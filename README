@@ -1,0 +1,7 @@
+This is an emulator for ps1 writen in C++
+
+TODO:
+* Read ROMs
+* Code the CPU emulation (MIPS)
+* Code the Debugger
+
