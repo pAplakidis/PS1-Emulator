@@ -18,7 +18,7 @@ int main(int argc, char **argv){
   std::ifstream boot (boot_path, std::ios::binary);
   std::ifstream rom (rom_path, std::ios::binary);
 
-  Ps1 ps1 = new Ps1(boot, rom);
+  Ps1 *ps1 = new Ps1(boot, rom);
   
   return 0;
 }

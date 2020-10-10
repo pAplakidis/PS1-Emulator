@@ -3,8 +3,8 @@
 class Ps1{
 
 public:
-  Cpu m_cpu;
-  std::ifstread m_boot;
+  Cpu *m_cpu;
+  std::ifstream m_boot;
   std::ifstream m_rom;
 
   Ps1(std::ifstream boot, std::ifstream rom);
