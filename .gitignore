@@ -1,3 +1,7 @@
 #.swp files
 .*.swp
 
+# binaries
+bin/
+src/build
+

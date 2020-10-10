@@ -1,0 +1,8 @@
+
+class Cpu{
+
+public:
+  
+  Cpu();
+};
+

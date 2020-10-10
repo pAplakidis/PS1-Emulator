@@ -1,0 +1,19 @@
+PS1 components
+
+- CPU:
+  * LSI CoreWare CW33300-based core (MIPS R3000A 32-bit)
+  * Geometry Transform Engine (GTE)
+  * Motion Decoder (MDEC)
+  * System Control Coprocessor (Cop0)
+
+- Memory:
+  * 2MB EDO DRAM
+  * 1MB framebuffer(GPU) and 512KB(SPU)
+  * BIOS on 512KB ROM
+
+- GPU:
+
+- SPU (Sound Processing Unit):
+
+- I/O system connectivity
+
