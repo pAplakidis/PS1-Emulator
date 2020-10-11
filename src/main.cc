@@ -14,11 +14,8 @@ int main(int argc, char **argv){
   // open ROM files
   std::string boot_path = argv[1];
   std::string rom_path = argv[2];
-
-  std::ifstream boot (boot_path, std::ios::binary);
-  std::ifstream rom (rom_path, std::ios::binary);
-
-  Ps1 *ps1 = new Ps1(boot, rom);
+  
+  Ps1 *ps1 = new Ps1(boot_path, rom_path);
   
   return 0;
 }

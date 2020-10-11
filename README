@@ -1,5 +1,15 @@
 This is an emulator for ps1 writen in C++
 
+Requirements:
+- None...for now
+
+Install:
+- mkdir build
+- cd build
+- cmake ..
+- make
+- ./PS1-Emulator
+
 TODO:
 * Read ROMs
 * Code the CPU emulation (MIPS)

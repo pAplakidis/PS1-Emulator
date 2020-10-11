@@ -1,9 +1,9 @@
 #include "ps1.h"
 
-Ps1::Ps1(std::ifstream boot, std::ifstream rom){
-  this->m_boot = boot;
-  this->m_rom = rom;
+Ps1::Ps1(std::string boot_path, std::string rom_path){
+  m_cpu = new Cpu();
 
-  this->m_cpu = new Cpu();
+  // Temporary tests
+  m_cpu->load_rom(rom_path);
 }
 
