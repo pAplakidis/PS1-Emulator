@@ -1,5 +1,10 @@
 This is an emulator for ps1 writen in C++
 
+Coding Style:
+* class member variables: m_...
+* registers: reg_...
+* variables and functions: lower case separated with _
+
 Requirements:
 - None...for now
 

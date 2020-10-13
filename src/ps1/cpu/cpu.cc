@@ -14,5 +14,26 @@ void Cpu::load_rom(std::string rom_path){
 // Reads command in memory and executes it (also increases pc to point to next instruction)
 void Cpu::cycle(){
   
+
+}
+
+void read_instruction(){
+  
+}
+
+void execute_instruction(){
+  
+}
+
+void branch(){
+  
+}
+
+void read_word(){
+  
+}
+
+void write_word(){
+  
 }
 
