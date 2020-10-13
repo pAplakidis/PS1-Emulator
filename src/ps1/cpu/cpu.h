@@ -2,6 +2,8 @@
 #include <vector>
 #include <stdint.h>
 
+#include "instruction.h"
+
 class Cpu{
 
 public:
@@ -35,7 +37,7 @@ public:
   void load_rom(std::string rom_path);
   void cycle();
   void read_instruction();
-  void execute_instruction();
+  void execute_instruction(Instruction instr);
   void branch();
   void read_word();
   void write_word();

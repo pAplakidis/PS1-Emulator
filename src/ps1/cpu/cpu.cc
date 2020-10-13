@@ -21,8 +21,10 @@ void read_instruction(){
   
 }
 
-void execute_instruction(){
+void execute_instruction(Instruction instr){
+  switch(instr.opcode()){
   
+  }
 }
 
 void branch(){
