@@ -36,8 +36,8 @@ public:
   Cpu();
   void load_rom(std::string rom_path);
   void cycle();
-  void read_instruction();
-  void execute_instruction(Instruction instr);
+  Instruction* read_instruction(uint32_t addr);
+  void execute_instruction(Instruction *instr);
   void branch();
   void read_word();
   void write_word();

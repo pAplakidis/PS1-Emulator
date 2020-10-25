@@ -1,6 +1,7 @@
 #include <fstream>
 
 #include "cpu/cpu.h"
+#include "interconnect.h"
 
 class Ps1{
 

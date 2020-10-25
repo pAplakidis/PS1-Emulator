@@ -1,7 +1,7 @@
 #include "cpu.h"
 
 Cpu::Cpu(){
-  
+  // TODO: set a default value for the PC and other registers
 }
 
 // Loads ps1 rom into m_rom member variable
@@ -13,29 +13,35 @@ void Cpu::load_rom(std::string rom_path){
 
 // Reads command in memory and executes it (also increases pc to point to next instruction)
 void Cpu::cycle(){
+  uint32_t temp_pc = reg_pc;
+  reg_pc += 4;  // this acts like a pointer but to C++ it is not (incrementing by 4 in a pseudo manual way)
   
-
+  Instruction *instr = read_instruction(temp_pc);
+  execute_instruction(instr);
 }
 
-void read_instruction(){
+// TODO: get and decode instruction in addr of PC and return the object with the opcode
+Instruction* Cpu::read_instruction(uint32_t addr){
+  Instruction *instr = new Instruction();
   
+  return instr;
 }
 
-void execute_instruction(Instruction instr){
-  switch(instr.opcode()){
+void Cpu::execute_instruction(Instruction *instr){
+  switch(instr->opcode()){
   
   }
 }
 
-void branch(){
+void Cpu::branch(){
   
 }
 
-void read_word(){
+void Cpu::read_word(){
   
 }
 
-void write_word(){
+void Cpu::write_word(){
   
 }
 
