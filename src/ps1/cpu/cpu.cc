@@ -4,7 +4,7 @@ Cpu::Cpu(){
   // PC reset value at the beginning of BIOS
   reg_pc = 0xbfc00000;
 
-  // set 32 registers to 0x0000
+  // set 32 registers to 0x00000000
   reg_sp = 0;
   reg_ra = 0;
   reg_gp = 0;

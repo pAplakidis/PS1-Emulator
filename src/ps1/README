@@ -17,3 +17,6 @@ PS1 components
 
 - I/O system connectivity
 
+TODO:
+* might not need interconnect since ps1 doesn't have one, intead implement a switchboard that will match the address to the correct peripheral and forward it there
+

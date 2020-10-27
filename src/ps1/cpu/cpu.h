@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 #include "instruction.h"
+#include "bios.h"
 
 class Cpu{
 
