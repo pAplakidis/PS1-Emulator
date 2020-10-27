@@ -11,6 +11,7 @@ public:
   static const uint32_t MEMORY_SIZE = 5120;    
   unsigned char m_memory[MEMORY_SIZE];
 
+  // NOTE: 1 register here might not be needed (32 registers needed in the MIPS register_file, we have 33)
   // Registers
   uint32_t reg_pc;  // Program Counter (not inside register file)
 

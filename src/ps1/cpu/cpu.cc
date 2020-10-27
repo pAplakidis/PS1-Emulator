@@ -1,7 +1,47 @@
 #include "cpu.h"
 
 Cpu::Cpu(){
-  // TODO: set a default value for the PC and other registers
+  // PC reset value at the beginning of BIOS
+  reg_pc = 0xbfc00000;
+
+  // set 32 registers to 0x0000
+  reg_sp = 0;
+  reg_ra = 0;
+  reg_gp = 0;
+  reg_at = 0;
+  fp = 0;
+
+  reg_k0 = 0;
+  reg_k1 = 0;
+
+  reg_v0 = 0;
+  reg_v1 = 0;
+
+  reg_a0 = 0;
+  reg_a1 = 0;
+  reg_a2 = 0;
+  reg_a3 = 0;
+
+
+  reg_s0 = 0;
+  reg_s1 = 0;
+  reg_s2 = 0;
+  reg_s3 = 0;
+  reg_s4 = 0;
+  reg_s5 = 0;
+  reg_s6 = 0;
+  reg_s7 = 0;
+
+  reg_t0 = 0;
+  reg_t1 = 0;
+  reg_t2 = 0;
+  reg_t3 = 0;
+  reg_t4 = 0;
+  reg_t5 = 0;
+  reg_t6 = 0;
+  reg_t7 = 0;
+  reg_t8 = 0;
+  reg_t9 = 0;
 }
 
 // Loads ps1 rom into m_rom member variable
