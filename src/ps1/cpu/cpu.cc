@@ -8,7 +8,6 @@ Cpu::Cpu(){
   reg_sp = 0;
   reg_ra = 0;
   reg_gp = 0;
-  reg_at = 0;
   fp = 0;
 
   reg_k0 = 0;

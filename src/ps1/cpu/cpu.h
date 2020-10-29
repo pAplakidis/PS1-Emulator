@@ -20,7 +20,6 @@ public:
   uint32_t reg_sp;  // Stack Pointer
   uint32_t reg_ra;  // Return Address
   uint32_t reg_gp;  // global pointer (easy access to static or extern variables)
-  uint32_t reg_at;  // reverved for use by assembler
   uint32_t fp;      // 9th register variable (also named s8), subroutines which need one can use this as a "frame pointer"
   uint32_t reg_k0, reg_k1;  // reserved for use by interrupt/ trap handler
 
