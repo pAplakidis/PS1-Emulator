@@ -9,7 +9,7 @@ class Cpu{
 
 public:
   // 4KB instruction memory, 1KB data cache
-  static const uint32_t MEMORY_SIZE = 5120;    
+  static const uint32_t MEMORY_SIZE = 5120; // CHECK THAT
   unsigned char m_memory[MEMORY_SIZE];
 
   // NOTE: 1 register here might not be needed (32 registers needed in the MIPS register_file, we have 33)
