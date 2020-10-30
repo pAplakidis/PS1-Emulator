@@ -4,12 +4,13 @@
 
 #include "instruction.h"
 #include "bios.h"
+#include "interconnect.h"
 
 class Cpu{
 
 public:
   // 4KB instruction memory, 1KB data cache
-  static const uint32_t MEMORY_SIZE = 5120; // CHECK THAT
+  static const uint32_t MEMORY_SIZE = 512 * 1024; // CHECK THAT
   unsigned char m_memory[MEMORY_SIZE];  // main memory of the CPU
 
   // NOTE: 1 register here might not be needed (32 registers needed in the MIPS register_file, we have 33)
@@ -34,6 +35,7 @@ public:
 
   // CPU object variables
   Bios *bios;
+  Interconnect *intercn;
 
 
   Cpu(std::string bios_path);

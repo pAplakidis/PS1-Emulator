@@ -1,4 +1,5 @@
 #include <vector>
+#include <fstream>
 #include <stdint.h>
 
 class Bios{
@@ -8,8 +9,6 @@ public:
   std::vector<uint8_t> data;
 
   Bios(std::string bios_path);
-
-  // fetch the 32bit little endian word at 'offset'
-  void load32(uint32_t offset);
+  uint32_t load32(uint32_t offset);
 };
 

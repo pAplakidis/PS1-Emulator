@@ -1,5 +1,4 @@
 #include <iostream>
-#include <fstream>
 #include <stdlib.h>
 
 #include "ps1/ps1.h"

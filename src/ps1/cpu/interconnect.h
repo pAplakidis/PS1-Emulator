@@ -1,0 +1,6 @@
+
+class Interconnect{
+public:
+  Interconnect();
+};
+
