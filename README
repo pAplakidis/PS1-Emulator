@@ -16,7 +16,10 @@ Install:
 - ./PS1-Emulator
 
 TODO:
-* Read ROMs
+* Read find and read test-ROMs
 * Code the CPU emulation (MIPS)
 * Code the Debugger
+* Garbage collect and check memory managemnt (optimization)
+* implement all components
+* try to run an actual game-ROM
 

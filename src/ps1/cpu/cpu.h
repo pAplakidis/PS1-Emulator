@@ -32,6 +32,8 @@ public:
   static const uint32_t reg_0 = 0;
   uint32_t reg_t0, reg_t1, reg_t2, reg_t3, reg_t4, reg_t5, reg_t6, reg_t7, reg_t8, reg_t9;
 
+  // CPU object variables
+  Bios *bios;
 
 
   Cpu(std::string bios_path);
