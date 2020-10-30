@@ -1,6 +1,0 @@
-
-class Interconnect{
-public:
-  Interconnect();
-};
-
