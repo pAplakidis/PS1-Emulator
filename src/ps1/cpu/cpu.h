@@ -33,12 +33,16 @@ public:
   static const uint32_t reg_0 = 0;
   uint32_t reg_t0, reg_t1, reg_t2, reg_t3, reg_t4, reg_t5, reg_t6, reg_t7, reg_t8, reg_t9;
 
+  // other data variables
+  std::vector<uint8_t> rom_data;
+
   // CPU object variables
   Bios *bios;
   Interconnect *intercn;
 
 
   Cpu(std::string bios_path);
+  void main_loop();
   void load_rom(std::string rom_path);
   void cycle();
   Instruction* read_instruction(uint32_t addr);

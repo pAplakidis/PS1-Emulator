@@ -6,11 +6,10 @@
 int main(int argc, char **argv){
 
   if(argc < 3){
-    std::cout << "Usage: " << argv[0] << " <boot_rom> <cd_rom>\n";
+    std::cout << "Usage: " << argv[0] << " <bios_rom> <cd_rom>\n";
     exit(1);
   }
 
-  // open ROM files
   std::string bios_path = argv[1];
   std::string rom_path = argv[2];
   

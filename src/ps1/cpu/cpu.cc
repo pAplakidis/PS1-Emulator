@@ -45,9 +45,19 @@ Cpu::Cpu(std::string bios_path){
 
 // Loads ps1 rom into m_rom member variable
 void Cpu::load_rom(std::string rom_path){
-  std::vector<char> rom_data; // buffer for storing data from ROM
-
   // TODO: open rom_file, read data to rom_data, copy the rom_data to m_memory in the correct offset (according to the docs)
+  std::ifstream instream(rom_path, std::ios::in | std::ios::binary);
+  std::vector<uint8_t> temp_data((std::istreambuf_iterator<char>(instream)), std::istreambuf_iterator<char>());
+  
+  rom_data = temp_data;
+}
+
+// main loop of CPU
+void Cpu::main_loop(){
+  // TODO: load BIOS as well
+  while(1){
+    Cpu::cycle();
+  }
 }
 
 // Reads command in memory and executes it (also increases pc to point to next instruction)
