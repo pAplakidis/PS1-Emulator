@@ -6,8 +6,9 @@
 class Ps1{
 
 public:
-  Cpu *m_cpu;
+  Cpu *cpu;
+  Interconnect *intercn;
 
-  Ps1(std::string boot_path, std::string rom_path);
+  Ps1(std::string bios_path, std::string rom_path);
 };
 

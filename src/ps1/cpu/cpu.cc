@@ -1,6 +1,6 @@
 #include "cpu.h"
 
-Cpu::Cpu(){
+Cpu::Cpu(std::string bios_path){
   // PC reset value at the beginning of BIOS
   reg_pc = 0xbfc00000;
 

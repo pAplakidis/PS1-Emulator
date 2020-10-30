@@ -1,10 +1,10 @@
 #include "ps1.h"
-#include "interconnect.h"
 
-Ps1::Ps1(std::string boot_path, std::string rom_path){
-  m_cpu = new Cpu();
+Ps1::Ps1(std::string bios_path, std::string rom_path){
+  cpu = new Cpu(bios_path);
+  intercn = new Interconnect();
 
   // Temporary tests
-  m_cpu->load_rom(rom_path);
+  cpu->load_rom(rom_path);
 }
 
