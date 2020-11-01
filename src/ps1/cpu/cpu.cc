@@ -79,6 +79,10 @@ Instruction* Cpu::read_instruction(uint32_t addr){
   return instr;
 }
 
+uint32_t Cpu::load32(uint32_t addr){
+  return intercn->load32(addr);
+}
+
 void Cpu::execute_instruction(Instruction *instr){
   switch(instr->opcode()){
   

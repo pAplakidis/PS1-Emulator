@@ -44,6 +44,7 @@ public:
   void load_rom(std::string rom_path);
   void cycle();
   Instruction* read_instruction(uint32_t addr);
+  uint32_t load32(uint32_t addr);
   void execute_instruction(Instruction *instr);
   void branch();
   void read_word();
