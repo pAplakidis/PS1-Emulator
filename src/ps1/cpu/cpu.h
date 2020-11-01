@@ -3,7 +3,6 @@
 #include <stdint.h>
 
 #include "instruction.h"
-#include "bios.h"
 #include "interconnect.h"
 
 class Cpu{
@@ -37,7 +36,6 @@ public:
   std::vector<uint8_t> rom_data;
 
   // CPU object variables
-  Bios *bios;
   Interconnect *intercn;
 
 

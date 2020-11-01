@@ -1,6 +1,10 @@
+#include "bios.h"
 
+// global interconnect
 class Interconnect{
 public:
-  Interconnect();
+  Bios *bios;
+
+  Interconnect(std::string bios_path);
 };
 

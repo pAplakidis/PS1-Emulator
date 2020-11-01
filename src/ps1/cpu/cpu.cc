@@ -41,6 +41,9 @@ Cpu::Cpu(std::string bios_path){
   reg_t7 = 0;
   reg_t8 = 0;
   reg_t9 = 0;
+
+  // TODO: this might not be for the CPU but for the whole ps1 (might have to move the files as well??)
+  intercn = new Interconnect(bios_path);
 }
 
 // Loads ps1 rom into m_rom member variable
