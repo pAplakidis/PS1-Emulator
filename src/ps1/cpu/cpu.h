@@ -39,13 +39,13 @@ public:
   Interconnect *intercn;
 
 
-  Cpu(std::string bios_path);
+  Cpu(Interconnect *intercn);
   void main_loop();
   void load_rom(std::string rom_path);
   void cycle();
-  Instruction* read_instruction(uint32_t addr);
   uint32_t load32(uint32_t addr);
-  void execute_instruction(Instruction *instr);
+  Instruction* decode(uint32_t intruction);
+  void execute_instruction(uint32_t instr);
   void branch();
   void read_word();
   void write_word();

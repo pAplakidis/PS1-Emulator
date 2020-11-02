@@ -9,7 +9,7 @@ class Interconnect{
 public:
   Bios *bios;
 
-  Interconnect(std::string bios_path);
+  Interconnect(Bios *bios);
   uint32_t load32(uint32_t addr);
 };
 

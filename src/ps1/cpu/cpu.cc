@@ -1,6 +1,6 @@
 #include "cpu.h"
 
-Cpu::Cpu(std::string bios_path){
+Cpu::Cpu(Interconnect *intercn){
   // PC reset value at the beginning of BIOS
   reg_pc = 0xbfc00000;
 
@@ -43,7 +43,7 @@ Cpu::Cpu(std::string bios_path){
   reg_t9 = 0;
 
   // TODO: this might not be for the CPU but for the whole ps1 (might have to move the files as well??)
-  intercn = new Interconnect(bios_path);
+  this->intercn = intercn;
 }
 
 // Loads ps1 rom into m_rom member variable
@@ -57,7 +57,6 @@ void Cpu::load_rom(std::string rom_path){
 
 // main loop of CPU
 void Cpu::main_loop(){
-  // TODO: load BIOS as well
   while(1){
     Cpu::cycle();
   }
@@ -65,26 +64,31 @@ void Cpu::main_loop(){
 
 // Reads command in memory and executes it (also increases pc to point to next instruction)
 void Cpu::cycle(){
+  // TODO: temp_pc might not be needed, we might need to increase reg_pc first and then execute instr
   uint32_t temp_pc = reg_pc;
   reg_pc += 4;  // this acts like a pointer but to C++ it is not (incrementing by 4 in a pseudo manual way)
   
-  Instruction *instr = read_instruction(temp_pc);
+  uint32_t instr = load32(reg_pc);
   execute_instruction(instr);
-}
-
-// TODO: get and decode instruction in addr of PC and return the object with the opcode
-Instruction* Cpu::read_instruction(uint32_t addr){
-  Instruction *instr = new Instruction();
-  
-  return instr;
 }
 
 uint32_t Cpu::load32(uint32_t addr){
   return intercn->load32(addr);
 }
 
-void Cpu::execute_instruction(Instruction *instr){
-  switch(instr->opcode()){
+Instruction* Cpu::decode(uint32_t instr){
+  Instruction *instruction = new Instruction(instr);
+
+  //printf("Unhandled instruction %x", instr);
+  //exit(1);
+
+  return instruction;
+}
+
+void Cpu::execute_instruction(uint32_t instr){
+  Instruction *instruction = decode(instr);
+
+  switch(instruction->opcode()){
   
   }
 }

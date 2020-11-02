@@ -1,8 +1,8 @@
 #include "interconnect.h"
 
-Interconnect::Interconnect(std::string bios_path){
+Interconnect::Interconnect(Bios *bios){
   // TODO: delete this object from memory after done booting
-  bios = new Bios(bios_path);
+  this->bios = bios;
 }
 
 // load a 32bit word at addr
