@@ -114,10 +114,15 @@ void Cpu::write_word(){
 
 // ADD rd,rs,rt
 void Cpu::op_add(Instruction *instruction){
+  // NOTE: these are addresses
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+  uint32_t rd = instruction->regd_idx();
 
+  // TODO: load the values of the registers to the addresses and execute operation
 }
 
-//ADDI rt,rs,imm
+// ADDI rt,rs,imm
 void Cpu::op_addi(Instruction *instruction){
 
 }
