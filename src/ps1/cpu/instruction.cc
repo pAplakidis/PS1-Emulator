@@ -8,6 +8,6 @@ Instruction::Instruction(uint32_t instr){
 }
 
 uint32_t Instruction::opcode(){
-  
+  return 0x0;
 }
 
