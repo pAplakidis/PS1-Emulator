@@ -39,6 +39,7 @@ public:
   Interconnect *intercn;
 
 
+  // Basic Functions
   Cpu(Interconnect *intercn);
   void main_loop();
   void load_rom(std::string rom_path);
@@ -49,6 +50,10 @@ public:
   void branch();
   void read_word();
   void write_word();
+
+  // Instructions
+  void op_add(Instruction *instruction);
+  void op_addi(Instruction *instruction);
 
 };
 

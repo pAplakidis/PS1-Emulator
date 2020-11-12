@@ -78,18 +78,23 @@ uint32_t Cpu::load32(uint32_t addr){
 
 Instruction* Cpu::decode(uint32_t instr){
   Instruction *instruction = new Instruction(instr);
-
-  //printf("Unhandled instruction %x", instr);
-  //exit(1);
-
   return instruction;
 }
 
 void Cpu::execute_instruction(uint32_t instr){
   Instruction *instruction = decode(instr);
 
+  // TODO: add all ~56 opcodes for this processor
   switch(instruction->opcode()){
-  
+    case 0b000000:
+      op_add(instruction);
+      break;
+    case 0b001000:
+      op_addi(instruction);
+      break;
+    default:
+      printf("Unhandled instruction %x", instr);
+      exit(1);
   }
 }
 
@@ -103,5 +108,17 @@ void Cpu::read_word(){
 
 void Cpu::write_word(){
   
+}
+
+// CPU instructions/operations
+
+// ADD rd,rs,rt
+void Cpu::op_add(Instruction *instruction){
+
+}
+
+//ADDI rt,rs,imm
+void Cpu::op_addi(Instruction *instruction){
+
 }
 
