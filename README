@@ -12,7 +12,10 @@ Install:
 - cd build
 - cmake ..
 - make
-- ./PS1-Emulator
+
+Run:
+- cd build
+- ./PS1-Emulator <bios> <game_rom>
 
 TODO:
 * Read find and read test-ROMs
