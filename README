@@ -19,6 +19,7 @@ Run:
 
 TODO:
 * Read find and read test-ROMs
+* DOCUMENT NAMES TO THE INDEXES OF REGISTERS IN THE GENERAL PURPOSE REGISTER ARRAY IN CPU
 * Code the CPU emulation (MIPS)
 * Code the Debugger
 * Garbage collect and check memory managemnt (optimization)

@@ -1,5 +1,7 @@
 #include <fstream>
 #include <vector>
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
 
 #include "instruction.h"
@@ -13,24 +15,13 @@ public:
   unsigned char m_memory[MEMORY_SIZE];  // main memory of the CPU
 
   // NOTE: 1 register here might not be needed (32 registers needed in the MIPS register_file, we have 33)
-  // Registers
+  // Special Purpose Registers
   uint32_t reg_pc;  // Program Counter (not inside register file)
+  uint32_t reg_hi, reg_lo; // high and low 32bits of multiplication result (remainder of division for hi, quotient of division for lo)
 
-  // 0-31 32bit registers
-  uint32_t reg_sp;  // Stack Pointer
-  uint32_t reg_ra;  // Return Address
-  uint32_t reg_gp;  // global pointer (easy access to static or extern variables)
-  uint32_t fp;      // 9th register variable (also named s8), subroutines which need one can use this as a "frame pointer"
-  uint32_t reg_k0, reg_k1;  // reserved for use by interrupt/ trap handler
+  // General Purpose Registers (check docs for their idx->name)
+  uint32_t registers[32];
 
-  // subroutine registers
-  uint32_t reg_v0, reg_v1;                  // return values for subroutines
-  uint32_t reg_a0, reg_a1, reg_a2, reg_a3;  // arguments for subroutines
-  uint32_t reg_s0, reg_s1, reg_s2, reg_s3, reg_s4, reg_s5, reg_s6, reg_s7;  // subroutine register variables
-
-  // general purpose registers
-  static const uint32_t reg_0 = 0;
-  uint32_t reg_t0, reg_t1, reg_t2, reg_t3, reg_t4, reg_t5, reg_t6, reg_t7, reg_t8, reg_t9;
 
   // other data variables
   std::vector<uint8_t> rom_data;
@@ -41,6 +32,8 @@ public:
 
   // Basic Functions
   Cpu(Interconnect *intercn);
+  uint32_t reg(int idx);
+  void set_reg(int idx, uint32_t value);
   void main_loop();
   void load_rom(std::string rom_path);
   void cycle();
@@ -52,8 +45,10 @@ public:
   void write_word();
 
   // Instructions
+  // TODO: maybe move these to a different file and create a namespace
   void op_add(Instruction *instruction);
   void op_addi(Instruction *instruction);
-
+  void op_addiu(Instruction *instruction);
+  void op_and(Instruction *instruction);
 };
 
