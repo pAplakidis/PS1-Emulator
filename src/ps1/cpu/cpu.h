@@ -50,5 +50,10 @@ public:
   void op_addi(Instruction *instruction);
   void op_addiu(Instruction *instruction);
   void op_and(Instruction *instruction);
+  void op_andi(Instruction *instruction);
+  void op_lui(Instruction *instruction);
+  void op_nor(Instruction *instruction);
+  void op_or(Instruction *instruction);
+  void op_ori(Instruction *instruction);
 };
 

@@ -65,10 +65,24 @@ void Cpu::execute_instruction(uint32_t instr){
   // TODO: add all ~56 opcodes for this processor
   switch(instruction->opcode()){
     case 0b000000:
-      if((instruction->instr & 0xffffffc0) == 0b100100)
+      // there are commands with the same opcode but their last 6 bits are different from each other
+      switch(instruction->instr & 0xffffffc0){
+        case 0b100100:
         op_and(instruction);
-      else
+        break;
+      case 0b100000:
         op_add(instruction);
+        break;
+      case 0b100111:
+        op_nor(instruction);
+        break;
+      case 0b100101:
+        op_or(instruction);
+        break;
+      default:
+        printf("Unhandled instrution that belong to the 000000 family\n");
+        exit(1);
+      }
       break;
     case 0b001000:
       op_addi(instruction);
@@ -76,8 +90,17 @@ void Cpu::execute_instruction(uint32_t instr){
     case 0b001001:
       op_addiu(instruction);
       break;
+    case 0b001100:
+      op_andi(instruction);
+      break;
+    case 0b001111:
+      op_lui(instruction);
+      break;
+    case 0b001101:
+      op_ori(instruction);
+      break;
     default:
-      printf("Unhandled instruction %x", instr);
+      printf("Unhandled instruction %x\n", instr);
       exit(1);
   }
 }
@@ -148,7 +171,61 @@ void Cpu::op_and(Instruction *instruction){
   uint32_t rt = instruction->regt_idx();
   uint32_t rd = instruction->regd_idx();
 
-  uint32_t result = (uint32_t)reg(rs) & (uint32_t)reg(rt);
+  uint32_t result = reg(rs) & reg(rt);
   set_reg(rd, result);
+}
+
+// ANDI rt,rs,imm
+void Cpu::op_andi(Instruction *instruction){
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+
+  uint32_t imm = instruction->immediate();
+  uint32_t result = reg(rs) & imm;
+  set_reg(rt, result);
+}
+
+// LUI rt,imm
+void Cpu::op_lui(Instruction *instruction){
+  // get register indices
+  uint32_t rt = instruction->regt_idx();
+  uint32_t imm = instruction->immediate();
+  
+  uint32_t result = imm << 16;
+  set_reg(rt, result);
+}
+
+// NOR rd,rs,rt
+void Cpu::op_nor(Instruction *instruction){
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+  uint32_t rd = instruction->regd_idx();
+  
+  uint32_t result = ~(reg(rs) | reg(rt));
+  set_reg(rd, result);
+}
+
+// OR rd,rs,rt
+void Cpu::op_or(Instruction *instruction){
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+  uint32_t rd = instruction->regd_idx();
+  
+  uint32_t result = reg(rs) | reg(rt);
+  set_reg(rd, result);
+}
+
+// ORI rt,rs,imm
+void Cpu::op_ori(Instruction *instruction){
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+
+  uint32_t imm = instruction->immediate();
+  uint32_t result = reg(rs) | reg(imm);
+  set_reg(rt, result);
 }
 
