@@ -79,8 +79,17 @@ void Cpu::execute_instruction(uint32_t instr){
       case 0b100101:
         op_or(instruction);
         break;
+      case 0b101010:
+        op_slt(instruction);
+        break;
+      case 0b101011:
+        op_sltu(instruction);
+        break;
+      case 0b100010:
+        op_sub(instruction);
+        break;
       default:
-        printf("Unhandled instrution that belong to the 000000 family\n");
+        printf("Unhandled instruction that belongs to the 000000 family %x\n", instr);
         exit(1);
       }
       break;
@@ -98,6 +107,12 @@ void Cpu::execute_instruction(uint32_t instr){
       break;
     case 0b001101:
       op_ori(instruction);
+      break;
+    case 0b001010:
+      op_slti(instruction);
+      break;
+    case 0b001011:
+      op_sltiu(instruction);
       break;
     default:
       printf("Unhandled instruction %x\n", instr);
@@ -119,6 +134,7 @@ void Cpu::write_word(){
 
 // CPU instructions/operations
 // TODO: code the rest of the instructions
+// TODO: check for the signed and unsigned operations (need int32_T for signed and uint32_t for unsigned) (reg() returns unsigned so only worry about signed integers)
 
 // ADD rd,rs,rt
 // ADDU rd,rs,rt	
@@ -133,7 +149,7 @@ void Cpu::op_add(Instruction *instruction){
     set_reg(rd, sum);
   }
   else if((instruction->instr & 0xffffffc0) == 0b100001){
-    uint32_t sum = (uint32_t)reg(rs) + (uint32_t)reg(rt);
+    uint32_t sum = reg(rs) + reg(rt);
     set_reg(rd, sum);
   }
   else{
@@ -149,7 +165,7 @@ void Cpu::op_addi(Instruction *instruction){
   uint32_t rt = instruction->regt_idx();
 
   int32_t imm = instruction->immediate();
-  uint32_t sum = reg(rs) + imm;
+  int32_t sum = (int32_t)reg(rs) + imm;
   set_reg(rt, sum);
 }
 
@@ -160,7 +176,7 @@ void Cpu::op_addiu(Instruction *instruction){
   uint32_t rt = instruction->regt_idx();
 
   uint32_t imm = instruction->immediate();
-  uint32_t sum = (uint32_t)reg(rs) + imm;
+  uint32_t sum = reg(rs) + imm;
   set_reg(rt, sum);
 }
 
@@ -227,5 +243,68 @@ void Cpu::op_ori(Instruction *instruction){
   uint32_t imm = instruction->immediate();
   uint32_t result = reg(rs) | reg(imm);
   set_reg(rt, result);
+}
+
+// SLT rd,rs,rt
+void Cpu::op_slt(Instruction *instruction){
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+  uint32_t rd = instruction->regd_idx();
+  
+  if((int32_t)reg(rs) < reg(rt))
+    set_reg(rd, 1);
+  else
+    set_reg(rd, 0);
+}
+
+// SLTI rt,rs,imm
+void Cpu::op_slti(Instruction *instruction){
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+
+  uint32_t imm = instruction->immediate();
+  if((int32_t)reg(rs) < imm)
+    set_reg(rt, 1);
+  else
+    set_reg(rt, 0);
+}
+
+// SLTIU rt,rs,imm
+void Cpu::op_sltiu(Instruction *instruction){
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+
+  uint32_t imm = instruction->immediate();
+  if(reg(rs) < imm)
+    set_reg(rt, 1);
+  else
+    set_reg(rt, 0);
+}
+
+// SLTU rd,rs,rt
+void Cpu::op_sltu(Instruction *instruction){
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+  uint32_t rd = instruction->regd_idx();
+  
+  if(reg(rs) < reg(rt))
+    set_reg(rd, 1);
+  else
+    set_reg(rd, 0);
+}
+
+// SUB rd,rs,rt
+void Cpu::op_sub(Instruction *instruction){
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+  uint32_t rd = instruction->regd_idx();
+  
+  int32_t result = (int32_t)reg(rs) - (int32_t)reg(rt);
+  set_reg(rd, result);
 }
 

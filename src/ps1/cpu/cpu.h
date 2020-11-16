@@ -55,5 +55,10 @@ public:
   void op_nor(Instruction *instruction);
   void op_or(Instruction *instruction);
   void op_ori(Instruction *instruction);
+  void op_slt(Instruction *instruction);
+  void op_slti(Instruction *instruction);
+  void op_sltiu(Instruction *instruction);
+  void op_sltu(Instruction *instruction);
+  void op_sub(Instruction *instruction);
 };
 
