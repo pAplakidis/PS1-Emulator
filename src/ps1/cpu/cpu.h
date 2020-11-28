@@ -9,6 +9,11 @@
 
 class Cpu{
 
+// TODO: put private functions and variables here
+private:
+  // General Purpose Registers (check docs for their idx->name)
+  uint32_t registers[32];
+
 public:
   // 4KB instruction memory, 1KB data cache
   static const uint32_t MEMORY_SIZE = 512 * 1024; // CHECK THAT
@@ -19,16 +24,11 @@ public:
   uint32_t reg_pc;  // Program Counter (not inside register file)
   uint32_t reg_hi, reg_lo; // high and low 32bits of multiplication result (remainder of division for hi, quotient of division for lo)
 
-  // General Purpose Registers (check docs for their idx->name)
-  uint32_t registers[32];
-
-
   // other data variables
   std::vector<uint8_t> rom_data;
 
   // CPU object variables
   Interconnect *intercn;
-
 
   // Basic Functions
   Cpu(Interconnect *intercn);
