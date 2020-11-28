@@ -3,9 +3,10 @@ This is an emulator for ps1 writen in C++
 Coding Style:
 * registers: reg_...
 * variables and functions: lower case separated with _
+* "{" goes on the same line with the statement
 
 Requirements:
-- None...for now
+- CMake
 
 Install:
 - mkdir build
