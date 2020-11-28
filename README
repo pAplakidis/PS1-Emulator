@@ -19,6 +19,7 @@ Run:
 - ./PS1-Emulator <bios> <game_rom>
 
 TODO:
+* Add #pragma once so we dont reinclude multiple files more than once
 * Read find and read test-ROMs
 * DOCUMENT NAMES TO THE INDEXES OF REGISTERS IN THE GENERAL PURPOSE REGISTER ARRAY IN CPU
 * Code the CPU emulation (MIPS)
