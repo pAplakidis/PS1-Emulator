@@ -5,3 +5,6 @@
 build/
 tests/
 
+# pdfs
+*.pdf
+
