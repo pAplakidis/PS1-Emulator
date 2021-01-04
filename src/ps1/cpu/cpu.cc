@@ -54,6 +54,11 @@ uint32_t Cpu::load32(uint32_t addr){
   return intercn->load32(addr);
 }
 
+// Store 32bit value into memory
+void Cpu::store32(uint32_t addr, uint32_t val){
+  intercn->store32(addr, val);
+}
+
 Instruction* Cpu::decode(uint32_t instr){
   Instruction *instruction = new Instruction(instr);
   return instruction;
@@ -70,28 +75,31 @@ void Cpu::execute_instruction(uint32_t instr){
         case 0b100100:
         op_and(instruction);
         break;
-      case 0b100000:
-        op_add(instruction);
-        break;
-      case 0b100111:
-        op_nor(instruction);
-        break;
-      case 0b100101:
-        op_or(instruction);
-        break;
-      case 0b101010:
-        op_slt(instruction);
-        break;
-      case 0b101011:
-        op_sltu(instruction);
-        break;
-      case 0b100010:
-        op_sub(instruction);
-        break;
-      default:
-        printf("Unhandled instruction that belongs to the 000000 family %x\n", instr);
-        exit(1);
-      }
+        case 0b100000:
+          op_add(instruction);
+          break;
+        case 0b100111:
+          op_nor(instruction);
+          break;
+        case 0b100101:
+          op_or(instruction);
+          break;
+        case 0b101010:
+          op_slt(instruction);
+          break;
+        case 0b101011:
+          op_sltu(instruction);
+          break;
+        case 0b100010:
+          op_sub(instruction);
+          break;
+        case 0b100110:
+          op_xor(instruction);
+          break;
+        default:
+          printf("Unhandled instruction that belongs to the 000000 family %x\n", instr);
+          exit(1);
+        }
       break;
     case 0b001000:
       op_addi(instruction);
@@ -114,22 +122,16 @@ void Cpu::execute_instruction(uint32_t instr){
     case 0b001011:
       op_sltiu(instruction);
       break;
+    case 0b001110:
+      op_xori(instruction);
+      break;
+    case 0b101011:
+      op_sw(instruction);
+      break;
     default:
       printf("Unhandled instruction %x\n", instr);
       exit(1);
   }
-}
-
-void Cpu::branch(){
-  
-}
-
-void Cpu::read_word(){
-  
-}
-
-void Cpu::write_word(){
-  
 }
 
 // CPU instructions/operations
@@ -298,13 +300,57 @@ void Cpu::op_sltu(Instruction *instruction){
 }
 
 // SUB rd,rs,rt
+// SUBU rd,rs,rt
 void Cpu::op_sub(Instruction *instruction){
   // get register indices
   uint32_t rs = instruction->regs_idx();
   uint32_t rt = instruction->regt_idx();
   uint32_t rd = instruction->regd_idx();
   
-  int32_t result = (int32_t)reg(rs) - (int32_t)reg(rt);
-  set_reg(rd, result);
+  //int32_t diff = (int32_t)reg(rs) - (int32_t)reg(rt);
+  //set_reg(rd, diff);
+
+  if((instruction->instr & 0xffffffc0) == 0b100010){
+    int32_t diff = (int32_t)reg(rs) - (int32_t)reg(rt);
+    set_reg(rd, diff);
+  }
+  else if((instruction->instr & 0xffffffc0) == 0b100011){
+    uint32_t diff = reg(rs) - reg(rt);
+    set_reg(rd, diff);
+  }
+  else{
+    printf("Cannot recognised whether ADD is signed or unsigned");
+    exit(1);
+  }
+}
+
+// XOR rd,rs,rt
+void Cpu::op_xor(Instruction *instruction){
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+  uint32_t rd = instruction->regd_idx();
+
+  set_reg(rd, reg(rs)^reg(rt));
+}
+
+// XORI rt,rs,imm
+void Cpu::op_xori(Instruction *instruction){
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+
+  uint32_t imm = instruction->immediate();
+  set_reg(rt, reg(rs)^imm);
+}
+
+void Cpu::op_sw(Instruction *instruction){
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+  uint32_t imm = instruction->immediate();
+
+  uint32_t addr = reg(rs) + imm;
+  store32(addr, reg(rt));
 }
 

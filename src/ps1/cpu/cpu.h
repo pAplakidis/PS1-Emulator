@@ -37,15 +37,14 @@ public:
   void main_loop();
   void load_rom(std::string rom_path);
   void cycle();
+
   uint32_t load32(uint32_t addr);
+  void store32(uint32_t addr, uint32_t val);
+
   Instruction* decode(uint32_t intruction);
   void execute_instruction(uint32_t instr);
-  void branch();
-  void read_word();
-  void write_word();
 
   // Instructions
-  // TODO: maybe move these to a different file and create a namespace
   void op_add(Instruction *instruction);
   void op_addi(Instruction *instruction);
   void op_addiu(Instruction *instruction);
@@ -60,5 +59,9 @@ public:
   void op_sltiu(Instruction *instruction);
   void op_sltu(Instruction *instruction);
   void op_sub(Instruction *instruction);
+  void op_xor(Instruction *instruction);
+  void op_xori(Instruction *instruction);
+
+  void op_sw(Instruction *instruction);
 };
 
