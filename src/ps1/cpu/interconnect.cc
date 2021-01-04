@@ -11,7 +11,7 @@ uint32_t Interconnect::load32(uint32_t addr){
 
   // Check for address alignment (must be an address-multiple of 32bits)
   if(addr % 4 != 0){
-    printf("Unaligned load32 address: %x", addr);
+    printf("Unaligned load32 address: %x\n", addr);
     exit(1);
   }
   
@@ -19,7 +19,7 @@ uint32_t Interconnect::load32(uint32_t addr){
     return bios->load32(offset);
   }
   else{
-    printf("Cannot fetch address at %x", addr);
+    printf("Cannot fetch address at %x\n", addr);
     exit(1);
   }
 }
@@ -27,13 +27,35 @@ uint32_t Interconnect::load32(uint32_t addr){
 // TODO: the only peripheral we support right now is BIOS ROM and we can't write to it, come back and complete this later
 // store 32bit word val into addr
 void Interconnect::store32(uint32_t addr, uint32_t val){
+  uint32_t offset;
+
   // Check for address alignment (must be an address-multiple of 32bits)
   if(addr % 4 != 0){
-    printf("Unaligned store32 address: %x", addr);
+    printf("Unaligned store32 address: %x\n", addr);
     exit(1);
   }
 
-  printf("Unhandled store32 into address %x", addr);
+  // Handle Expansion mapping
+  if(offset = map::MEMCONTROL->contains(addr)){
+    switch(offset){
+      // Expansion 1 base address
+      case 0:
+        if(val != 0xf1000000){
+          printf("Bad Expansion 1 base address: %x\n", val);
+          exit(1);
+        }
+      case 4:
+        if(val != 0xf1802000){
+          printf("Bad Expansion 2 base address: %x\n", val);
+          exit(1);
+      }
+      default:
+        printf("Unhandled write to MEMCONTROL register\n");
+        exit(1);
+    }
+  }
+
+  printf("Unhandled store32 into address %x\n", addr);
   exit(1);
 }
 

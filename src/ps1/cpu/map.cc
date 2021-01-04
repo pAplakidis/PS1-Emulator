@@ -19,4 +19,5 @@ namespace map{
   }
 
   Range *BIOS = new Range(0xbfc00000, 512*1024);
+  Range *MEMCONTROL = new Range(0x1f801000, 36);
 }
