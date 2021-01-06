@@ -45,6 +45,8 @@ public:
   void execute_instruction(uint32_t instr);
 
   // Instructions
+
+  // ALU
   void op_add(Instruction *instruction);
   void op_addi(Instruction *instruction);
   void op_addiu(Instruction *instruction);
@@ -62,6 +64,13 @@ public:
   void op_xor(Instruction *instruction);
   void op_xori(Instruction *instruction);
 
+  // Memory Access
   void op_sw(Instruction *instruction);
+
+ // Shifter
+ void op_sll(Instruction *instruction);
+
+ // Branch
+ void op_j(Instruction *instruction);;
 };
 

@@ -15,5 +15,6 @@ namespace map{
 
   extern Range *BIOS; 
   extern Range *MEMCONTROL;
+  extern Range *RAM_SIZE;
 }
 

@@ -71,7 +71,7 @@ void Cpu::execute_instruction(uint32_t instr){
   switch(instruction->opcode()){
     case 0b000000:
       // there are commands with the same opcode but their last 6 bits are different from each other
-      switch(instruction->instr & 0xffffffc0){
+      switch(instruction->subfunction()){
         case 0b100100:
         op_and(instruction);
         break;
@@ -95,6 +95,9 @@ void Cpu::execute_instruction(uint32_t instr){
           break;
         case 0b100110:
           op_xor(instruction);
+          break;
+        case 0b000000:
+          op_sll(instruction);
           break;
         default:
           printf("Unhandled instruction that belongs to the 000000 family %x\n", instr);
@@ -127,6 +130,9 @@ void Cpu::execute_instruction(uint32_t instr){
       break;
     case 0b101011:
       op_sw(instruction);
+      break;
+    case 0b000010:
+      op_j(instruction);
       break;
     default:
       printf("Unhandled instruction %x\n", instr);
@@ -166,7 +172,7 @@ void Cpu::op_addi(Instruction *instruction){
   uint32_t rs = instruction->regs_idx();
   uint32_t rt = instruction->regt_idx();
 
-  int32_t imm = instruction->immediate();
+  int32_t imm = instruction->imm_se();
   int32_t sum = (int32_t)reg(rs) + imm;
   set_reg(rt, sum);
 }
@@ -344,13 +350,34 @@ void Cpu::op_xori(Instruction *instruction){
   set_reg(rt, reg(rs)^imm);
 }
 
+// SW rt,offset(rs)
 void Cpu::op_sw(Instruction *instruction){
   // get register indices
   uint32_t rs = instruction->regs_idx();
   uint32_t rt = instruction->regt_idx();
-  uint32_t imm = instruction->immediate();
+  int32_t imm = instruction->imm_se();
 
   uint32_t addr = reg(rs) + imm;
   store32(addr, reg(rt));
+}
+
+// TODO: need all Shifter instructions
+// SLL rd,rt,sa
+void Cpu::op_sll(Instruction *instruction){
+  // get register indices
+  uint32_t rt = instruction->regt_idx();
+  uint32_t rd = instruction->regd_idx();
+  int32_t sa = instruction->shift();
+
+  set_reg(rd, reg(rt) << sa);
+}
+
+
+// TODO: need all branch instructions
+// J target
+void Cpu::op_j(Instruction *instruction){
+  uint32_t target = instruction->imm_jump();
+
+  reg_pc = (reg_pc & 0xf0000000) | (target << 2);
 }
 
