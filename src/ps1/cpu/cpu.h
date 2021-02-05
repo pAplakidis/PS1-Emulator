@@ -69,6 +69,11 @@ public:
 
  // Shifter
  void op_sll(Instruction *instruction);
+ void op_sllv(Instruction *instruction);
+ void op_sra(Instruction *instruction);
+ void op_srav(Instruction *instruction);
+ void op_srl(Instruction *instruction);
+ void op_srlv(Instruction *instruction);
 
  // Branch
  void op_j(Instruction *instruction);;

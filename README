@@ -27,6 +27,6 @@ TODO:
 * Garbage collect and check memory managemnt (optimization)
 * implement all components
 * try BIOS and tests (CPU, GPU, SPU, etc)
-* try to run an actual game-ROM
+* try to run an actual game-ROM (debug the whole thing)
 * ps1 doesn't have on OS but an interface/program that loads stuff (doesn't interact with user)
 

@@ -12,7 +12,6 @@ Cpu::Cpu(Interconnect *intercn){
     registers[i] = 0xdeadbeef;
   }
 
-  // TODO: this might not be for the CPU but for the whole ps1 (might have to move the files as well??)
   this->intercn = intercn;
 }
 
@@ -98,6 +97,21 @@ void Cpu::execute_instruction(uint32_t instr){
           break;
         case 0b000000:
           op_sll(instruction);
+          break;
+        case 0b000100:
+          op_sllv(instruction);
+          break;
+        case 0b000011:
+          op_sra(instruction);
+          break;
+        case 0b000111:
+          op_srav(instruction);
+          break;
+        case 0b000010:
+          op_srl(instruction);
+          break;
+        case 0b000110:
+          op_srlv(instruction);
           break;
         default:
           printf("Unhandled instruction that belongs to the 000000 family %x\n", instr);
@@ -361,7 +375,6 @@ void Cpu::op_sw(Instruction *instruction){
   store32(addr, reg(rt));
 }
 
-// TODO: need all Shifter instructions
 // SLL rd,rt,sa
 void Cpu::op_sll(Instruction *instruction){
   // get register indices
@@ -372,6 +385,55 @@ void Cpu::op_sll(Instruction *instruction){
   set_reg(rd, reg(rt) << sa);
 }
 
+// SLLV rd,rt,rs
+void Cpu::op_sllv(Instruction *instruction){
+  // get register indices
+  uint32_t rt = instruction->regt_idx();
+  uint32_t rd = instruction->regd_idx();
+  uint32_t rs = instruction->regs_idx();
+
+  set_reg(rd, reg(rt) << reg(rs));
+}
+
+// SRA rd,rt,sa
+void Cpu::op_sra(Instruction *instruction){
+  // get register indices
+  int32_t rt = instruction->regt_idx();
+  uint32_t rd = instruction->regd_idx();
+  int32_t sa = instruction->shift();
+
+  set_reg(rd, reg(rt) >> sa);
+}
+
+// SRAV rd,rt,rs
+void Cpu::op_srav(Instruction *instruction){
+  // get register indices
+  int32_t rt = instruction->regt_idx();
+  uint32_t rd = instruction->regd_idx();
+  uint32_t rs = instruction->regs_idx();
+
+  set_reg(rd, reg(rt) >> reg(rs));
+}
+
+// SRL rd,rt,sa
+void Cpu::op_srl(Instruction *instruction){
+  // get register indices
+  uint32_t rt = instruction->regt_idx();
+  uint32_t rd = instruction->regd_idx();
+  int32_t sa = instruction->shift();
+
+  set_reg(rd, reg(rt) >> sa);
+}
+
+// SRLV rd,rt,rs
+void Cpu::op_srlv(Instruction *instruction){
+  // get register indices
+  uint32_t rt = instruction->regt_idx();
+  uint32_t rd = instruction->regd_idx();
+  uint32_t rs = instruction->regs_idx();
+
+  set_reg(rd, reg(rt) >> reg(rs));
+}
 
 // TODO: need all branch instructions
 // J target
