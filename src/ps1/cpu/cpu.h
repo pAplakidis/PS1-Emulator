@@ -24,6 +24,9 @@ public:
   uint32_t reg_pc;  // Program Counter (not inside register file)
   uint32_t reg_hi, reg_lo; // high and low 32bits of multiplication result (remainder of division for hi, quotient of division for lo)
 
+  // Next instruction to be executed, used to simulate the branch delay slot
+  Instruction *next_intruction;
+
   // other data variables
   std::vector<uint8_t> rom_data;
 
@@ -42,7 +45,7 @@ public:
   void store32(uint32_t addr, uint32_t val);
 
   Instruction* decode(uint32_t intruction);
-  void execute_instruction(uint32_t instr);
+  void execute_instruction(Instruction *instruction);
 
   // Instructions
 

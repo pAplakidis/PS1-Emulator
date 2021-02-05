@@ -4,6 +4,8 @@ Cpu::Cpu(Interconnect *intercn){
   // PC reset value at the beginning of BIOS
   reg_pc = 0xbfc00000;
 
+  next_instruction = new Instruction(0x0); // NOP
+
   // set $zero register value (index 0 in general purpose file) to 0x0
   registers[0] = 0x0;
 
@@ -44,9 +46,10 @@ void Cpu::main_loop(){
 
 // Reads command in memory and executes it (also increases pc to point to next instruction)
 void Cpu::cycle(){
-  uint32_t instr = load32(reg_pc);
-  execute_instruction(instr);
+  Instruction *instruction = next_instruction;  // this solves branching issues with pipelining
+  next_instruction = decode(load32(reg_pc));
   reg_pc += 4;  // this acts like a pointer but to C++ it is not (incrementing by 4 in a pseudo manual way)
+  execute_instruction(instruction);
 }
 
 uint32_t Cpu::load32(uint32_t addr){
@@ -63,8 +66,7 @@ Instruction* Cpu::decode(uint32_t instr){
   return instruction;
 }
 
-void Cpu::execute_instruction(uint32_t instr){
-  Instruction *instruction = decode(instr);
+void Cpu::execute_instruction(Instruction *instruction){
 
   // TODO: add all ~56 opcodes for this processor
   switch(instruction->opcode()){
@@ -114,7 +116,7 @@ void Cpu::execute_instruction(uint32_t instr){
           op_srlv(instruction);
           break;
         default:
-          printf("Unhandled instruction that belongs to the 000000 family %x\n", instr);
+          printf("Unhandled instruction that belongs to the 000000 family %x\n", instruction->instr);
           exit(1);
         }
       break;
@@ -149,7 +151,7 @@ void Cpu::execute_instruction(uint32_t instr){
       op_j(instruction);
       break;
     default:
-      printf("Unhandled instruction %x\n", instr);
+      printf("Unhandled instruction %x\n", instruction->instr);
       exit(1);
   }
 }
