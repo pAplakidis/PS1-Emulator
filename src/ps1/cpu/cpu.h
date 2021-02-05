@@ -25,7 +25,7 @@ public:
   uint32_t reg_hi, reg_lo; // high and low 32bits of multiplication result (remainder of division for hi, quotient of division for lo)
 
   // Next instruction to be executed, used to simulate the branch delay slot
-  Instruction *next_intruction;
+  Instruction *next_instruction;
 
   // other data variables
   std::vector<uint8_t> rom_data;
