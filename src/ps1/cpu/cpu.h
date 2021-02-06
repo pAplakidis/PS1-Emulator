@@ -81,7 +81,10 @@ public:
   void op_srlv(Instruction *instruction);
 
   // Branch
+  void branch(uint32_t offset);
   void op_j(Instruction *instruction);;
+  void op_bne(Instruction *instruction);
+
   void op_mfc0(Instruction *instruction);
   void op_mtc0(Instruction *instruction);
 

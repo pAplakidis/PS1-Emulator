@@ -71,7 +71,6 @@ Instruction* Cpu::decode(uint32_t instr){
 }
 
 void Cpu::execute_instruction(Instruction *instruction){
-
   // TODO: add all ~56 opcodes for this processor
   switch(instruction->opcode()){
     case 0b000000:
@@ -451,11 +450,33 @@ void Cpu::op_srlv(Instruction *instruction){
 }
 
 // TODO: need all branch instructions
+// Branch to immediate value 'offset'
+void Cpu::branch(uint32_t offset){
+  // offset immediates are always shifted to the right by 2, since pc addresses need to be alogned on 32bits at all times (check MIPS architecture for that)
+  offset = offset << 2;
+  uint32_t pc = reg_pc;
+
+  pc += offset;
+  pc -= 4;  // we need to compensate for the hardcoded += offset in execute_instruction()
+  reg_pc = pc;
+}
+
 // J target
 void Cpu::op_j(Instruction *instruction){
   uint32_t target = instruction->imm_jump();
 
   reg_pc = (reg_pc & 0xf0000000) | (target << 2);
+}
+
+// BNE rs,rt,offset
+void Cpu::op_bne(Instruction *instruction){
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+  int32_t imm = instruction->imm_se();
+  
+  if(reg(rs) != reg(rt)){
+    branch(imm);
+  }
 }
 
 // TODO: code this
