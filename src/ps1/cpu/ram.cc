@@ -2,8 +2,7 @@
 
 // init main RAM with garbage values
 Ram::Ram(){
-  int n = 2 * 1024 * 1024;
-  data.assign(n, 0xca);
+  data.assign(2 * 1024 * 1024, 0xca);
 }
 
 // Fetch the 32bit little endian word at 'offset'

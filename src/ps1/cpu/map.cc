@@ -23,4 +23,7 @@ namespace map{
 
   // Cache control register
   Range *CACHECONTROL = new Range(0xfffe0130, 4);
+
+  // RAM
+  Range *RAM = new Range(0xa0000000, 2*1024*1024);
 }

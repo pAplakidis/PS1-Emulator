@@ -19,5 +19,8 @@ namespace map{
 
   // Cache control register
   extern Range *CACHECONTROL;
+
+  // RAM
+  extern Range *RAM;
 }
 
