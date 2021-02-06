@@ -150,6 +150,9 @@ void Cpu::execute_instruction(Instruction *instruction){
     case 0b101011:
       op_sw(instruction);
       break;
+    case 0b100011:
+      op_lw(instruction);
+      break;
     case 0b000010:
       op_j(instruction);
       break;
@@ -188,6 +191,7 @@ void Cpu::op_add(Instruction *instruction){
   }
 }
 
+// TODO: need to check for overflow (in rust, rs.checked_add(imm))
 // ADDI rt,rs,imm
 void Cpu::op_addi(Instruction *instruction){
   // get register indices
@@ -387,6 +391,23 @@ void Cpu::op_sw(Instruction *instruction){
 
   uint32_t addr = reg(rs) + imm;
   store32(addr, reg(rt));
+}
+
+// LW rt,offset(rs)
+void Cpu::op_lw(Instruction *instruction){
+  if(sr & 0x10000 != 0){
+    // Cache is isolated, ignore write
+    printf("Ignoring load while cache is isolated\n");
+    return;
+  }
+  
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+  int32_t imm = instruction->imm_se();
+
+  uint32_t addr = reg(rs) + imm;
+  set_reg(rt, load32(addr));
 }
 
 // SLL rd,rt,sa

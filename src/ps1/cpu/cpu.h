@@ -71,6 +71,7 @@ public:
 
   // Memory Access
   void op_sw(Instruction *instruction);
+  void op_lw(Instruction *instruction);
 
   // Shifter
   void op_sll(Instruction *instruction);
