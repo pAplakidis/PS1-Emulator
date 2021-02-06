@@ -538,7 +538,7 @@ void Cpu::op_mfc0(Instruction *instruction){
 }
 
 // MTC0 rt,rd
-// Move to Coprocessor
+// Move to Coprocessor 0
 void Cpu::op_mtc0(Instruction *instruction){
   // get register indices
   uint32_t cpu_r = instruction->regt_idx();
@@ -547,8 +547,24 @@ void Cpu::op_mtc0(Instruction *instruction){
   uint32_t v = reg(cpu_r);
 
   switch(cop_r){
+    // breakpoints registers
+    // 3 BPC, 5 BDA, 6 unknown(useless), 7 DCIC, 9 BDAM, 11, BPCM
+    case 3 | 5 | 6 | 7 | 9 | 11:
+      if(v != 0){
+        printf("Unhandled write to cop0r%d\n", cop_r);
+        exit(1);
+      }
+      break;
+    // reg 12 is SR
     case 12:
       sr = v;
+      break;
+    // reg 13 cause register (read only data -> cause of the excepion)
+    case 13:
+      if(v != 0){
+        printf("Unhandled write to CAUSE register\n");
+        exit(1);
+      }
       break;
     default:
       printf("Unhandled cop0 register %x\n", cop_r);
