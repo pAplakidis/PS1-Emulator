@@ -14,6 +14,9 @@ private:
   // General Purpose Registers (check docs for their idx->name)
   uint32_t registers[32];
 
+  // Cop0 register 12: Status Register
+  uint32_t sr;
+
 public:
   // 4KB instruction memory, 1KB data cache
   static const uint32_t MEMORY_SIZE = 512 * 1024; // CHECK THAT
@@ -48,7 +51,6 @@ public:
   void execute_instruction(Instruction *instruction);
 
   // Instructions
-
   // ALU
   void op_add(Instruction *instruction);
   void op_addi(Instruction *instruction);
@@ -70,15 +72,20 @@ public:
   // Memory Access
   void op_sw(Instruction *instruction);
 
- // Shifter
- void op_sll(Instruction *instruction);
- void op_sllv(Instruction *instruction);
- void op_sra(Instruction *instruction);
- void op_srav(Instruction *instruction);
- void op_srl(Instruction *instruction);
- void op_srlv(Instruction *instruction);
+  // Shifter
+  void op_sll(Instruction *instruction);
+  void op_sllv(Instruction *instruction);
+  void op_sra(Instruction *instruction);
+  void op_srav(Instruction *instruction);
+  void op_srl(Instruction *instruction);
+  void op_srlv(Instruction *instruction);
 
- // Branch
- void op_j(Instruction *instruction);;
+  // Branch
+  void op_j(Instruction *instruction);;
+  void op_mfc0(Instruction *instruction);
+  void op_mtc0(Instruction *instruction);
+
+  // Coprocessors
+  void op_cop0(Instruction *instruction);
 };
 

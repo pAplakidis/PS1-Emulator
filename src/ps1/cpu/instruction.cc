@@ -16,6 +16,11 @@ uint32_t Instruction::subfunction(){
   return instr & 0x3f;
 }
 
+// returns coprocessor opcode bits [25:21]
+uint32_t Instruction::cop_opcode(){
+  return (instr >> 21) & 0x1f;
+}
+
 // returns rs index bits [25:21]
 uint32_t Instruction::regs_idx(){
   return (instr >> 21) & 0x1f;

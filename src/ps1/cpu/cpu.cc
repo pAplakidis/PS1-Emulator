@@ -4,10 +4,14 @@ Cpu::Cpu(Interconnect *intercn){
   // PC reset value at the beginning of BIOS
   reg_pc = 0xbfc00000;
 
+  // handles branching issues with pipelining
   next_instruction = new Instruction(0x0); // NOP
 
   // set $zero register value (index 0 in general purpose file) to 0x0
   registers[0] = 0x0;
+
+  // set Cop0 status register
+  sr = 0x0;
 
   // reset values of other registers are unknown so set them to 0xdeadbeef
   for(int i=1;i<32;i++){
@@ -149,6 +153,9 @@ void Cpu::execute_instruction(Instruction *instruction){
       break;
     case 0b000010:
       op_j(instruction);
+      break;
+    case 0b010000:
+      op_cop0(instruction);
       break;
     default:
       printf("Unhandled instruction %x\n", instruction->instr);
@@ -368,6 +375,12 @@ void Cpu::op_xori(Instruction *instruction){
 
 // SW rt,offset(rs)
 void Cpu::op_sw(Instruction *instruction){
+  if(sr & 0x10000 != 0){
+    // Cache is isolated, ignore write
+    printf("Ignoring store while cache is isolated\n");
+    return;
+  }
+
   // get register indices
   uint32_t rs = instruction->regs_idx();
   uint32_t rt = instruction->regt_idx();
@@ -443,5 +456,46 @@ void Cpu::op_j(Instruction *instruction){
   uint32_t target = instruction->imm_jump();
 
   reg_pc = (reg_pc & 0xf0000000) | (target << 2);
+}
+
+// TODO: code this
+// MFC0 rt,rd
+// Move from Coprocessor
+void Cpu::op_mfc0(Instruction *instruction){
+
+}
+
+// MTC0 rt,rd
+// Move to Coprocessor
+void Cpu::op_mtc0(Instruction *instruction){
+  // get register indices
+  uint32_t cpu_r = instruction->regt_idx();
+  uint32_t cop_r = instruction->regd_idx(); // TODO: in rust it is regd_idx().0, what is that?
+
+  uint32_t v = reg(cpu_r);
+
+  switch(cop_r){
+    case 12:
+      sr = v;
+      break;
+    default:
+      printf("Unhandled cop0 register %x\n", cop_r);
+      exit(1);
+  }
+}
+
+// Coprocessor 0 opcode
+void Cpu::op_cop0(Instruction *instruction){
+  switch(instruction->cop_opcode()){
+    case 0b00000:
+      op_mfc0(instruction);
+      break;
+    case 0b00100:
+      op_mtc0(instruction);
+      break;
+    default:
+      printf("Unhandled cop0 isntruction %x\n", instruction->instr);
+      exit(1);
+  }
 }
 
