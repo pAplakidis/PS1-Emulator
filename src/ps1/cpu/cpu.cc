@@ -80,6 +80,7 @@ void Cpu::cycle(){
   }
 }
 
+// put the load in the delay slot
 uint32_t Cpu::load32(uint32_t addr){
   return intercn->load32(addr);
 }

@@ -9,6 +9,8 @@ Bios::Bios(std::string bios_path){
 
 // fetch the 32bit little endian word at 'offset'
 uint32_t Bios::load32(uint32_t offset){
+  offset = (size_t)offset;
+
   // byte0, byte1, byte2, byte3 (32bit = 4bytes)
   uint32_t b0 = data[offset + 0];
   uint32_t b1 = data[offset + 1];

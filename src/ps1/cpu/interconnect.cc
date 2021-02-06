@@ -51,8 +51,8 @@ void Interconnect::store32(uint32_t addr, uint32_t val){
       }
       default:
         printf("Unhandled write to MEMCONTROL register\n");
-        exit(1);
     }
+    return;
   }
 
   printf("Unhandled store32 into address %x\n", addr);
