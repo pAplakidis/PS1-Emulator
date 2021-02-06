@@ -9,6 +9,11 @@ Cpu::Cpu(Interconnect *intercn){
 
   // set $zero register value (index 0 in general purpose file) to 0x0
   registers[0] = 0x0;
+  out_regs[0] = 0x0;  // if no load is pending we target $zero (does nothing)
+
+  // for load delay slots
+  load[0] = 0;
+  load[1] = 0x0;
 
   // set Cop0 status register
   sr = 0x0;
@@ -28,8 +33,10 @@ uint32_t Cpu::reg(int idx){
 
 // Set CPU register
 void Cpu::set_reg(int idx, uint32_t value){
-  registers[idx] = value;
-  registers[0] = 0x0; // make sure $zero/R0 is always 0
+  //registers[idx] = value;
+  //registers[0] = 0x0; // make sure $zero/R0 is always 0
+  out_regs[idx] = value;
+  out_regs[0] = 0x0;  // make sure $zero/R0 is always 0
 }
 
 // Loads ps1 rom into m_rom member variable
@@ -51,9 +58,26 @@ void Cpu::main_loop(){
 // Reads command in memory and executes it (also increases pc to point to next instruction)
 void Cpu::cycle(){
   Instruction *instruction = next_instruction;  // this solves branching issues with pipelining
-  next_instruction = decode(load32(reg_pc));
+  next_instruction = decode(load32(reg_pc));  // decode just makes an instruction object
   reg_pc += 4;  // this acts like a pointer but to C++ it is not (incrementing by 4 in a pseudo manual way)
+
+  // execute the pending load (if any, otherwise it will load $zero which is a NOP)
+  // set_reg works only on out_regs so this operation won't be visible by the next instruction
+  int reg = (int)load[0];
+  uint32_t val = load[1];
+  set_reg(reg, val);
+
+  // reset the load to target register 0 for the next instruction
+  load[0] = 0;
+  load[1] = 0x0;
+
+  // executed decoded instruction
   execute_instruction(instruction);
+
+  // copy output regs as input for next instruction
+  for(int i=0; i < 32; i++){
+    registers[i] = out_regs[i];
+  }
 }
 
 uint32_t Cpu::load32(uint32_t addr){
@@ -396,7 +420,7 @@ void Cpu::op_sw(Instruction *instruction){
 // LW rt,offset(rs)
 void Cpu::op_lw(Instruction *instruction){
   if(sr & 0x10000 != 0){
-    // Cache is isolated, ignore write
+    // Cache is isolated, ignore load
     printf("Ignoring load while cache is isolated\n");
     return;
   }
@@ -407,7 +431,12 @@ void Cpu::op_lw(Instruction *instruction){
   int32_t imm = instruction->imm_se();
 
   uint32_t addr = reg(rs) + imm;
-  set_reg(rt, load32(addr));
+  uint32_t value = load32(addr);
+  //set_reg(rt, addr);
+
+  // put the load in the delay slot
+  load[0] = (uint32_t)rt;
+  load[1] = value;
 }
 
 // SLL rd,rt,sa
@@ -512,7 +541,7 @@ void Cpu::op_mfc0(Instruction *instruction){
 void Cpu::op_mtc0(Instruction *instruction){
   // get register indices
   uint32_t cpu_r = instruction->regt_idx();
-  uint32_t cop_r = instruction->regd_idx(); // TODO: in rust it is regd_idx().0, what is that?
+  uint32_t cop_r = instruction->regd_idx(); // TODO: in rust it is regd_idx().0, what is that? (might not need to check it out after all)
 
   uint32_t v = reg(cpu_r);
 

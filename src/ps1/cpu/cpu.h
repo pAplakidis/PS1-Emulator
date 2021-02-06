@@ -14,6 +14,12 @@ private:
   // General Purpose Registers (check docs for their idx->name)
   uint32_t registers[32];
 
+  // 2nd set of registers used to emulate the load delay slot accurately, they contain the output of the current instruction
+  uint32_t out_regs[32];
+
+  // load initiated by the current instruction
+  uint32_t load[2];
+
   // Cop0 register 12: Status Register
   uint32_t sr;
 
