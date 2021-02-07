@@ -95,6 +95,7 @@ public:
   void branch(uint32_t offset);
   void op_j(Instruction *instruction);;
   void op_jal(Instruction *instruction);
+  void op_jr(Instruction *instruction);
   void op_bne(Instruction *instruction);
 
   void op_mfc0(Instruction *instruction);

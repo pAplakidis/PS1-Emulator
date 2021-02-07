@@ -153,6 +153,9 @@ void Cpu::execute_instruction(Instruction *instruction){
         case 0b000110:
           op_srlv(instruction);
           break;
+        case 0b001000:
+          op_jr(instruction);
+          break;
         default:
           printf("Unhandled instruction that belongs to the 000000 family %x\n", instruction->instr);
           exit(1);
@@ -580,6 +583,12 @@ void Cpu::op_jal(Instruction *instruction){
   // Store return address in $31 ($ra)
   set_reg(31, ra);
   op_j(instruction);
+}
+
+// JR rs
+void Cpu::op_jr(Instruction *instruction){
+  uint32_t rs = instruction->regs_idx();
+  reg_pc = reg(rs);
 }
 
 // BNE rs,rt,offset
