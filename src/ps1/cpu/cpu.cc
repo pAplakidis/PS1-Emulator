@@ -241,6 +241,8 @@ void Cpu::op_add(Instruction *instruction){
   if((instruction->instr & 0xffffffc0) == 0b100000){
     int32_t sum = (int32_t)reg(rs) + (int32_t)reg(rt);
     set_reg(rd, sum);
+
+    // TODO: check for ADD overflow (match s.checked_add(t) in Rust)
   }
   else if((instruction->instr & 0xffffffc0) == 0b100001){
     uint32_t sum = reg(rs) + reg(rt);
@@ -507,7 +509,7 @@ void Cpu::op_lw(Instruction *instruction){
   //set_reg(rt, addr);
 
   // put the load in the delay slot
-  load[0] = (uint32_t)rt;
+  load[0] = rt;
   load[1] = value;
 }
 
@@ -643,11 +645,29 @@ void Cpu::op_beq(Instruction *instruction){
   }
 }
 
-// TODO: code this
 // MFC0 rt,rd
-// Move from Coprocessor
+// Move from Coprocessor 0
 void Cpu::op_mfc0(Instruction *instruction){
+  uint32_t cpu_r = instruction->regt_idx();
+  uint32_t cop_r = instruction->regd_idx(); // TODO: in rust it is regd_idx().0, what is that? (might not need to check it out after all)
 
+  uint32_t v;
+
+  switch(cop_r){
+    case 12:
+      v = sr;
+      break;
+    // Cause register
+    case 13:
+      printf("Unhandled read from CAUSE register\n");
+      exit(1);
+    default:
+      printf("Unhandled read from cop0r %d\n", cop_r);
+      exit(1);
+  }
+
+  load[0] = cpu_r;
+  load[1] = v;
 }
 
 // MTC0 rt,rd
