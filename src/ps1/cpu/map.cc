@@ -38,6 +38,9 @@ namespace map{
   // Expansion region 2
   const Range *EXPANSION_2 = new Range(0x1f802000, 66);
 
+  // Expansion region 2
+  const Range *EXPANSION_1 = new Range(0x1f000000, 8192 * 1024 * 1024);
+
   uint32_t mask_region(uint32_t addr){
     size_t idx = addr >> 29;
     return addr & REGION_MASK[idx];

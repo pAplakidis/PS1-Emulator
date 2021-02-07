@@ -3,6 +3,7 @@
 Interconnect::Interconnect(Bios *bios){
   // TODO: delete this object from memory after done booting
   this->bios = bios;
+  ram = new Ram();
 }
 
 // load a 32bit word at addr
@@ -28,8 +29,17 @@ uint32_t Interconnect::load32(uint32_t addr){
 uint8_t Interconnect::load8(uint32_t addr){
   uint32_t abs_addr = map::mask_region(addr);
   
+  if(uint32_t offset = map::RAM->contains(abs_addr)){
+    return ram->load8(offset);
+  }
+
   if(uint32_t offset = map::BIOS->contains(abs_addr)){
     return bios->load8(offset);
+  }
+
+  if(uint32_t _ = map::EXPANSION_1->contains(abs_addr)){
+    // no expansion implemented
+    return 0xff;
   }
 
   printf("Unhandled load8 at address %8x\n", addr);
@@ -92,16 +102,11 @@ void Interconnect::store16(uint32_t addr, uint16_t val){
 // TODO: the only peripheral we support right now is BIOS ROM and we can't write to it, come back and complete this later
 // Store 8bit halfword 'val' into 'addr'
 void Interconnect::store8(uint32_t addr, uint8_t val){
-  if(addr % 2 != 0){
-    printf("Unaligned store8 address %8x\n", addr);
-    exit(1);
-  }
-
   uint32_t abs_addr = map::mask_region(addr);
 
   if(uint32_t offset = map::EXPANSION_2->contains(abs_addr)){
     printf("Unhandled write to SPU register %x\n", offset);
-    return;
+    return ram->store8(offset, val);
   }
   
   printf("Unhandled store8 into address %8x\n", addr);

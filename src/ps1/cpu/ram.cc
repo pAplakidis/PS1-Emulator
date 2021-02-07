@@ -19,6 +19,10 @@ uint32_t Ram::load32(uint32_t offset){
   return l_endian_byte;
 }
 
+uint8_t Ram::load8(uint32_t offset){
+  return (uint8_t)data[(size_t)offset];
+}
+
 // Store the 32bit little endian word 'value' at 'offset'
 void Ram::store32(uint32_t offset, uint32_t value){
   offset = (size_t)offset;
@@ -32,5 +36,10 @@ void Ram::store32(uint32_t offset, uint32_t value){
   data[offset + 1] = b1;
   data[offset + 2] = b2;
   data[offset + 3] = b3;
+}
+
+// Store the byte 'val' into 'offset'
+void Ram::store8(uint32_t offset, uint8_t value){
+  data[(size_t)offset] = value;
 }
 
