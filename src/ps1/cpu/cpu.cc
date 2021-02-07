@@ -80,9 +80,14 @@ void Cpu::cycle(){
   }
 }
 
-// put the load in the delay slot
+// load 32bit value from the memory
 uint32_t Cpu::load32(uint32_t addr){
   return intercn->load32(addr);
+}
+
+// load 8bit value from the memory
+uint8_t Cpu::load8(uint32_t addr){
+  return intercn->load8(addr);
 }
 
 // Store 32bit value into memory
@@ -197,11 +202,20 @@ void Cpu::execute_instruction(Instruction *instruction){
     case 0b100011:
       op_lw(instruction);
       break;
+    case 0b100000:
+      op_lb(instruction);
+      break;
     case 0b000010:
       op_j(instruction);
       break;
     case 0b000011:
       op_jal(instruction);
+      break;
+    case 0b000101:
+      op_bne(instruction);
+      break;
+    case 0b000100:
+      op_beq(instruction);
       break;
     case 0b010000:
       op_cop0(instruction);
@@ -497,6 +511,22 @@ void Cpu::op_lw(Instruction *instruction){
   load[1] = value;
 }
 
+// LB rt,offset(rs)
+void Cpu::op_lb(Instruction *instruction){
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+  int32_t imm = instruction->imm_se();
+
+  uint32_t addr = reg(rs) + imm;
+  // cast i8 to force sign extension
+  int8_t value = load8(addr);
+
+  // put the load in the delay slot
+  load[0] = rt;
+  load[1] = (uint32_t)value;
+}
+
 // SLL rd,rt,sa
 void Cpu::op_sll(Instruction *instruction){
   // get register indices
@@ -598,6 +628,17 @@ void Cpu::op_bne(Instruction *instruction){
   int32_t imm = instruction->imm_se();
   
   if(reg(rs) != reg(rt)){
+    branch(imm);
+  }
+}
+
+// BEQ rs,rt,offset
+void Cpu::op_beq(Instruction *instruction){
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+  int32_t imm = instruction->imm_se();
+
+  if(reg(rs) == reg(rt)){
     branch(imm);
   }
 }

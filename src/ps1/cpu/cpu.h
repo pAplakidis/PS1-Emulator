@@ -51,6 +51,7 @@ public:
   void cycle();
 
   uint32_t load32(uint32_t addr);
+  uint8_t load8(uint32_t addr);
   void store32(uint32_t addr, uint32_t val);
   void store16(uint32_t addr, uint16_t val);
   void store8(uint32_t addr, uint8_t val);
@@ -82,6 +83,7 @@ public:
   void op_sh(Instruction *instruction);
   void op_sb(Instruction *instruction);
   void op_lw(Instruction *instruction);
+  void op_lb(Instruction *instruction);
 
   // Shifter
   void op_sll(Instruction *instruction);
@@ -97,6 +99,7 @@ public:
   void op_jal(Instruction *instruction);
   void op_jr(Instruction *instruction);
   void op_bne(Instruction *instruction);
+  void op_beq(Instruction *instruction);
 
   void op_mfc0(Instruction *instruction);
   void op_mtc0(Instruction *instruction);

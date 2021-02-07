@@ -21,3 +21,7 @@ uint32_t Bios::load32(uint32_t offset){
   return l_endian_byte;
 }
 
+uint8_t Bios::load8(uint32_t offset){
+  return data[(size_t)offset];
+}
+

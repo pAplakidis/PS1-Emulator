@@ -10,5 +10,6 @@ public:
 
   Bios(std::string bios_path);
   uint32_t load32(uint32_t offset);
+  uint8_t load8(uint32_t offset);
 };
 

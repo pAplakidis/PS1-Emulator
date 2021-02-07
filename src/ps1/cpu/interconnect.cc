@@ -24,6 +24,18 @@ uint32_t Interconnect::load32(uint32_t addr){
   }
 }
 
+// load byte at 'addr'
+uint8_t Interconnect::load8(uint32_t addr){
+  uint32_t abs_addr = map::mask_region(addr);
+  
+  if(uint32_t offset = map::BIOS->contains(abs_addr)){
+    return bios->load8(offset);
+  }
+
+  printf("Unhandled load8 at address %8x\n", addr);
+  exit(1);
+}
+
 // TODO: the only peripheral we support right now is BIOS ROM and we can't write to it, come back and complete this later
 // store 32bit word val into addr
 void Interconnect::store32(uint32_t addr, uint32_t val){
