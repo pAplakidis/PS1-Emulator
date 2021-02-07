@@ -10,10 +10,21 @@ PS1 components
   * 2MB EDO DRAM
   * 1MB framebuffer(GPU) and 512KB(SPU)
   * BIOS on 512KB ROM
+  * PS1 has no MMU so no virtual memory
+  * memory map [KUSEG, KSEG0, KSEG1], [Main RAM, Expansion region 1, Scratchpad, Hardware registers, BIOS ROM], check [ https://problemkaputt.de/psx-spx.htm ]
+  * we only care about which region is in use is when we implement the cache instruction and only for KSEG1 (only non-cached region) (it doesn't matter which region the peripherals are accessed)
 
 - GPU:
+  * 1KB of data cache
+  * 1KB of instruction cache
+  * no need to implement data cache (data cache is not used, instead its memory is mapped as the scratpad at a fixed location)
 
 - SPU (Sound Processing Unit):
 
 - I/O system connectivity
+
+- Software:
+  * BIOS for different models [ https://en.wikipedia.org/wiki/PlayStation_models ]
+  * No OS (or minimal OS functionality)
+  * No kernel/user privilege separation (everything runs in kernel mode)
 
