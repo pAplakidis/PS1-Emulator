@@ -17,11 +17,7 @@ namespace map{
     }
   }
 
-  uint32_t Range::mask_region(uint32_t addr) const{
-    size_t idx = addr >> 29;
-    return addr & REGION_MASK[idx];
-  }
-
+  // TODO: maybe move these to the interconnect
   const Range *BIOS = new Range(0xbfc00000, 512*1024);
   const Range *MEMCONTROL = new Range(0x1f801000, 36);
   // Register that has something to do with RAM configuration, configured by the BIOS
@@ -35,4 +31,12 @@ namespace map{
 
   // Unknown registers
   const Range *SYS_CONTROL = new Range(0x1f801000, 36);
+
+  // SPU registers
+  const Range *SPU = new Range(0x1f801c00, 640);
+
+  uint32_t mask_region(uint32_t addr){
+    size_t idx = addr >> 29;
+    return addr & REGION_MASK[idx];
+  }
 }

@@ -66,6 +66,13 @@ void Interconnect::store16(uint32_t addr, uint16_t val){
     printf("Unaligned store16 address %8x\n", addr);
     exit(1);
   }
+
+  uint32_t abs_addr = map::mask_region(addr);
+
+  if(uint32_t offset = map::SPU->contains(abs_addr)){
+    printf("Unhandled write to SPU register %x\n", offset);
+    return;
+  }
   
   printf("Unhandled store16 into address %8x\n", addr);
 }
