@@ -90,6 +90,11 @@ void Cpu::store32(uint32_t addr, uint32_t val){
   intercn->store32(addr, val);
 }
 
+// Store 16bit value into memory
+void Cpu::store16(uint32_t addr, uint16_t val){
+  intercn->store16(addr, val);
+}
+
 Instruction* Cpu::decode(uint32_t instr){
   Instruction *instruction = new Instruction(instr);
   return instruction;
@@ -416,6 +421,23 @@ void Cpu::op_sw(Instruction *instruction){
 
   uint32_t addr = reg(rs) + imm;
   store32(addr, reg(rt));
+}
+
+// SH rt,offset(rs)
+void Cpu::op_sh(Instruction *instruction){
+  if(sr & 0x10000 != 0){
+    // Cache is isolated, ignore write
+    printf("Ignoring store while cache is isolated\n");
+    return;
+  }
+
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+  int32_t imm = instruction->imm_se();
+
+  uint32_t addr = reg(rs) + imm;
+  store16(addr, (uint16_t)reg(rt));
 }
 
 // LW rt,offset(rs)

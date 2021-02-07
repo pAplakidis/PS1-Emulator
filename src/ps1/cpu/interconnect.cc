@@ -11,7 +11,7 @@ uint32_t Interconnect::load32(uint32_t addr){
 
   // Check for address alignment (must be an address-multiple of 32bits)
   if(addr % 4 != 0){
-    printf("Unaligned load32 address: %x\n", addr);
+    printf("Unaligned load32 address: %8x\n", addr);
     exit(1);
   }
   
@@ -55,7 +55,18 @@ void Interconnect::store32(uint32_t addr, uint32_t val){
     return;
   }
 
-  printf("Unhandled store32 into address %x\n", addr);
+  printf("Unhandled store32 into address %8x\n", addr);
   exit(1);
+}
+
+// TODO: the only peripheral we support right now is BIOS ROM and we can't write to it, come back and complete this later
+// Store 16bit halfword 'val' into 'addr'
+void Interconnect::store16(uint32_t addr, uint16_t val){
+  if(addr % 2 != 0){
+    printf("Unaligned store16 address %8x\n", addr);
+    exit(1);
+  }
+  
+  printf("Unhandled store16 into address %8x\n", addr);
 }
 

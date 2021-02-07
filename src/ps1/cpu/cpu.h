@@ -52,6 +52,7 @@ public:
 
   uint32_t load32(uint32_t addr);
   void store32(uint32_t addr, uint32_t val);
+  void store16(uint32_t addr, uint16_t val);
 
   Instruction* decode(uint32_t intruction);
   void execute_instruction(Instruction *instruction);
@@ -77,6 +78,7 @@ public:
 
   // Memory Access
   void op_sw(Instruction *instruction);
+  void op_sh(Instruction *instruction);
   void op_lw(Instruction *instruction);
 
   // Shifter
