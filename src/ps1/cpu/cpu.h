@@ -53,6 +53,7 @@ public:
   uint32_t load32(uint32_t addr);
   void store32(uint32_t addr, uint32_t val);
   void store16(uint32_t addr, uint16_t val);
+  void store8(uint32_t addr, uint8_t val);
 
   Instruction* decode(uint32_t intruction);
   void execute_instruction(Instruction *instruction);
@@ -79,6 +80,7 @@ public:
   // Memory Access
   void op_sw(Instruction *instruction);
   void op_sh(Instruction *instruction);
+  void op_sb(Instruction *instruction);
   void op_lw(Instruction *instruction);
 
   // Shifter
@@ -92,6 +94,7 @@ public:
   // Branch
   void branch(uint32_t offset);
   void op_j(Instruction *instruction);;
+  void op_jal(Instruction *instruction);
   void op_bne(Instruction *instruction);
 
   void op_mfc0(Instruction *instruction);

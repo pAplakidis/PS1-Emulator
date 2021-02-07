@@ -95,6 +95,11 @@ void Cpu::store16(uint32_t addr, uint16_t val){
   intercn->store16(addr, val);
 }
 
+// Store 8bit value into memory
+void Cpu::store8(uint32_t addr, uint8_t val){
+  intercn->store8(addr, val);
+}
+
 Instruction* Cpu::decode(uint32_t instr){
   Instruction *instruction = new Instruction(instr);
   return instruction;
@@ -180,11 +185,20 @@ void Cpu::execute_instruction(Instruction *instruction){
     case 0b101011:
       op_sw(instruction);
       break;
+    case 0b101001:
+      op_sh(instruction);
+      break;
+    case 0b101000:
+      op_sb(instruction);
+      break;
     case 0b100011:
       op_lw(instruction);
       break;
     case 0b000010:
       op_j(instruction);
+      break;
+    case 0b000011:
+      op_jal(instruction);
       break;
     case 0b010000:
       op_cop0(instruction);
@@ -440,6 +454,24 @@ void Cpu::op_sh(Instruction *instruction){
   store16(addr, (uint16_t)reg(rt));
 }
 
+// SB rt,offset(rs)
+void Cpu::op_sb(Instruction *instruction){
+  if(sr & 0x10000 != 0){
+    // Cache is isolated, ignore write
+    printf("Ignoring store while cache is isolated\n");
+    return;
+  }
+
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+  int32_t imm = instruction->imm_se();
+
+  uint32_t addr = reg(rs) + imm;
+  uint32_t val = reg(rt);
+  store8(addr, (uint8_t)val);
+}
+
 // LW rt,offset(rs)
 void Cpu::op_lw(Instruction *instruction){
   if(sr & 0x10000 != 0){
@@ -539,6 +571,15 @@ void Cpu::op_j(Instruction *instruction){
   uint32_t target = instruction->imm_jump();
 
   reg_pc = (reg_pc & 0xf0000000) | (target << 2);
+}
+
+// JAL target (jump and link)
+void Cpu::op_jal(Instruction *instruction){
+  uint32_t ra = reg_pc;
+
+  // Store return address in $31 ($ra)
+  set_reg(31, ra);
+  op_j(instruction);
 }
 
 // BNE rs,rt,offset

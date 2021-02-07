@@ -35,6 +35,9 @@ namespace map{
   // SPU registers
   const Range *SPU = new Range(0x1f801c00, 640);
 
+  // Expansion region 2
+  const Range *EXPANSION_2 = new Range(0x1f802000, 66);
+
   uint32_t mask_region(uint32_t addr){
     size_t idx = addr >> 29;
     return addr & REGION_MASK[idx];
