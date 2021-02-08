@@ -161,6 +161,9 @@ void Cpu::execute_instruction(Instruction *instruction){
         case 0b001000:
           op_jr(instruction);
           break;
+        case 0b001001:
+          op_jalr(instruction);
+          break;
         default:
           printf("Unhandled instruction that belongs to the 000000 family %x\n", instruction->instr);
           exit(1);
@@ -204,6 +207,9 @@ void Cpu::execute_instruction(Instruction *instruction){
       break;
     case 0b100000:
       op_lb(instruction);
+      break;
+    case 0b100100:
+      op_lbu(instruction);
       break;
     case 0b000010:
       op_j(instruction);
@@ -535,6 +541,20 @@ void Cpu::op_lb(Instruction *instruction){
   load[1] = (uint32_t)value;
 }
 
+// LBU rt,offset(rs)
+void Cpu::op_lbu(Instruction *instruction){
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+  int32_t imm = instruction->imm_se();
+
+  uint32_t addr = reg(rs) + imm;
+
+  // Put the load in the delay slot
+  load[0] = rt;
+  load[1] = (uint32_t)load8(addr);
+}
+
 // SLL rd,rt,sa
 void Cpu::op_sll(Instruction *instruction){
   // get register indices
@@ -626,6 +646,18 @@ void Cpu::op_jal(Instruction *instruction){
 // JR rs
 void Cpu::op_jr(Instruction *instruction){
   uint32_t rs = instruction->regs_idx();
+  reg_pc = reg(rs);
+}
+
+// JALR rs (jump and link register)
+void Cpu::op_jalr(Instruction *instruction){
+  uint32_t rd = instruction->regd_idx();
+  uint32_t rs = instruction->regs_idx();
+  
+  uint32_t ra = reg_pc;
+
+  // store return address in 'rd'
+  set_reg(rd, ra);
   reg_pc = reg(rs);
 }
 

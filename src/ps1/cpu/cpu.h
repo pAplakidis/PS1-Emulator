@@ -84,6 +84,7 @@ public:
   void op_sb(Instruction *instruction);
   void op_lw(Instruction *instruction);
   void op_lb(Instruction *instruction);
+  void op_lbu(Instruction *instruction);
 
   // Shifter
   void op_sll(Instruction *instruction);
@@ -98,6 +99,7 @@ public:
   void op_j(Instruction *instruction);;
   void op_jal(Instruction *instruction);
   void op_jr(Instruction *instruction);
+  void op_jalr(Instruction *instruction);
   void op_bne(Instruction *instruction);
   void op_beq(Instruction *instruction);
   void op_bgtz(Instruction *instruction);
