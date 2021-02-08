@@ -22,6 +22,8 @@ Cpu::Cpu(Interconnect *intercn){
   for(int i=1;i<32;i++){
     registers[i] = 0xdeadbeef;
   }
+  hi = 0xdeadbeef;
+  lo = 0xdeadbeef;
 
   this->intercn = intercn;
 }
@@ -163,6 +165,12 @@ void Cpu::execute_instruction(Instruction *instruction){
           break;
         case 0b001001:
           op_jalr(instruction);
+          break;
+        case 0b011010:
+          op_div(instruction);
+          break;
+        case 0b010010:
+          op_mflo(instruction);
           break;
         default:
           printf("Unhandled instruction that belongs to the 000000 family %x\n", instruction->instr);
@@ -454,6 +462,42 @@ void Cpu::op_xori(Instruction *instruction){
   set_reg(rt, reg(rs)^imm);
 }
 
+// TODO: more multiplication commands to be handled
+// DIV rs,rt
+void Cpu::op_div(Instruction *instruction){
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+
+  int32_t n = (int32_t)reg(rs);
+  int32_t d = (int32_t)reg(rt);
+
+  // Division in MIPS has some special cases
+  if(d == 0){
+    // division by 0, results are bogus
+    hi = (uint32_t)n;
+
+    if(n >= 0){
+      lo = 0xffffffff;
+    }else{
+      lo = 1;
+    }
+  }else if((uint32_t)n == 0x80000000 && d == -1){
+    // Result is not representable in a 32bit signed integer
+    hi = 0;
+    lo = 0x80000000;
+  }else{
+    hi = (uint32_t)(n % d);
+    lo = (uint32_t)(n / d);
+  }
+}
+
+// MFLO rd (move from LO)
+void Cpu::op_mflo(Instruction *instruction){
+  uint32_t rd = instruction->regd_idx();
+  set_reg(rd, lo);
+}
+
 // SW rt,offset(rs)
 void Cpu::op_sw(Instruction *instruction){
   if(sr & 0x10000 != 0){
@@ -581,7 +625,7 @@ void Cpu::op_sllv(Instruction *instruction){
 // SRA rd,rt,sa
 void Cpu::op_sra(Instruction *instruction){
   // get register indices
-  int32_t rt = instruction->regt_idx();
+  int32_t rt = (int32_t)instruction->regt_idx();
   uint32_t rd = instruction->regd_idx();
   int32_t sa = instruction->shift();
 
@@ -591,7 +635,7 @@ void Cpu::op_sra(Instruction *instruction){
 // SRAV rd,rt,rs
 void Cpu::op_srav(Instruction *instruction){
   // get register indices
-  int32_t rt = instruction->regt_idx();
+  int32_t rt = (int32_t)instruction->regt_idx();
   uint32_t rd = instruction->regd_idx();
   uint32_t rs = instruction->regs_idx();
 

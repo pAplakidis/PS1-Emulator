@@ -23,6 +23,11 @@ private:
   // Cop0 register 12: Status Register
   uint32_t sr;
 
+  // HI register (devision remainder, multiplication high result)
+  uint32_t hi;
+  // LO register (devision quotient, multiplication low result)
+  uint32_t lo;
+
 public:
   // 4KB instruction memory, 1KB data cache
   static const uint32_t MEMORY_SIZE = 512 * 1024; // CHECK THAT
@@ -60,7 +65,7 @@ public:
   void execute_instruction(Instruction *instruction);
 
   // Instructions
-  // ALU
+  // basic ALU
   void op_add(Instruction *instruction);
   void op_addi(Instruction *instruction);
   void op_addiu(Instruction *instruction);
@@ -77,6 +82,10 @@ public:
   void op_sub(Instruction *instruction);
   void op_xor(Instruction *instruction);
   void op_xori(Instruction *instruction);
+
+  // Multiply
+  void op_div(Instruction *instruction);
+  void op_mflo(Instruction *instruction);
 
   // Memory Access
   void op_sw(Instruction *instruction);
