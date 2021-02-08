@@ -378,7 +378,7 @@ void Cpu::op_slt(Instruction *instruction){
   uint32_t rt = instruction->regt_idx();
   uint32_t rd = instruction->regd_idx();
   
-  if((int32_t)reg(rs) < reg(rt))
+  if((int32_t)reg(rs) < (int32_t)reg(rt))
     set_reg(rd, 1);
   else
     set_reg(rd, 0);
