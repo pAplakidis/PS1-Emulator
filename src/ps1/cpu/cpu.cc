@@ -169,8 +169,14 @@ void Cpu::execute_instruction(Instruction *instruction){
         case 0b011010:
           op_div(instruction);
           break;
+        case 0b011011:
+          op_divu(instruction);
+          break;
         case 0b010010:
           op_mflo(instruction);
+          break;
+        case 0b010000:
+          op_mfhi(instruction);
           break;
         default:
           printf("Unhandled instruction that belongs to the 000000 family %x\n", instruction->instr);
@@ -492,10 +498,36 @@ void Cpu::op_div(Instruction *instruction){
   }
 }
 
+// DIVU rs,rt
+void Cpu::op_divu(Instruction *instruction){
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+
+  uint32_t n = reg(rs);
+  uint32_t d = reg(rt);
+  
+  // Division in MIPS has some special cases
+  if(d == 0){
+    // division by 0, results are bogus
+    hi = n;
+    lo = 0xffffffff;
+  }else{
+    hi = n % d;
+    lo = n / d;
+  }
+}
+
 // MFLO rd (move from LO)
 void Cpu::op_mflo(Instruction *instruction){
   uint32_t rd = instruction->regd_idx();
   set_reg(rd, lo);
+}
+
+// MFHI rd
+void Cpu::op_mfhi(Instruction *instruction){
+  uint32_t rd = instruction->regd_idx();
+  set_reg(rd, hi);
 }
 
 // SW rt,offset(rs)

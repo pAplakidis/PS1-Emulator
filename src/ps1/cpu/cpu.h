@@ -85,7 +85,9 @@ public:
 
   // Multiply
   void op_div(Instruction *instruction);
+  void op_divu(Instruction *instruction);
   void op_mflo(Instruction *instruction);
+  void op_mfhi(Instruction *instruction);
 
   // Memory Access
   void op_sw(Instruction *instruction);
@@ -115,10 +117,9 @@ public:
   void op_blez(Instruction *instruction);
   void op_bxx(Instruction *instruction);
 
-  void op_mfc0(Instruction *instruction);
-  void op_mtc0(Instruction *instruction);
-
   // Coprocessors
   void op_cop0(Instruction *instruction);
+  void op_mfc0(Instruction *instruction);
+  void op_mtc0(Instruction *instruction);
 };
 
