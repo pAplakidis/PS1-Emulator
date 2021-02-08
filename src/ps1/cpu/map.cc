@@ -17,7 +17,7 @@ namespace map{
     }
   }
 
-  // TODO: maybe move these to the interconnect
+  // TODO: maybe move these to the interconnect file?
   const Range *BIOS = new Range(0xbfc00000, 512*1024);
   const Range *MEMCONTROL = new Range(0x1f801000, 36);
   // Register that has something to do with RAM configuration, configured by the BIOS
@@ -39,7 +39,11 @@ namespace map{
   const Range *EXPANSION_2 = new Range(0x1f802000, 66);
 
   // Expansion region 2
+  // TODO: check if the length is correct
   const Range *EXPANSION_1 = new Range(0x1f000000, 8192 * 1024 * 1024);
+
+  // Interrupt Control registers (status and mask)
+  const Range *IRQ_CONTROL = new Range(0x1f801070, 8);
 
   uint32_t mask_region(uint32_t addr){
     size_t idx = addr >> 29;

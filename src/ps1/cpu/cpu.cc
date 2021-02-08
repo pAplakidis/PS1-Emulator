@@ -111,7 +111,7 @@ Instruction* Cpu::decode(uint32_t instr){
 }
 
 void Cpu::execute_instruction(Instruction *instruction){
-  // TODO: add all ~56 opcodes for this processor
+  // TODO: add all ~56 opcodes for this processor (check if some are not in the switch statement)
   switch(instruction->opcode()){
     case 0b000000:
       // there are commands with the same opcode but their last 6 bits are different from each other
@@ -216,6 +216,12 @@ void Cpu::execute_instruction(Instruction *instruction){
       break;
     case 0b000100:
       op_beq(instruction);
+      break;
+    case 0b000111:
+      op_bgtz(instruction);
+      break;
+    case 0b000110:
+      op_blez(instruction);
       break;
     case 0b010000:
       op_cop0(instruction);
@@ -645,6 +651,24 @@ void Cpu::op_beq(Instruction *instruction){
   }
 }
 
+// BGTZ rs,offset
+void Cpu::op_bgtz(Instruction *instruction){
+  uint32_t rs = instruction->regs_idx();
+  int32_t imm = instruction->imm_se();
+  
+  if((int32_t)reg(rs) > 0)
+    branch(imm);
+}
+
+// BLEZ rs,offset
+void Cpu::op_blez(Instruction *instruction){
+  uint32_t rs = instruction->regs_idx();
+  int32_t imm = instruction->imm_se();
+  
+  if((int32_t)reg(rs) <= 0)
+    branch(imm);
+}
+
 // MFC0 rt,rd
 // Move from Coprocessor 0
 void Cpu::op_mfc0(Instruction *instruction){
@@ -684,7 +708,7 @@ void Cpu::op_mtc0(Instruction *instruction){
     // 3 BPC, 5 BDA, 6 unknown(useless), 7 DCIC, 9 BDAM, 11, BPCM
     case 3 | 5 | 6 | 7 | 9 | 11:
       if(v != 0){
-        printf("Unhandled write to cop0r%d\n", cop_r);
+        printf("Unhandled write to cop0_r %d\n", cop_r);
         exit(1);
       }
       break;

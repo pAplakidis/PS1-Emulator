@@ -49,16 +49,16 @@ uint8_t Interconnect::load8(uint32_t addr){
 // TODO: the only peripheral we support right now is BIOS ROM and we can't write to it, come back and complete this later
 // store 32bit word val into addr
 void Interconnect::store32(uint32_t addr, uint32_t val){
-  uint32_t offset;
-
   // Check for address alignment (must be an address-multiple of 32bits)
   if(addr % 4 != 0){
     printf("Unaligned store32 address: %x\n", addr);
     exit(1);
   }
 
+  uint32_t abs_addr = map::mask_region(addr);
+
   // Handle Expansion mapping
-  if(offset = map::MEMCONTROL->contains(addr)){
+  if(uint32_t offset = map::MEMCONTROL->contains(addr)){
     switch(offset){
       // Expansion 1 base address
       case 0:
@@ -74,6 +74,11 @@ void Interconnect::store32(uint32_t addr, uint32_t val){
       default:
         printf("Unhandled write to MEMCONTROL register\n");
     }
+    return;
+  }
+
+  if(uint32_t offset = map::IRQ_CONTROL->contains(abs_addr)){
+    printf("IRQ_control: %x <- %08x", offset, val);
     return;
   }
 

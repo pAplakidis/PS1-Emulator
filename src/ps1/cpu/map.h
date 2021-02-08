@@ -22,6 +22,7 @@ namespace map{
   extern const Range *SPU;
   extern const Range *EXPANSION_2;
   extern const Range *EXPANSION_1;
+  extern const Range *IRQ_CONTROL;
 
   // Mask array used to strip the region bits of the adrress
   // The mask is selected using the 3 MSBs of the address so each entry effectively matches 512KB of the address space

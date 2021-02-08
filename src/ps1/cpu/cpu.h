@@ -100,6 +100,8 @@ public:
   void op_jr(Instruction *instruction);
   void op_bne(Instruction *instruction);
   void op_beq(Instruction *instruction);
+  void op_bgtz(Instruction *instruction);
+  void op_blez(Instruction *instruction);
 
   void op_mfc0(Instruction *instruction);
   void op_mtc0(Instruction *instruction);
