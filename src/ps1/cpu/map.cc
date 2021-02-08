@@ -38,7 +38,7 @@ namespace map{
   // Expansion region 2
   const Range *EXPANSION_2 = new Range(0x1f802000, 66);
 
-  // Expansion region 2
+  // Expansion region 1
   // TODO: check if the length is correct
   const Range *EXPANSION_1 = new Range(0x1f000000, 8192 * 1024 * 1024);
 
