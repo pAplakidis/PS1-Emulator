@@ -104,6 +104,7 @@ public:
   void op_beq(Instruction *instruction);
   void op_bgtz(Instruction *instruction);
   void op_blez(Instruction *instruction);
+  void op_bxx(Instruction *instruction);
 
   void op_mfc0(Instruction *instruction);
   void op_mtc0(Instruction *instruction);

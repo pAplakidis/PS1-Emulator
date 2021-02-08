@@ -229,6 +229,9 @@ void Cpu::execute_instruction(Instruction *instruction){
     case 0b000110:
       op_blez(instruction);
       break;
+    case 0b000001:
+      op_bxx(instruction);
+      break;
     case 0b010000:
       op_cop0(instruction);
       break;
@@ -699,6 +702,35 @@ void Cpu::op_blez(Instruction *instruction){
   
   if((int32_t)reg(rs) <= 0)
     branch(imm);
+}
+
+// BGEZ rs,offset, BLTZ rs,offset, BGEZAL rs,offset, BLTZAL rs,offset
+// Bits 16 and 20 are used to figure out which one to use (position of rt)
+void Cpu::op_bxx(Instruction *instruction){
+  uint32_t rs = instruction->regs_idx();
+  int32_t imm = instruction->imm_se();
+
+  uint32_t instr = instruction->instr;
+  
+  uint32_t is_bgez = (instr >> 16) & 1;
+  uint32_t is_link = (instr >> 17) & 0xf == 8;
+
+  int32_t v = (int32_t)reg(rs);
+
+  // Test "less than zero"
+  uint32_t test = (uint32_t)(v < 0);
+
+  // If the test is "greater than or equal to zero" we need to negate the comparison above since ("a>=0" <=> "!(a<0)"). The xor takes care of that
+  test ^= is_bgez;
+
+  if(is_link){
+    uint32_t ra = reg_pc;
+    // Store return address in r31
+    set_reg(31, ra);
+  }
+  if(test != 0){
+    branch(imm);
+  }
 }
 
 // MFC0 rt,rd
