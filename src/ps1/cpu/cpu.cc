@@ -312,7 +312,6 @@ void Cpu::execute_instruction(Instruction *instruction){
 }
 
 // CPU instructions/operations
-// TODO: check for the signed and unsigned operations (need int32_T for signed and uint32_t for unsigned) (reg() returns unsigned so only worry about signed integers)
 
 // TODO: implement NOR
 // ADD rd,rs,rt
@@ -324,10 +323,9 @@ void Cpu::op_add(Instruction *instruction){
   uint32_t rd = instruction->regd_idx();
 
   if((instruction->instr & 0xffffffc0) == 0b100000){
-    int32_t sum = (int32_t)reg(rs) + (int32_t)reg(rt);
+    //int32_t sum = (int32_t)reg(rs) + (int32_t)reg(rt);
+    int32_t sum = checked_add((int32_t)reg(rs), (int32_t)reg(rt));
     set_reg(rd, sum);
-
-    // TODO: check for ADD overflow (match s.checked_add(t) in Rust)
   }
   else if((instruction->instr & 0xffffffc0) == 0b100001){
     uint32_t sum = reg(rs) + reg(rt);
@@ -339,7 +337,6 @@ void Cpu::op_add(Instruction *instruction){
   }
 }
 
-// TODO: need to check for overflow (in rust, rs.checked_add(imm))
 // ADDI rt,rs,imm
 void Cpu::op_addi(Instruction *instruction){
   // get register indices
@@ -347,7 +344,8 @@ void Cpu::op_addi(Instruction *instruction){
   uint32_t rt = instruction->regt_idx();
 
   int32_t imm = instruction->imm_se();
-  int32_t sum = (int32_t)reg(rs) + imm;
+  //int32_t sum = (int32_t)reg(rs) + imm;
+  int32_t sum = checked_add((int32_t)reg(rs), imm);
   set_reg(rt, sum);
 }
 

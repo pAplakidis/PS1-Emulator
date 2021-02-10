@@ -6,6 +6,7 @@
 
 #include "instruction.h"
 #include "interconnect.h"
+#include "helpers.h"
 
 // Exception types (as stored in the "CAUSE" register)
 enum Exception{
