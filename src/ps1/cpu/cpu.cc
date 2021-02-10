@@ -23,6 +23,9 @@ Cpu::Cpu(Interconnect *intercn){
   hi = 0xdeadbeef;
   lo = 0xdeadbeef;
 
+  branched = false;
+  delay_slot = false;
+
   this->intercn = intercn;
 }
 
@@ -75,7 +78,11 @@ void Cpu::cycle(){
   load[0] = 0;
   load[1] = 0x0;
 
-  // executed decoded instruction
+  // if the last instruction was a branch then we're in the delay slot
+  delay_slot = branched;
+  branched = false;
+
+  // execute decoded instruction
   execute_instruction(instruction);
 
   // copy output regs as input for next instruction
@@ -128,7 +135,7 @@ void Cpu::exception(enum Exception cause){
   }
 
   // Shift bits [5:0] of "SR" 2 places to the left
-  // Those bits are 3 pairs of Interrupt Enable User Mode bits behaving like a stack 3 entries deep
+  // Those bits are 3 pairs of Interrupt Enable/User Mode bits behaving like a stack 3 entries deep
   // Entering an exception pushes a pair of zeroes by left shifting the stack which disables interrupts and puts the CPU in kernel mode
   // The original third entry is discarded (it's up to the kernel to handle more than two recursive exception levels)
   uint32_t mode = sr & 0x3f;
@@ -140,6 +147,12 @@ void Cpu::exception(enum Exception cause){
 
   // Save the current instruction address in "EPC";
   epc = current_pc;
+
+  if(delay_slot){
+    // when an exception occurs in delay slot "EPC" points to the branch instruction and bit 31 of "CAUSE" is set
+    epc += 4;
+    this->cause |= 1 << 31;
+  }
 
   // Exceptions don't have a branch delay, we jump directly into the handler
   reg_pc = handler;
@@ -299,9 +312,9 @@ void Cpu::execute_instruction(Instruction *instruction){
 }
 
 // CPU instructions/operations
-// TODO: code the rest of the instructions
 // TODO: check for the signed and unsigned operations (need int32_T for signed and uint32_t for unsigned) (reg() returns unsigned so only worry about signed integers)
 
+// TODO: implement NOR
 // ADD rd,rs,rt
 // ADDU rd,rs,rt	
 void Cpu::op_add(Instruction *instruction){
@@ -511,7 +524,7 @@ void Cpu::op_xori(Instruction *instruction){
   set_reg(rt, reg(rs)^imm);
 }
 
-// TODO: more multiplication commands to be handled
+// TODO: implement MULT and MULTU
 // DIV rs,rt
 void Cpu::op_div(Instruction *instruction){
   // get register indices
@@ -585,6 +598,7 @@ void Cpu::op_mthi(Instruction *instruction){
   lo = reg(rs);
 }
 
+// TODO: implement LH and LHU
 // SW rt,offset(rs)
 void Cpu::op_sw(Instruction *instruction){
   if(sr & 0x10000 != 0){
@@ -749,7 +763,7 @@ void Cpu::op_srlv(Instruction *instruction){
   set_reg(rd, reg(rt) >> reg(rs));
 }
 
-// TODO: need all branch instructions
+// TODO: implement BREAK instruction
 // Branch to immediate value 'offset'
 void Cpu::branch(uint32_t offset){
   // offset immediates are always shifted to the right by 2, since pc addresses need to be alogned on 32bits at all times (check MIPS architecture for that)
@@ -759,6 +773,7 @@ void Cpu::branch(uint32_t offset){
   pc += offset;
   pc -= 4;  // we need to compensate for the hardcoded += offset in execute_instruction()
   next_pc = pc;
+  branched = true;
 }
 
 // J target
@@ -766,6 +781,7 @@ void Cpu::op_j(Instruction *instruction){
   uint32_t target = instruction->imm_jump();
 
   next_pc = (reg_pc & 0xf0000000) | (target << 2);
+  branched = true;
 }
 
 // JAL target (jump and link)
@@ -780,7 +796,8 @@ void Cpu::op_jal(Instruction *instruction){
 // JR rs
 void Cpu::op_jr(Instruction *instruction){
   uint32_t rs = instruction->regs_idx();
-  reg_pc = reg(rs);
+  next_pc = reg(rs);
+  branched = true;
 }
 
 // JALR rs (jump and link register)
@@ -792,7 +809,8 @@ void Cpu::op_jalr(Instruction *instruction){
 
   // store return address in 'rd'
   set_reg(rd, ra);
-  reg_pc = reg(rs);
+  next_pc = reg(rs);
+  branched = true;
 }
 
 // BNE rs,rt,offset
@@ -869,6 +887,21 @@ void Cpu::op_syscall(Instruction *instruction){
   exception(SysCall);
 }
 
+// RFE (return from exception)
+void Cpu::op_rfe(Instruction *instruction){
+  // There are other instructions with the same encoding but all are virtual memory related and the PS1 doens't implement them
+  // need to make sure we are not running buggy code
+  if(instruction->instr & 0x3f != 0b010000){
+    printf("Invalid cop0 instruction %x\n", instruction->instr);
+    exit(1);
+  }
+
+  // Restore the pre-exception mode by shifting the Interrupt Enable/User Mode stack back to its original position
+  uint32_t mode = sr & 0x3f;
+  sr &= !0x3f;
+  sr |= mode >> 2;
+}
+
 // MFC0 rt,rd
 // Move from Coprocessor 0
 void Cpu::op_mfc0(Instruction *instruction){
@@ -940,6 +973,9 @@ void Cpu::op_cop0(Instruction *instruction){
       break;
     case 0b00100:
       op_mtc0(instruction);
+      break;
+    case 0b10000:
+      op_rfe(instruction);
       break;
     default:
       printf("Unhandled cop0 isntruction %x\n", instruction->instr);

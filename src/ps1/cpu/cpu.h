@@ -46,6 +46,9 @@ public:
   uint32_t current_pc;  // address of instruction currently being executed, used for setting the EPC in exceptions
   uint32_t cause; // Cop0 register 13: Cause Register
   uint32_t epc;   // Cop0 register 14: EPC
+  
+  bool branched;  // set by the current instruction if a branch occured and the next instruction will be in the delay slot
+  bool delay_slot;  // set if the current instruction executes in the delay slot
 
   uint32_t reg_hi, reg_lo; // high and low 32bits of multiplication result (remainder of division for hi, quotient of division for lo)
 
@@ -134,5 +137,6 @@ public:
   void op_cop0(Instruction *instruction);
   void op_mfc0(Instruction *instruction);
   void op_mtc0(Instruction *instruction);
+  void op_rfe(Instruction *instruction);
 };
 
