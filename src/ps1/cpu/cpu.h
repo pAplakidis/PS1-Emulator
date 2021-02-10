@@ -126,6 +126,7 @@ public:
   void op_bgtz(Instruction *instruction);
   void op_blez(Instruction *instruction);
   void op_bxx(Instruction *instruction);
+  void op_syscall(Instruction *instruction);
 
   // Coprocessors
   void op_cop0(Instruction *instruction);

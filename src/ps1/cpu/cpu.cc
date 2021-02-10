@@ -212,8 +212,11 @@ void Cpu::execute_instruction(Instruction *instruction){
         case 0b010000:
           op_mfhi(instruction);
           break;
+        case 0b001100:
+          op_syscall(instruction);
+          break;
         default:
-          printf("Unhandled instruction that belongs to the 000000 family %x\n", instruction->instr);
+          printf("Unhandled instruction subfunction(belongs to the 000000 family) %x\n", instruction->instr);
           exit(1);
         }
       break;
@@ -841,6 +844,11 @@ void Cpu::op_bxx(Instruction *instruction){
   if(test != 0){
     branch(imm);
   }
+}
+
+// SYSCALL
+void Cpu::op_syscall(Instruction *instruction){
+  exception(SysCall);
 }
 
 // MFC0 rt,rd
