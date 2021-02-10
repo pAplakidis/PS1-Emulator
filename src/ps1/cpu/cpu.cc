@@ -3,9 +3,7 @@
 Cpu::Cpu(Interconnect *intercn){
   // PC reset value at the beginning of BIOS
   reg_pc = 0xbfc00000;
-
-  // handles branching issues with pipelining
-  next_instruction = new Instruction(0x0); // NOP
+  next_pc = reg_pc + 4;
 
   // set $zero register value (index 0 in general purpose file) to 0x0
   registers[0] = 0x0;
@@ -59,9 +57,13 @@ void Cpu::main_loop(){
 
 // Reads command in memory and executes it (also increases pc to point to next instruction)
 void Cpu::cycle(){
-  Instruction *instruction = next_instruction;  // this solves branching issues with pipelining
-  next_instruction = decode(load32(reg_pc));  // decode just makes an instruction object
-  reg_pc += 4;  // this acts like a pointer but to C++ it is not (incrementing by 4 in a pseudo manual way)
+  // Fetch instruction at PC
+  Instruction *instruction = decode(load32(reg_pc));  // this solves branching issues with pipelining
+
+  // Increment next PC to point to the next instruction
+  current_pc = reg_pc;
+  reg_pc = next_pc;
+  next_pc += 4;
 
   // execute the pending load (if any, otherwise it will load $zero which is a NOP)
   // set_reg works only on out_regs so this operation won't be visible by the next instruction
@@ -823,8 +825,11 @@ void Cpu::op_mfc0(Instruction *instruction){
       break;
     // Cause register
     case 13:
-      printf("Unhandled read from CAUSE register\n");
-      exit(1);
+      v = cause;
+      break;
+    case 14:
+      v = epc;
+      break;
     default:
       printf("Unhandled read from cop0r %d\n", cop_r);
       exit(1);

@@ -9,8 +9,11 @@
 
 class Cpu{
 
-// TODO: put private functions and variables here
-private:
+public:
+  // 4KB instruction memory, 1KB data cache
+  static const uint32_t MEMORY_SIZE = 512 * 1024; // CHECK THAT
+  unsigned char m_memory[MEMORY_SIZE];  // main memory of the CPU
+
   // General Purpose Registers (check docs for their idx->name)
   uint32_t registers[32];
 
@@ -28,18 +31,17 @@ private:
   // LO register (devision quotient, multiplication low result)
   uint32_t lo;
 
-public:
-  // 4KB instruction memory, 1KB data cache
-  static const uint32_t MEMORY_SIZE = 512 * 1024; // CHECK THAT
-  unsigned char m_memory[MEMORY_SIZE];  // main memory of the CPU
-
   // NOTE: 1 register here might not be needed (32 registers needed in the MIPS register_file, we have 33)
   // Special Purpose Registers
   uint32_t reg_pc;  // Program Counter (not inside register file)
-  uint32_t reg_hi, reg_lo; // high and low 32bits of multiplication result (remainder of division for hi, quotient of division for lo)
 
-  // Next instruction to be executed, used to simulate the branch delay slot
-  Instruction *next_instruction;
+  // for exception handling
+  uint32_t next_pc;
+  uint32_t current_pc;  // address of instruction currently being executed, used for setting the EPC in exceptions
+  uint32_t cause; // Cop0 register 13: Cause Register
+  uint32_t epc;   // Cop0 register 14: EPC
+
+  uint32_t reg_hi, reg_lo; // high and low 32bits of multiplication result (remainder of division for hi, quotient of division for lo)
 
   // other data variables
   std::vector<uint8_t> rom_data;
