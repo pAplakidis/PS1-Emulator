@@ -6,6 +6,6 @@
 
 int min() throw();
 int max() throw();
-void assert_check(const char *msg, bool check);
-int checked_add(int const a, int const b);
+bool assert_check(const char *msg, bool check);
+int *checked_add(int const a, int const b);
 

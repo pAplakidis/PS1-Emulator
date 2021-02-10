@@ -8,20 +8,28 @@ int max() throw(){
   return std::numeric_limits<int>::max();
 }
 
-void assert_check(const char *msg, bool check){
+bool assert_check(const char *msg, bool check){
   if(!check){
     std::cerr << msg << "\n";
-    abort();
+    //abort();
+    return false;
   }
+  return true;
 }
 
-int checked_add(int const a, int const b){
+int *checked_add(int const a, int const b){
   if(a >= 0){
-    assert_check("addition possitive overflow", b <= max() - a);
+    if(!assert_check("addition possitive overflow", b <= max() - a)){
+      return NULL;
+    }
   }else{
-    assert_check("addition negative overflow", b >= min() - a);
+    if(!assert_check("addition negative overflow", b >= min() - a)){
+      return NULL;
+    }
   }
 
-  return a+b;
+  int *sum = (int *)malloc(sizeof(int));
+  *sum = a + b;
+  return sum;
 }
 

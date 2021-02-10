@@ -11,7 +11,9 @@
 // Exception types (as stored in the "CAUSE" register)
 enum Exception{
   // System call (caused by the SYSCALL opcode)
-  SysCall = 0x8
+  SysCall = 0x8,
+  // Arithmetic Overflow
+  Overflow = 0xc
 };
 
 class Cpu{

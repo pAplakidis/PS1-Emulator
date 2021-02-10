@@ -324,8 +324,15 @@ void Cpu::op_add(Instruction *instruction){
 
   if((instruction->instr & 0xffffffc0) == 0b100000){
     //int32_t sum = (int32_t)reg(rs) + (int32_t)reg(rt);
-    int32_t sum = checked_add((int32_t)reg(rs), (int32_t)reg(rt));
-    set_reg(rd, sum);
+    int *ptr = checked_add((int32_t)reg(rs), (int32_t)reg(rt));
+
+    if(ptr == NULL){
+      exception(Overflow);
+    }
+    else{
+      int32_t sum = (int32_t)*ptr;
+      set_reg(rd, sum);
+    }
   }
   else if((instruction->instr & 0xffffffc0) == 0b100001){
     uint32_t sum = reg(rs) + reg(rt);
@@ -345,8 +352,15 @@ void Cpu::op_addi(Instruction *instruction){
 
   int32_t imm = instruction->imm_se();
   //int32_t sum = (int32_t)reg(rs) + imm;
-  int32_t sum = checked_add((int32_t)reg(rs), imm);
-  set_reg(rt, sum);
+  int *ptr = checked_add((int32_t)reg(rs), imm);
+
+  if(ptr == NULL){
+    exception(Overflow);
+  }
+  else{
+    int32_t sum = (int32_t)*ptr;
+    set_reg(rt, sum);
+  }
 }
 
 // ADDIU rt,rs,imm
