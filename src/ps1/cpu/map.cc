@@ -44,6 +44,10 @@ namespace map{
   // Interrupt Control registers (status and mask)
   const Range *IRQ_CONTROL = new Range(0x1f801070, 8);
 
+  // Timer registers (independent of timers on the Playstation, we just ignore these)
+  // TODO: check if this range is correct
+  const Range *TIMERS= new Range(0x1f801100, 8);
+
   uint32_t mask_region(uint32_t addr){
     size_t idx = addr >> 29;
     return addr & REGION_MASK[idx];

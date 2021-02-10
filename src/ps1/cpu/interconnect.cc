@@ -8,21 +8,28 @@ Interconnect::Interconnect(Bios *bios){
 
 // load a 32bit word at addr
 uint32_t Interconnect::load32(uint32_t addr){
-  uint32_t offset;
-
   // Check for address alignment (must be an address-multiple of 32bits)
   if(addr % 4 != 0){
     printf("Unaligned load32 address: %8x\n", addr);
     exit(1);
   }
   
-  if(offset = map::BIOS->contains(addr)){
+  uint32_t abs_addr = map::mask_region(addr);
+
+  if(uint32_t offset = map::BIOS->contains(addr)){
     return bios->load32(offset);
   }
   else{
     printf("Cannot fetch address at %x\n", addr);
     exit(1);
   }
+
+  if(uint32_t offset = map::IRQ_CONTROL->contains(abs_addr)){
+    printf("IRQ control read %x\n", offset);
+  }
+
+  printf("Unhandled load 32 at address %08x\n", addr);
+  exit(1);
 }
 
 // load byte at 'addr'
@@ -101,6 +108,11 @@ void Interconnect::store16(uint32_t addr, uint16_t val){
     return;
   }
   
+  if(uint32_t offset = map::TIMERS->contains(abs_addr)){
+    printf("Unhandled write to timer register %x\n",  offset);
+    return;
+  }
+
   printf("Unhandled store16 into address %8x\n", addr);
 }
 
