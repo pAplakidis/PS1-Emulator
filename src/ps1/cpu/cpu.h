@@ -98,6 +98,8 @@ public:
   void op_divu(Instruction *instruction);
   void op_mflo(Instruction *instruction);
   void op_mfhi(Instruction *instruction);
+  void op_mtlo(Instruction *instruction);
+  void op_mthi(Instruction *instruction);
 
   // Memory Access
   void op_sw(Instruction *instruction);

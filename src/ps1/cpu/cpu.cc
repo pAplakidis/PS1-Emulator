@@ -212,11 +212,17 @@ void Cpu::execute_instruction(Instruction *instruction){
         case 0b010000:
           op_mfhi(instruction);
           break;
+        case 0b010011:
+          op_mtlo(instruction);
+          break;
+        case 0b010001:
+          op_mthi(instruction);
+          break;
         case 0b001100:
           op_syscall(instruction);
           break;
         default:
-          printf("Unhandled instruction subfunction(belongs to the 000000 family) %x\n", instruction->instr);
+          printf("Unhandled instruction subfunction(belongs to the 000000 family)) %x\n", instruction->instr);
           exit(1);
         }
       break;
@@ -565,6 +571,18 @@ void Cpu::op_mflo(Instruction *instruction){
 void Cpu::op_mfhi(Instruction *instruction){
   uint32_t rd = instruction->regd_idx();
   set_reg(rd, hi);
+}
+
+// MTLO rs
+void Cpu::op_mtlo(Instruction *instruction){
+  uint32_t rs = instruction->regs_idx();
+  hi = reg(rs);
+}
+
+// MTHO rs
+void Cpu::op_mthi(Instruction *instruction){
+  uint32_t rs = instruction->regs_idx();
+  lo = reg(rs);
 }
 
 // SW rt,offset(rs)
