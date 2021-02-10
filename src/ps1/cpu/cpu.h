@@ -7,6 +7,12 @@
 #include "instruction.h"
 #include "interconnect.h"
 
+// Exception types (as stored in the "CAUSE" register)
+enum Exception{
+  // System call (caused by the SYSCALL opcode)
+  SysCall = 0x8
+};
+
 class Cpu{
 
 public:
@@ -62,6 +68,8 @@ public:
   void store32(uint32_t addr, uint32_t val);
   void store16(uint32_t addr, uint16_t val);
   void store8(uint32_t addr, uint8_t val);
+
+  void exception(enum Exception cause);
 
   Instruction* decode(uint32_t intruction);
   void execute_instruction(Instruction *instruction);

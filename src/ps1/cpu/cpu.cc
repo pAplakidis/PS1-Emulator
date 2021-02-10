@@ -114,6 +114,38 @@ Instruction* Cpu::decode(uint32_t instr){
   return instruction;
 }
 
+// Trigger an exception
+void Cpu::exception(enum Exception cause){
+  // Exception handler address depends on the "BEV"
+  uint32_t handler;
+  switch(sr & (1 << 22) != 0){
+    case true:
+      handler = 0xbfc00180;
+      break;
+    case false:
+      handler = 0x80000080;
+      break;
+  }
+
+  // Shift bits [5:0] of "SR" 2 places to the left
+  // Those bits are 3 pairs of Interrupt Enable User Mode bits behaving like a stack 3 entries deep
+  // Entering an exception pushes a pair of zeroes by left shifting the stack which disables interrupts and puts the CPU in kernel mode
+  // The original third entry is discarded (it's up to the kernel to handle more than two recursive exception levels)
+  uint32_t mode = sr & 0x3f;
+  sr &= 0x3f;
+  sr |= (mode << 2) & 0x3f;
+
+  // Update "CAUSE" register with the exception code (bits [6:2])
+  this->cause = (uint32_t)cause << 2;
+
+  // Save the current instruction address in "EPC";
+  epc = current_pc;
+
+  // Exceptions don't have a branch delay, we jump directly into the handler
+  reg_pc = handler;
+  next_pc = reg_pc + 4;
+}
+
 void Cpu::execute_instruction(Instruction *instruction){
   // TODO: add all ~56 opcodes for this processor (check if some are not in the switch statement)
   switch(instruction->opcode()){
@@ -705,14 +737,14 @@ void Cpu::branch(uint32_t offset){
 
   pc += offset;
   pc -= 4;  // we need to compensate for the hardcoded += offset in execute_instruction()
-  reg_pc = pc;
+  next_pc = pc;
 }
 
 // J target
 void Cpu::op_j(Instruction *instruction){
   uint32_t target = instruction->imm_jump();
 
-  reg_pc = (reg_pc & 0xf0000000) | (target << 2);
+  next_pc = (reg_pc & 0xf0000000) | (target << 2);
 }
 
 // JAL target (jump and link)

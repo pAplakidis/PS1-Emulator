@@ -1,5 +1,7 @@
 This is an emulator for ps1 writen in C++
 
+special thanks for this awesome tutorial [ https://github.com/simias/psx-guide ]
+
 Coding Style:
 * registers: reg_...
 * variables and functions: lower case separated with _
