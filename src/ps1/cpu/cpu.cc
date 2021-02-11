@@ -332,7 +332,6 @@ void Cpu::execute_instruction(Instruction *instruction){
 
 // CPU instructions/operations
 
-// TODO: implement NOR
 // ADD rd,rs,rt
 // ADDU rd,rs,rt	
 void Cpu::op_add(Instruction *instruction){
@@ -432,7 +431,7 @@ void Cpu::op_nor(Instruction *instruction){
   uint32_t rt = instruction->regt_idx();
   uint32_t rd = instruction->regd_idx();
   
-  uint32_t result = ~(reg(rs) | reg(rt));
+  uint32_t result = !(reg(rs) | reg(rt));
   set_reg(rd, result);
 }
 
