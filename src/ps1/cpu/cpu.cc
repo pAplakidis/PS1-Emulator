@@ -250,6 +250,9 @@ void Cpu::execute_instruction(Instruction *instruction){
         case 0b011001:
           op_multu(instruction);
           break;
+        case 0b001101:
+          op_break(instruction);
+          break;
         case 0b001100:
           op_syscall(instruction);
           break;
@@ -633,13 +636,18 @@ void Cpu::op_mthi(Instruction *instruction){
   lo = reg(rs);
 }
 
-// TODO: implement this
 // MULT rs,rt
 void Cpu::op_mult(Instruction *instruction){
   // get register indices
   uint32_t rs = instruction->regs_idx();
   uint32_t rt = instruction->regt_idx();
 
+  int64_t a = (int64_t)reg(rs);
+  int64_t b = (int64_t)reg(rt);
+
+  uint64_t v = a * b;
+  hi = (uint32_t)(v >> 32);
+  lo = (uint32_t)v;
 }
 
 // MULTU rs,rt
@@ -879,7 +887,6 @@ void Cpu::op_srlv(Instruction *instruction){
   set_reg(rd, v);
 }
 
-// TODO: implement BREAK instruction
 // Branch to immediate value 'offset'
 void Cpu::branch(uint32_t offset){
   // offset immediates are always shifted to the right by 2, since pc addresses need to be alogned on 32bits at all times (check MIPS architecture for that)
@@ -996,6 +1003,11 @@ void Cpu::op_bxx(Instruction *instruction){
   if(test != 0){
     branch(imm);
   }
+}
+
+// BREAK
+void Cpu::op_break(Instruction *instruction){
+  exception(Break);
 }
 
 // SYSCALL

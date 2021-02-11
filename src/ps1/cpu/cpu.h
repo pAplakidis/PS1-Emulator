@@ -12,6 +12,8 @@
 enum Exception{
   // System call (caused by the SYSCALL opcode)
   SysCall = 0x8,
+  // Breakpoint (caused by the BREAK opcode)
+  Break = 0x9,
   // Arithmetic Overflow
   Overflow = 0xc,
   // Address error on load
@@ -143,6 +145,7 @@ public:
   void op_bgtz(Instruction *instruction);
   void op_blez(Instruction *instruction);
   void op_bxx(Instruction *instruction);
+  void op_break(Instruction *instruction);
   void op_syscall(Instruction *instruction);
 
   // Coprocessors
