@@ -104,6 +104,11 @@ uint32_t Cpu::load32(uint32_t addr){
   return intercn->load32(addr);
 }
 
+// load 32bit value from the memory
+uint16_t Cpu::load16(uint32_t addr){
+  return intercn->load16(addr);
+}
+
 // load 8bit value from the memory
 uint8_t Cpu::load8(uint32_t addr){
   return intercn->load8(addr);
@@ -288,6 +293,12 @@ void Cpu::execute_instruction(Instruction *instruction){
       break;
     case 0b100100:
       op_lbu(instruction);
+      break;
+    case 0b100001:
+      op_lh(instruction);
+      break;
+    case 0b100101:
+      op_lhu(instruction);
       break;
     case 0b000010:
       op_j(instruction);
@@ -738,6 +749,30 @@ void Cpu::op_lbu(Instruction *instruction){
   // Put the load in the delay slot
   load[0] = rt;
   load[1] = (uint32_t)load8(addr);
+}
+
+// LH rt, offset(rs)
+void Cpu::op_lh(Instruction *instruction){
+
+}
+
+// LHU rt, offset(rs)
+void Cpu::op_lhu(Instruction *instruction){
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+  int32_t imm = instruction->imm_se();
+  
+  uint32_t addr = reg(rs) + imm;
+
+  // Address must be 16bit aligned
+  if(addr % 2 == 0){
+    // Put the load in the delay slot
+    load[0] = rt;
+    load[1] = (uint32_t)load16(addr);
+  }else{
+    exception(LoadAddressError);
+  }
 }
 
 // SLL rd,rt,sa

@@ -37,6 +37,19 @@ uint32_t Interconnect::load32(uint32_t addr){
   exit(1);
 }
 
+// Load 16bit halfword at 'addr'
+uint16_t Interconnect::load16(uint32_t addr){
+  uint32_t abs_addr = map::mask_region(addr);
+
+  if(uint32_t offset = map::SPU->contains(abs_addr)){
+    printf("Unhandled read from SPU register %08x\n", abs_addr);
+    return 0;
+  }
+
+  printf("Unhandled load16 at address %08x\n", addr);
+  exit(1);
+}
+
 // load byte at 'addr'
 uint8_t Interconnect::load8(uint32_t addr){
   uint32_t abs_addr = map::mask_region(addr);
