@@ -13,7 +13,11 @@ enum Exception{
   // System call (caused by the SYSCALL opcode)
   SysCall = 0x8,
   // Arithmetic Overflow
-  Overflow = 0xc
+  Overflow = 0xc,
+  // Address error on load
+  LoadAddressError = 0x4,
+  // Address error on store
+  StoreAddressError = 0x5
 };
 
 class Cpu{

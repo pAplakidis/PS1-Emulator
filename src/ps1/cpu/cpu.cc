@@ -625,7 +625,12 @@ void Cpu::op_sw(Instruction *instruction){
   int32_t imm = instruction->imm_se();
 
   uint32_t addr = reg(rs) + imm;
-  store32(addr, reg(rt));
+
+  if(addr % 4 == 0){
+    store32(addr, reg(rt));
+  }else{
+    exception(StoreAddressError);
+  }
 }
 
 // SH rt,offset(rs)
@@ -642,7 +647,13 @@ void Cpu::op_sh(Instruction *instruction){
   int32_t imm = instruction->imm_se();
 
   uint32_t addr = reg(rs) + imm;
-  store16(addr, (uint16_t)reg(rt));
+
+  // Address must be 16bit aligned
+  if(addr % 2 == 0){
+    store16(addr, (uint16_t)reg(rt));
+  }else{
+    exception(StoreAddressError);
+  }
 }
 
 // SB rt,offset(rs)
@@ -677,12 +688,18 @@ void Cpu::op_lw(Instruction *instruction){
   int32_t imm = instruction->imm_se();
 
   uint32_t addr = reg(rs) + imm;
-  uint32_t value = load32(addr);
   //set_reg(rt, addr);
 
-  // put the load in the delay slot
-  load[0] = rt;
-  load[1] = value;
+  // Adress must be 32bit aligned
+  if(addr % 4 == 0){
+    uint32_t value = load32(addr);
+
+    // put the load in the delay slot
+    load[0] = rt;
+    load[1] = value;
+  }else{
+    exception(LoadAddressError);
+  }
 }
 
 // LB rt,offset(rs)
