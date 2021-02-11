@@ -19,6 +19,17 @@ uint32_t Ram::load32(uint32_t offset){
   return l_endian_byte;
 }
 
+// Fetch the 16bit little endian halfword at 'offset'
+uint16_t Ram::load16(uint32_t offset){
+  size_t off = (size_t)off;
+
+  uint16_t b0 = (uint16_t)data[off + 0];
+  uint16_t b1 = (uint16_t)data[off + 1];
+
+  uint16_t l_endian_byte = b0 | (b1 << 8);
+  return l_endian_byte;
+}
+
 uint8_t Ram::load8(uint32_t offset){
   return (uint8_t)data[(size_t)offset];
 }

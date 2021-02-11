@@ -46,6 +46,10 @@ uint16_t Interconnect::load16(uint32_t addr){
     return 0;
   }
 
+  if(uint32_t offset = map::RAM->contains(abs_addr)){
+    return ram->load16(offset);
+  }
+
   printf("Unhandled load16 at address %08x\n", addr);
   exit(1);
 }
