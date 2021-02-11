@@ -60,11 +60,19 @@ void Cpu::main_loop(){
 
 // Reads command in memory and executes it (also increases pc to point to next instruction)
 void Cpu::cycle(){
+  // Save the address of the current instruction to save in "EPC" in case of an exception
+  current_pc = reg_pc;
+
+  if(current_pc % 4 != 0){
+    // PC is not correctly aligned
+    exception(LoadAddressError);
+    return;
+  }
+
   // Fetch instruction at PC
   Instruction *instruction = decode(load32(reg_pc));  // this solves branching issues with pipelining
 
   // Increment next PC to point to the next instruction
-  current_pc = reg_pc;
   reg_pc = next_pc;
   next_pc += 4;
 

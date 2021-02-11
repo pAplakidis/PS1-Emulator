@@ -96,12 +96,11 @@ void Interconnect::store32(uint32_t addr, uint32_t val){
 // TODO: the only peripheral we support right now is BIOS ROM and we can't write to it, come back and complete this later
 // Store 16bit halfword 'val' into 'addr'
 void Interconnect::store16(uint32_t addr, uint16_t val){
-  if(addr % 2 != 0){
-    printf("Unaligned store16 address %8x\n", addr);
-    exit(1);
-  }
-
   uint32_t abs_addr = map::mask_region(addr);
+
+  if(uint32_t offset = map::RAM->contains(abs_addr)){
+    return ram->store16(offset, val);
+  }
 
   if(uint32_t offset = map::SPU->contains(abs_addr)){
     printf("Unhandled write to SPU register %x\n", offset);
