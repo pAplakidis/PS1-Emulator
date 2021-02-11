@@ -349,7 +349,7 @@ void Cpu::op_add(Instruction *instruction){
   uint32_t rt = instruction->regt_idx();
   uint32_t rd = instruction->regd_idx();
 
-  if((instruction->instr & 0xffffffc0) == 0b100000){
+  if(instruction->subfunction() == 0b100000){
     //int32_t sum = (int32_t)reg(rs) + (int32_t)reg(rt);
     int *ptr = checked_add((int32_t)reg(rs), (int32_t)reg(rt));
 
@@ -361,12 +361,12 @@ void Cpu::op_add(Instruction *instruction){
       set_reg(rd, sum);
     }
   }
-  else if((instruction->instr & 0xffffffc0) == 0b100001){
+  else if(instruction->subfunction() == 0b100001){
     uint32_t sum = reg(rs) + reg(rt);
     set_reg(rd, sum);
   }
   else{
-    printf("Cannot recognised whether ADD is signed or unsigned");
+    printf("Cannot recognise whether ADD is signed or unsigned");
     exit(1);
   }
 }
@@ -529,16 +529,24 @@ void Cpu::op_sub(Instruction *instruction){
   //int32_t diff = (int32_t)reg(rs) - (int32_t)reg(rt);
   //set_reg(rd, diff);
 
-  if((instruction->instr & 0xffffffc0) == 0b100010){
-    int32_t diff = (int32_t)reg(rs) - (int32_t)reg(rt);
-    set_reg(rd, diff);
+  if(instruction->subfunction() == 0b100010){
+    //int32_t diff = (int32_t)reg(rs) - (int32_t)reg(rt);
+    int *ptr = checked_sub((int32_t)reg(rs), (int32_t)reg(rt));
+
+    if(ptr == NULL){
+      exception(Overflow);
+    }
+    else{
+      int32_t diff = (int32_t)*ptr;
+      set_reg(rd, diff);
+    }
   }
-  else if((instruction->instr & 0xffffffc0) == 0b100011){
+  else if(instruction->subfunction() == 0b100011){
     uint32_t diff = reg(rs) - reg(rt);
     set_reg(rd, diff);
   }
   else{
-    printf("Cannot recognised whether ADD is signed or unsigned");
+    printf("Cannot recognise whether SUB is signed or unsigned");
     exit(1);
   }
 }

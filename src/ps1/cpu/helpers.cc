@@ -33,3 +33,19 @@ int *checked_add(int const a, int const b){
   return sum;
 }
 
+int *checked_sub(int const a, int const b){
+  if(b < 0){
+    if(!assert_check("subtraction possitive overflow", a <= max() + b)){
+      return NULL;
+    }
+  }else{
+    if(!assert_check("subtraction negative overflow", a >= min() + b)){
+      return NULL;
+    }
+  }
+
+  int *diff = (int *)malloc(sizeof(int));
+  *diff = a - b;
+  return diff;
+}
+
