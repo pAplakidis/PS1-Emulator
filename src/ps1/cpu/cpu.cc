@@ -748,12 +748,24 @@ void Cpu::op_lbu(Instruction *instruction){
 
   // Put the load in the delay slot
   load[0] = rt;
-  load[1] = (uint32_t)load8(addr);
+  load[1] = (uint32_t)load16(addr);
 }
 
 // LH rt, offset(rs)
 void Cpu::op_lh(Instruction *instruction){
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+  int32_t imm = instruction->imm_se();
+  
+  uint32_t addr = reg(rs) + imm;
 
+  // cast as i16 to force sign extension
+  int16_t v = (int16_t)load16(addr);
+
+  // Put the load in the delay slot
+  load[0] = rt;
+  load[1] = (uint32_t)v;
 }
 
 // LHU rt, offset(rs)
@@ -792,7 +804,8 @@ void Cpu::op_sllv(Instruction *instruction){
   uint32_t rd = instruction->regd_idx();
   uint32_t rs = instruction->regs_idx();
 
-  set_reg(rd, reg(rt) << reg(rs));
+  // shift amount is truncated to 5 bits
+  set_reg(rd, reg(rt) << (reg(rs) & 0x1f));
 }
 
 // SRA rd,rt,sa
