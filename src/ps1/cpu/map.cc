@@ -50,6 +50,9 @@ namespace map{
 
   // Direct Memory Access registers (used to move data between peripherals and RAM withought involving the CPU)
   const Range *DMA = new Range(0x1f801080, 0x80);
+  
+  // GPU Registers (TODO: check if this range is correct)
+  const Range *GPU= new Range(0x1f801810, 8);
 
   uint32_t mask_region(uint32_t addr){
     size_t idx = addr >> 29;
