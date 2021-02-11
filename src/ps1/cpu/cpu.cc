@@ -350,7 +350,6 @@ void Cpu::op_add(Instruction *instruction){
   uint32_t rd = instruction->regd_idx();
 
   if(instruction->subfunction() == 0b100000){
-    //int32_t sum = (int32_t)reg(rs) + (int32_t)reg(rt);
     int *ptr = checked_add((int32_t)reg(rs), (int32_t)reg(rt));
 
     if(ptr == NULL){
@@ -378,7 +377,6 @@ void Cpu::op_addi(Instruction *instruction){
   uint32_t rt = instruction->regt_idx();
 
   int32_t imm = instruction->imm_se();
-  //int32_t sum = (int32_t)reg(rs) + imm;
   int *ptr = checked_add((int32_t)reg(rs), imm);
 
   if(ptr == NULL){
@@ -526,11 +524,7 @@ void Cpu::op_sub(Instruction *instruction){
   uint32_t rt = instruction->regt_idx();
   uint32_t rd = instruction->regd_idx();
   
-  //int32_t diff = (int32_t)reg(rs) - (int32_t)reg(rt);
-  //set_reg(rd, diff);
-
   if(instruction->subfunction() == 0b100010){
-    //int32_t diff = (int32_t)reg(rs) - (int32_t)reg(rt);
     int *ptr = checked_sub((int32_t)reg(rs), (int32_t)reg(rt));
 
     if(ptr == NULL){
