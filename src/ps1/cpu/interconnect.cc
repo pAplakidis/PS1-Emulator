@@ -35,8 +35,15 @@ uint32_t Interconnect::load32(uint32_t addr){
 
   if(uint32_t offset = map::GPU->contains(abs_addr)){
     printf("GPU read %x\n", offset);
-    return 0;
+    switch(offset){
+      // GPUSTAT: set bit 28 to signal that the GPU is ready to receive DMA blocks
+      case 4:
+        return 0x10000000;
+      default:
+        return 0;
+    }
   }
+
 
   printf("Unhandled load 32 at address %08x\n", addr);
   exit(1);
@@ -128,6 +135,11 @@ void Interconnect::store32(uint32_t addr, uint32_t val){
 
   if(uint32_t offset = map::GPU->contains(abs_addr)){
     printf("GPU write %x: %08x\n", offset, val);
+    return;
+  }
+
+  if(uint32_t offset = map::TIMERS->contains(abs_addr)){
+    printf("Unhandled write to timer register %x: %08x\n", offset, val);
     return;
   }
 
