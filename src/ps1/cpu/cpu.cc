@@ -814,7 +814,7 @@ void Cpu::op_sra(Instruction *instruction){
   int32_t sa = instruction->shift();
 
   int32_t v = (int32_t)reg(rt) >> sa;
-  set_reg(rd, v);
+  set_reg(rd, (uint32_t)v);
 }
 
 // SRAV rd,rt,rs
@@ -826,7 +826,7 @@ void Cpu::op_srav(Instruction *instruction){
 
   // shifft amount is truncated to 5 bits
   int32_t v = (int32_t)reg(rt) >> (reg(rs) & 0x1f);
-  set_reg(rd, v);
+  set_reg(rd, (uint32_t)v);
 }
 
 // SRL rd,rt,sa
