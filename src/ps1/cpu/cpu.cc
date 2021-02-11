@@ -628,7 +628,6 @@ void Cpu::op_mthi(Instruction *instruction){
   lo = reg(rs);
 }
 
-// TODO: implement LH and LHU
 // SW rt,offset(rs)
 void Cpu::op_sw(Instruction *instruction){
   if(sr & 0x10000 != 0){
@@ -810,21 +809,24 @@ void Cpu::op_sllv(Instruction *instruction){
 // SRA rd,rt,sa
 void Cpu::op_sra(Instruction *instruction){
   // get register indices
-  int32_t rt = (int32_t)instruction->regt_idx();
+  uint32_t rt = instruction->regt_idx();
   uint32_t rd = instruction->regd_idx();
   int32_t sa = instruction->shift();
 
-  set_reg(rd, reg(rt) >> sa);
+  int32_t v = (int32_t)reg(rt) >> sa;
+  set_reg(rd, v);
 }
 
 // SRAV rd,rt,rs
 void Cpu::op_srav(Instruction *instruction){
   // get register indices
-  int32_t rt = (int32_t)instruction->regt_idx();
+  uint32_t rt = instruction->regt_idx();
   uint32_t rd = instruction->regd_idx();
   uint32_t rs = instruction->regs_idx();
 
-  set_reg(rd, reg(rt) >> reg(rs));
+  // shifft amount is truncated to 5 bits
+  int32_t v = (int32_t)reg(rt) >> (reg(rs) & 0x1f);
+  set_reg(rd, v);
 }
 
 // SRL rd,rt,sa
