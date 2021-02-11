@@ -55,6 +55,11 @@ uint16_t Interconnect::load16(uint32_t addr){
     return ram->load16(offset);
   }
 
+  if(uint32_t offset = map::IRQ_CONTROL->contains(abs_addr)){
+    printf("IRQ control read %x\n", offset);
+    return 0;
+  }
+
   printf("Unhandled load16 at address %08x\n", addr);
   exit(1);
 }
@@ -149,7 +154,10 @@ void Interconnect::store16(uint32_t addr, uint16_t val){
     return;
   }
 
-  printf("Unhandled store16 into address %8x\n", addr);
+  if(uint32_t offset = map::IRQ_CONTROL->contains(abs_addr)){
+    printf("IRQ control write %x: %04x\n", offset, val);
+    return;
+  }
 }
 
 // TODO: the only peripheral we support right now is BIOS ROM and we can't write to it, come back and complete this later
