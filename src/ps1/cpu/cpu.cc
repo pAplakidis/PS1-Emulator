@@ -846,7 +846,9 @@ void Cpu::op_srlv(Instruction *instruction){
   uint32_t rd = instruction->regd_idx();
   uint32_t rs = instruction->regs_idx();
 
-  set_reg(rd, reg(rt) >> reg(rs));
+  // shift amount is truncated to 5 bits
+  uint32_t v = reg(rt) >> (reg(rs) & 0x1f);
+  set_reg(rd, v);
 }
 
 // TODO: implement BREAK instruction
