@@ -111,6 +111,8 @@ public:
   void op_mfhi(Instruction *instruction);
   void op_mtlo(Instruction *instruction);
   void op_mthi(Instruction *instruction);
+  void op_mult(Instruction *instruction);
+  void op_multu(Instruction *instruction);
 
   // Memory Access
   void op_sw(Instruction *instruction);

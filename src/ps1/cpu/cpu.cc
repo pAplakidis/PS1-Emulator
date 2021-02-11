@@ -244,6 +244,12 @@ void Cpu::execute_instruction(Instruction *instruction){
         case 0b010001:
           op_mthi(instruction);
           break;
+        case 0b011000:
+          op_mult(instruction);
+          break;
+        case 0b011001:
+          op_multu(instruction);
+          break;
         case 0b001100:
           op_syscall(instruction);
           break;
@@ -554,7 +560,6 @@ void Cpu::op_xori(Instruction *instruction){
   set_reg(rt, reg(rs)^imm);
 }
 
-// TODO: implement MULT and MULTU
 // DIV rs,rt
 void Cpu::op_div(Instruction *instruction){
   // get register indices
@@ -622,10 +627,33 @@ void Cpu::op_mtlo(Instruction *instruction){
   hi = reg(rs);
 }
 
-// MTHO rs
+// MTHI rs
 void Cpu::op_mthi(Instruction *instruction){
   uint32_t rs = instruction->regs_idx();
   lo = reg(rs);
+}
+
+// TODO: implement this
+// MULT rs,rt
+void Cpu::op_mult(Instruction *instruction){
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+
+}
+
+// MULTU rs,rt
+void Cpu::op_multu(Instruction *instruction){
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+
+  uint64_t a = (uint64_t)reg(rs);
+  uint64_t b = (uint64_t)reg(rt);
+
+  uint64_t v = a * b;
+  hi = (uint32_t)(v >> 32);
+  lo = (uint32_t)v;
 }
 
 // SW rt,offset(rs)
