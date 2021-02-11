@@ -19,7 +19,9 @@ enum Exception{
   // Address error on load
   LoadAddressError = 0x4,
   // Address error on store
-  StoreAddressError = 0x5
+  StoreAddressError = 0x5,
+  // Unsuported coprocessor operation
+  CoprocessorError = 0xb
 };
 
 class Cpu{
@@ -153,5 +155,8 @@ public:
   void op_mfc0(Instruction *instruction);
   void op_mtc0(Instruction *instruction);
   void op_rfe(Instruction *instruction);
+  void op_cop1(Instruction *instruction);
+  void op_cop2(Instruction *instruction);
+  void op_cop3(Instruction *instruction);
 };
 

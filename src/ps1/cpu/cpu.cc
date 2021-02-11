@@ -174,6 +174,7 @@ void Cpu::exception(enum Exception cause){
 
 void Cpu::execute_instruction(Instruction *instruction){
   // TODO: add all ~56 opcodes for this processor (check if some are not in the switch statement)
+  // TODO: maybe sort them to look good?
   switch(instruction->opcode()){
     case 0b000000:
       // there are commands with the same opcode but their last 6 bits are different from each other
@@ -332,6 +333,15 @@ void Cpu::execute_instruction(Instruction *instruction){
       break;
     case 0b010000:
       op_cop0(instruction);
+      break;
+    case 0b010001:
+      op_cop1(instruction);
+      break;
+    case 0b010010:
+      op_cop2(instruction);
+      break;
+    case 0b010011:
+      op_cop3(instruction);
       break;
     default:
       printf("Unhandled instruction %x\n", instruction->instr);
@@ -1113,3 +1123,18 @@ void Cpu::op_cop0(Instruction *instruction){
   }
 }
 
+// Coprocessor 1 opcode (does not exist on the Playstation)
+void Cpu::op_cop1(Instruction *instruction){
+  exception(CoprocessorError);
+}
+
+// Coprocessor 2 opcode (Geometry Transform Engine(GTE))
+void Cpu::op_cop2(Instruction *instruction){
+  printf("Unhandled GTE instruction %x\n", instruction);
+  exit(1);
+}
+
+// Coprocessor 3 opcode (does not exist on the Playstation)
+void Cpu::op_cop3(Instruction *instruction){
+  exception(CoprocessorError);
+}
