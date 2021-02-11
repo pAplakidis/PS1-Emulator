@@ -28,6 +28,11 @@ uint32_t Interconnect::load32(uint32_t addr){
     printf("IRQ control read %x\n", offset);
   }
 
+  if(uint32_t offset = map::DMA->contains(abs_addr)){
+    printf("DMA read %08x\n", abs_addr);
+    return 0;
+  }
+
   printf("Unhandled load 32 at address %08x\n", addr);
   exit(1);
 }
@@ -86,6 +91,11 @@ void Interconnect::store32(uint32_t addr, uint32_t val){
 
   if(uint32_t offset = map::IRQ_CONTROL->contains(abs_addr)){
     printf("IRQ_control: %x <- %08x", offset, val);
+    return;
+  }
+
+  if(uint32_t offset = map::DMA->contains(abs_addr)){
+    printf("DMA write: %08x %08x", abs_addr, val);
     return;
   }
 

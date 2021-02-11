@@ -24,6 +24,11 @@ namespace map{
   extern const Range *EXPANSION_1;
   extern const Range *IRQ_CONTROL;
   extern const Range *TIMERS;
+  extern const Range *DMA;
+
+  // Mask array used to strip the region bits of the adrress
+  // The mask is selected using the 3 MSBs of the address so each entry effectively matches 512KB of the address space
+  // KSEG2 is not touched since it doesn't share anything with other regions
 
   // Mask array used to strip the region bits of the adrress
   // The mask is selected using the 3 MSBs of the address so each entry effectively matches 512KB of the address space
