@@ -833,6 +833,159 @@ void Cpu::op_lhu(Instruction *instruction){
   }
 }
 
+// LWL rt, offset(rs) (load word left)
+void Cpu::op_lwl(Instruction *instruction){
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+  int32_t imm = instruction->imm_se();
+
+  uint32_t addr = reg(rs) + imm;
+
+  // This instruction bypasses the load delay restriction: this instruction will merge the new contents with the value currently being loaded if need be
+  uint32_t cur_v = out_regs[(size_t)rt];
+
+  // Next we load the *aligned* word containing the first addressed byte
+  uint32_t aligned_addr = addr & !3;
+  uint32_t aligned_word = load32(aligned_addr);
+
+  // Depending on the address alignment we fetch the 1, 2, 3 or 4 *most* significant bytes and put them in the target register
+  uint32_t v;
+  switch(addr & 3){
+    case 0:
+      v = (cur_v & 0x00ffffff) | (aligned_word << 24);
+      break;
+    case 1:
+      v = (cur_v & 0x0000ffff) | (aligned_word << 16);
+      break;
+    case 2:
+      v = (cur_v & 0x000000ff) | (aligned_word << 8);
+      break;
+    case 3:
+      v = (cur_v & 0x00000000) | (aligned_word << 0);
+      break;
+    default:
+      printf("LWL error -> instruction: %x\n", instruction->instr);
+      exit(1);
+  }
+
+  load[0] = rt;
+  load[1] = v;
+}
+
+// LWR rt, offset(rs)
+void Cpu::op_lwr(Instruction *instruction){
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+  int32_t imm = instruction->imm_se();
+
+  uint32_t addr = reg(rs) + imm;
+
+  // This instruction bypasses the load delay restriction: this instruction will merge the new contents with the value currently being loaded if need be
+  uint32_t cur_v = out_regs[(size_t)rt];
+
+  // Next we load the *aligned* word containing the first addressed byte
+  uint32_t aligned_addr = addr & !3;
+  uint32_t aligned_word = load32(aligned_addr);
+
+  // Depending on the address alignment we fetch the 1, 2, 3 or 4 *least* significant bytes and put them in the target register
+  uint32_t v;
+  switch(addr & 3){
+    case 0:
+      v = (cur_v & 0x00000000) | (aligned_word >> 0);
+      break;
+    case 1:
+      v = (cur_v & 0xff000000) | (aligned_word >> 8);
+      break;
+    case 2:
+      v = (cur_v & 0xffff0000) | (aligned_word >> 16);
+      break;
+    case 3:
+      v = (cur_v & 0xffffff00) | (aligned_word >> 24);
+      break;
+    default:
+      printf("LWR error -> instruction: %x\n", instruction->instr);
+      exit(1);
+  }
+
+  load[0] = rt;
+  load[1] = v;
+}
+
+// SWL rt, offset(rs)
+void Cpu::op_swl(Instruction *instruction){
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+  int32_t imm = instruction->imm_se();
+
+  uint32_t addr = reg(rs) + imm;
+  uint32_t v = reg(rt);
+  uint32_t aligned_addr = addr & !3;
+
+  // load the current value for the aligned word at the target address
+  uint32_t cur_mem = load32(aligned_addr);
+
+  uint32_t mem;
+  switch(addr & 3){
+    case 0:
+      mem = (cur_mem & 0xffffff00) | (v >> 24);
+      break;
+    case 1:
+      mem = (cur_mem & 0xffff0000) | (v >> 16);
+      break;
+    case 2:
+      mem = (cur_mem & 0xff000000) | (v >> 8);
+      break;
+    case 3:
+      mem = (cur_mem & 0x00000000) | (v >> 0);
+      break;
+    default:
+      printf("SWL error -> instruction: %x\n", instruction->instr);
+      exit(1);
+  }
+
+  store32(aligned_addr, mem);
+}
+
+// SWR rt, offset(rs)
+void Cpu::op_swr(Instruction *instruction){
+  // get register indices
+  uint32_t rs = instruction->regs_idx();
+  uint32_t rt = instruction->regt_idx();
+  int32_t imm = instruction->imm_se();
+
+  uint32_t addr = reg(rs) + imm;
+  uint32_t v = reg(rt);
+  uint32_t aligned_addr = addr & !3;
+
+  // load the current value for the aligned word at the target address
+  uint32_t cur_mem = load32(aligned_addr);
+
+  uint32_t mem;
+  switch(addr & 3){
+    case 0:
+      mem = (cur_mem & 0x00000000) | (v << 0);
+      break;
+    case 1:
+      mem = (cur_mem & 0x000000ff) | (v << 8);
+      break;
+    case 2:
+      mem = (cur_mem & 0x0000ffff) | (v << 16);
+      break;
+    case 3:
+      mem = (cur_mem & 0x00ffffff) | (v << 24);
+      break;
+    default:
+      printf("SWL error -> instruction: %x\n", instruction->instr);
+      exit(1);
+  }
+
+  store32(aligned_addr, mem);
+
+}
+
 // SLL rd,rt,sa
 void Cpu::op_sll(Instruction *instruction){
   // get register indices

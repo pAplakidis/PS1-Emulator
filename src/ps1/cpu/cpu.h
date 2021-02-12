@@ -128,6 +128,14 @@ public:
   void op_lh(Instruction *instruction);
   void op_lhu(Instruction *instruction);
 
+  // Unaligned reads
+  void op_lwl(Instruction *instruction);
+  void op_lwr(Instruction *instruction);
+
+  // Unaligned writes
+  void op_swl(Instruction *instruction);
+  void op_swr(Instruction *instruction);
+
   // Shifter
   void op_sll(Instruction *instruction);
   void op_sllv(Instruction *instruction);
