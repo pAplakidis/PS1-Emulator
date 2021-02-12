@@ -173,8 +173,7 @@ void Cpu::exception(enum Exception cause){
 }
 
 void Cpu::execute_instruction(Instruction *instruction){
-  // TODO: add all ~56 opcodes for this processor (check if some are not in the switch statement)
-  // TODO: maybe sort them to look good?
+  // TODO: maybe sort them to look good? (check if some are not in the switch statement)
   switch(instruction->opcode()){
     case 0b000000:
       // there are commands with the same opcode but their last 6 bits are different from each other
@@ -258,8 +257,8 @@ void Cpu::execute_instruction(Instruction *instruction){
           op_syscall(instruction);
           break;
         default:
-          printf("Unhandled instruction subfunction(belongs to the 000000 family)) %x\n", instruction->instr);
-          exit(1);
+          op_illegal(instruction);
+          break;
         }
       break;
     case 0b001000:
@@ -344,12 +343,18 @@ void Cpu::execute_instruction(Instruction *instruction){
       op_cop3(instruction);
       break;
     default:
-      printf("Unhandled instruction %x\n", instruction->instr);
-      exit(1);
+      op_illegal(instruction);
+      break;
   }
 }
 
 // CPU instructions/operations
+
+// Illegal instruction
+void Cpu::op_illegal(Instruction *instruction){
+  printf("Illegal instruction %x\n", instruction->instr);
+  exception(IllegalInstruction);
+}
 
 // ADD rd,rs,rt
 // ADDU rd,rs,rt	
@@ -983,7 +988,6 @@ void Cpu::op_swr(Instruction *instruction){
   }
 
   store32(aligned_addr, mem);
-
 }
 
 // SLL rd,rt,sa
@@ -1283,7 +1287,7 @@ void Cpu::op_cop1(Instruction *instruction){
 
 // Coprocessor 2 opcode (Geometry Transform Engine(GTE))
 void Cpu::op_cop2(Instruction *instruction){
-  printf("Unhandled GTE instruction %x\n", instruction);
+  printf("Unhandled GTE instruction %x\n", instruction->instr);
   exit(1);
 }
 
@@ -1291,3 +1295,51 @@ void Cpu::op_cop2(Instruction *instruction){
 void Cpu::op_cop3(Instruction *instruction){
   exception(CoprocessorError);
 }
+
+// TODO: add these to the switch statement
+// Load Word in Coprocessor 0
+void Cpu::op_lwc0(Instruction *instruction){
+  // Not supported by this coprocessor
+  exception(CoprocessorError);
+}
+
+// Load Word in Coprocessor 1
+void Cpu::op_lwc1(Instruction *instruction){
+  // Not supported by this coprocessor
+  exception(CoprocessorError);
+}
+
+// Load Word in Coprocessor 2
+void Cpu::op_lwc2(Instruction *instruction){
+  printf("Unhandled GTE LWC: %x\n", instruction->instr);
+}
+
+// Load Word in Coprocessor 3
+void Cpu::op_lwc3(Instruction *instruction){
+  // Not supported by this coprocessor
+  exception(CoprocessorError);
+}
+
+// Store Word in Coprocessor 0
+void Cpu::op_swc0(Instruction *instruction){
+  // Not supported by this coprocessor
+  exception(CoprocessorError);
+}
+
+// Store Word in Coprocessor 1
+void Cpu::op_swc1(Instruction *instruction){
+  // Not supported by this coprocessor
+  exception(CoprocessorError);
+}
+
+// Store Word in Coprocessor 2
+void Cpu::op_swc2(Instruction *instruction){
+  printf("Unhandled GTE SWC: %x\n", instruction->instr);
+}
+
+// Store Word in Coprocessor 3
+void Cpu::op_swc3(Instruction *instruction){
+  // Not supported by this coprocessor
+  exception(CoprocessorError);
+}
+

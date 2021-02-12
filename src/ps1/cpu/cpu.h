@@ -21,7 +21,9 @@ enum Exception{
   // Address error on store
   StoreAddressError = 0x5,
   // Unsuported coprocessor operation
-  CoprocessorError = 0xb
+  CoprocessorError = 0xb,
+  // CPU encountered an unknown instruction
+  IllegalInstruction = 0xa
 };
 
 class Cpu{
@@ -90,6 +92,9 @@ public:
   void execute_instruction(Instruction *instruction);
 
   // Instructions
+  // Illegal instruction
+  void op_illegal(Instruction *instruction);
+
   // basic ALU
   void op_add(Instruction *instruction);
   void op_addi(Instruction *instruction);
@@ -166,5 +171,13 @@ public:
   void op_cop1(Instruction *instruction);
   void op_cop2(Instruction *instruction);
   void op_cop3(Instruction *instruction);
+  void op_lwc0(Instruction *instruction);
+  void op_lwc1(Instruction *instruction);
+  void op_lwc2(Instruction *instruction);
+  void op_lwc3(Instruction *instruction);
+  void op_swc0(Instruction *instruction);
+  void op_swc1(Instruction *instruction);
+  void op_swc2(Instruction *instruction);
+  void op_swc3(Instruction *instruction);
 };
 
