@@ -3,6 +3,7 @@
 #include "bios.h"
 #include "ram.h"
 #include "map.h"
+#include "dma.h"
 
 // global interconnect
 class Interconnect{
