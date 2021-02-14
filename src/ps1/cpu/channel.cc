@@ -11,6 +11,9 @@ Channel::Channel(){
   dummy = 0;
 
   base = 0;
+
+  block_size = 0;
+  block_count = 0;
 }
 
 uint32_t Channel::control(){
@@ -81,5 +84,20 @@ uint32_t Channel::get_base(){
 // Set channel base address. Only bits [0:23] are significant so only 16MB are addressable by the DMA
 void Channel::set_base(uint32_t value){
   base = value & 0xffffff;
+}
+
+
+// Retrieve value of the Block Control register
+uint32_t Channel::block_control(){
+  uint32_t bs = (uint32_t)block_size;
+  uint32_t bc = (uint32_t)block_count;
+
+  return (bc << 16) | bs;
+}
+
+// Set value of the Block Control register
+void Channel::set_block_control(uint32_t value){
+  block_size = (uint16_t)value;
+  block_count = (uint16_t)(value >> 16);
 }
 

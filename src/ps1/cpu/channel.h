@@ -47,11 +47,20 @@ private:
   //  DMA start address
   uint32_t base;
 
+  // Size of a block in words
+  uint16_t block_size;
+  
+  // Block count, only used when 'sync' is 'Request'
+  uint16_t block_count;
+
 public:
   Channel();
   uint32_t control();
   void set_control(uint32_t value);
+  // TODO: plug these in the interconnect the same way the others were pluged in (check page 102)
   uint32_t get_base();
   void set_base(uint32_t value);
+  uint32_t block_control();
+  void set_block_control(uint32_t value);
 };
 
