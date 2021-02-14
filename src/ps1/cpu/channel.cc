@@ -9,6 +9,8 @@ Channel::Channel(){
   chop_dma_sz = 0;
   chop_cpu_sz = 0;
   dummy = 0;
+
+  base = 0;
 }
 
 uint32_t Channel::control(){
@@ -69,5 +71,15 @@ void Channel::set_control(uint32_t value){
   enable = (value >> 24) & 1 != 0;
   trigger = (value >> 28) & 1 != 0;
   dummy = (uint8_t)((value >> 29) & 3);
+}
+
+// Retrieve the channel's base address
+uint32_t Channel::get_base(){
+  return base;
+}
+
+// Set channel base address. Only bits [0:23] are significant so only 16MB are addressable by the DMA
+void Channel::set_base(uint32_t value){
+  base = value & 0xffffff;
 }
 

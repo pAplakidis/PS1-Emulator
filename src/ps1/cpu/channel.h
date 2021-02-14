@@ -44,9 +44,14 @@ private:
   // Unknown 2 RW bits in configuration register
   uint8_t dummy;
 
+  //  DMA start address
+  uint32_t base;
+
 public:
   Channel();
   uint32_t control();
   void set_control(uint32_t value);
+  uint32_t get_base();
+  void set_base(uint32_t value);
 };
 
