@@ -49,3 +49,32 @@ void Dma::set_interrupt(uint32_t value){
   channel_irq_flags &= !ack;
 }
 
+// Return a reference to a channel by port number
+Channel* Dma::channel(enum Port port){
+  return channels[(size_t)port];
+}
+
+namespace PORT{
+  enum Port from_index(uint32_t index){
+    switch(index){
+      case 0:
+        return MdecIn;
+      case 1:
+        return MdecOut;
+      case 2:
+        return Gpu;
+      case 3:
+        return CdRom;
+      case 4:
+        return Spu;
+      case 5:
+        return Pio;
+      case 6:
+        return Otc;
+      default:
+        printf("Invalid port %x\n", index);
+        exit(1);
+    }
+  }
+}
+
