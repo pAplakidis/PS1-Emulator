@@ -10,3 +10,8 @@ uint32_t Dma::get_control(){
   return control;
 }
 
+// Set the value of the control register
+void Dma::set_control(uint32_t value){
+  control = value;
+}
+

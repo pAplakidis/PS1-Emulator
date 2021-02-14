@@ -10,5 +10,6 @@ private:
 public:
   Dma();
   uint32_t get_control();
+  void set_control(uint32_t value);
 };
 

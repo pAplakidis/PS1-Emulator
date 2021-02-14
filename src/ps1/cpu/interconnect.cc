@@ -1,9 +1,12 @@
 #include "interconnect.h"
 
 Interconnect::Interconnect(Bios *bios){
-  // TODO: delete this object from memory after done booting
+  // TODO: delete this object from memory after done booting game
   this->bios = bios;
   ram = new Ram();
+
+  // DMA registers
+  dma = new Dma();
 }
 
 // load a 32bit word at addr
@@ -44,9 +47,9 @@ uint32_t Interconnect::load32(uint32_t addr){
     }
   }
 
-
-  printf("Unhandled load 32 at address %08x\n", addr);
-  exit(1);
+  if(uint32_t offset = map::DMA->contains(abs_addr)){
+    return dma_reg(offset);
+  }
 }
 
 // Load 16bit halfword at 'addr'
@@ -143,8 +146,9 @@ void Interconnect::store32(uint32_t addr, uint32_t val){
     return;
   }
 
-  printf("Unhandled store32 into address %8x\n", addr);
-  exit(1);
+  if(uint32_t offset = map::DMA->contains(abs_addr)){
+    return set_dma_reg(offset, val);
+  }
 }
 
 // TODO: the only peripheral we support right now is BIOS ROM and we can't write to it, come back and complete this later
@@ -183,5 +187,28 @@ void Interconnect::store8(uint32_t addr, uint8_t val){
   }
   
   printf("Unhandled store8 into address %8x\n", addr);
+}
+
+// DMA register read
+uint32_t Interconnect::dma_reg(uint32_t offset){
+  switch(offset){
+    case 0x70:
+      return dma->get_control();
+    default:
+      printf("Unhandled DMA access: %08x\n", offset);
+      exit(1);
+  }
+}
+
+// DMA register write
+void Interconnect::set_dma_reg(uint32_t offset, uint32_t value){
+  switch(offset){
+    case 0x70:
+      dma->set_control(value);
+      break;
+    default:
+      printf("Unhandled DMA write access: %08x <- %08x\n", offset, value);
+      exit(1);
+  }
 }
 
