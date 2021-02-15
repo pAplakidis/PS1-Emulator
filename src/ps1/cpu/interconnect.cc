@@ -342,7 +342,7 @@ void Interconnect::do_dma(enum Port port){
   }
 }
 
-// DMA block copy 
+// Emulate DMA transfer for Manual and Request synchronization modes
 void Interconnect::do_dma_block(enum Port port){
   Channel *channel = dma->channel(port);
 
@@ -373,8 +373,18 @@ void Interconnect::do_dma_block(enum Port port){
 
     switch(channel->get_direction()){
       case FromRam:
-        printf("Unhandled DMA direction\n");
-        exit(1);
+      {
+        uint32_t src_word = ram->load32(cur_addr);
+        switch(port){
+          case Gpu:
+            printf("GPU data %08x\n", src_word);
+            break;
+          default:
+            printf("Unhandled DMA destination port %x\n", (uint8_t)port);
+            exit(1);
+        }
+      }
+      break;
       case ToRam:
       {
         uint32_t src_word;
