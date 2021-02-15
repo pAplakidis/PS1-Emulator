@@ -334,8 +334,8 @@ void Interconnect::do_dma(enum Port port){
   // DMA transfer has been started, for now we process everything in one pass (i.e. no chopping or priority handling)
   switch(dma->channel(port)->get_sync()){
     case LinkedList:
-      printf("Linked list mode unsupported\n");
-      exit(1);
+      do_dma_linked_list(port);
+      break;
     default:
       do_dma_block(port);
       break;
@@ -401,6 +401,43 @@ void Interconnect::do_dma_block(enum Port port){
     }
     addr = addr + increment;
     remsz--;
+  }
+  channel->done();
+}
+
+// Emulate DMA transfer for linked list synchronization mode
+void Interconnect::do_dma_linked_list(enum Port port){
+  Channel *channel = dma->channel(port);
+  uint32_t addr = channel->get_base() & 0x1ffffc;
+
+  if(channel->get_direction() == ToRam){
+    printf("Invalid DMA direction for linked list mode\n");
+    exit(1);
+  }
+
+  // DMA doesn't support linked list for anything appart the GPU
+  if(port != Gpu){
+    printf("Attempted linked list DMA on port %x\n", (uint8_t)port);
+    exit(1);
+  }
+
+  while(1){
+    // In linked list mode, each entry starts with a "header" word. The high byte contains the number of words in the "packet" (not counting the header word)
+    uint32_t header = ram->load32(addr);
+    uint32_t remsz = header >> 24;
+    
+    while(remsz > 0){
+      addr = (addr + 4) & 0x1ffffc;
+      uint32_t command = ram->load32(addr);
+      printf("GPU command %08x\n", command);
+      remsz--;
+    }
+    // The end-of-table marker is usually 0xffffff but mednafen only checks for the MSB so maybethat's what the harware does. Since this bit is not part of any valid address it makes some sense. TODO: test that
+    if(header & 0x800000 != 0){
+      break;
+    }
+
+    addr = header & 0x1ffffc;
   }
   channel->done();
 }
