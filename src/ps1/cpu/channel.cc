@@ -16,6 +16,18 @@ Channel::Channel(){
   block_count = 0;
 }
 
+enum Direction Channel::get_direction(){
+  return direction;
+}
+
+enum Step Channel::get_step(){
+  return step;
+}
+
+enum Sync Channel::get_sync(){
+  return sync;
+}
+
 uint32_t Channel::control(){
   uint32_t r = 0;
 
@@ -99,5 +111,19 @@ uint32_t Channel::block_control(){
 void Channel::set_block_control(uint32_t value){
   block_size = (uint16_t)value;
   block_count = (uint16_t)(value >> 16);
+}
+
+// Return true if the channel has been started
+bool Channel::active(){
+  // In manual sync mode tha CPU must set the "trigger" bit to start the tranfser
+  bool trigger;
+  switch(sync){
+    case Manual:
+      trigger = this->trigger;
+      break;
+    default:
+      return true;
+  }
+  return enable && trigger;
 }
 

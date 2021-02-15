@@ -210,6 +210,10 @@ uint32_t Interconnect::dma_reg(uint32_t offset){
     {
       Channel *channel = dma->channel(PORT::from_index(major));
       switch(minor){
+        case 0:
+          return channel->get_base();
+        case 4:
+          return channel->block_control();
         case 8:
           return channel->control();
         default:
@@ -256,6 +260,8 @@ void Interconnect::set_dma_reg(uint32_t offset, uint32_t value){
   }
   */
 
+  enum Port *active_port = (enum Port*)malloc(sizeof(enum Port));
+
   switch(major){
     // Per-channel registers
     case 0 ... 6:
@@ -264,12 +270,24 @@ void Interconnect::set_dma_reg(uint32_t offset, uint32_t value){
       Channel *channel = dma->channel(port);
 
       switch(minor){
+        case 0:
+          channel->set_base(value);
+          break;
+        case 4:
+          channel->set_block_control(value);
+          break;
         case 8:
           channel->set_control(value);
           break;
         default:
           printf("Unhandled DMA write at %x <- %08x\n", offset, value);
           exit(1);
+      }
+
+      if(channel->active()){
+        *active_port = port;
+      }else{
+        active_port = NULL;
       }
       break;
     }
@@ -287,11 +305,34 @@ void Interconnect::set_dma_reg(uint32_t offset, uint32_t value){
           printf("Unhandled DMA write at %x <- %08x\n", offset, value);
           exit(1);
       }
+
+      active_port = NULL;
       break;
     }
     default:
       printf("Unhandled DMA write at %x <- %08x\n", offset, value);
       exit(1);
   }
+ if(active_port != NULL){
+    do_dma(*active_port);
+ }
+}
+
+// Execute DMA transfer for a port
+void Interconnect::do_dma(enum Port port){
+  // DMA transfer has been started, for now we process everything in one pass (i.e. no chopping or priority handling)
+  switch(dma->channel(port)->get_sync()){
+    case LinkedList:
+      printf("Linked list mode unsupported\n");
+      exit(1);
+    default:
+      do_dma_block(port);
+      break;
+  }
+}
+
+// Copy block
+void Interconnect::do_dma_block(enum Port port){
+
 }
 

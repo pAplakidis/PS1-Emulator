@@ -55,12 +55,15 @@ private:
 
 public:
   Channel();
+  enum Direction get_direction();
+  enum Step get_step();
+  enum Sync get_sync();
   uint32_t control();
   void set_control(uint32_t value);
-  // TODO: plug these in the interconnect the same way the others were pluged in (check page 102)
   uint32_t get_base();
   void set_base(uint32_t value);
   uint32_t block_control();
   void set_block_control(uint32_t value);
+  bool active();
 };
 

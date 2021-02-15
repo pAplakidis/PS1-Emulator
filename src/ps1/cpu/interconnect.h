@@ -23,5 +23,7 @@ public:
 private:
   uint32_t dma_reg(uint32_t offset);
   void set_dma_reg(uint32_t offset, uint32_t value);
+  void do_dma(enum Port port);
+  void do_dma_block(enum Port port);
 };
 
