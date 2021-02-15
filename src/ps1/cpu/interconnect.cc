@@ -50,6 +50,17 @@ uint32_t Interconnect::load32(uint32_t addr){
   if(uint32_t offset = map::DMA->contains(abs_addr)){
     return dma_reg(offset);
   }
+
+  if(uint32_t offset = map::GPU->contains(abs_addr)){
+    switch(offset){
+      // GPUSTAT: set bit 26, 27, 28 tosignal that the GPU is ready for DMA and CPU access.
+      // This way the BIOS won't dead lock waiting for an event that will never come.
+      case 4:
+        return 0x1c000000;
+      default:
+        return 0;
+    }
+  }
 }
 
 // Load 16bit halfword at 'addr'
@@ -331,8 +342,66 @@ void Interconnect::do_dma(enum Port port){
   }
 }
 
-// Copy block
+// DMA block copy 
 void Interconnect::do_dma_block(enum Port port){
+  Channel *channel = dma->channel(port);
 
+  int32_t increment;
+  switch(channel->get_step()){
+    case Increment:
+      increment = 4;
+      break;
+    case Decrement:
+      increment = -4;
+      break;
+  }
+
+  uint32_t addr = channel->get_base();
+
+  // Transfer size in words
+  uint32_t remsz;
+  if(uint32_t *temp = channel->transfer_size()){
+    remsz = *temp;
+  }else{
+    printf("Couldn't figure out DMA block transfer size\n");
+    exit(1);
+  }
+
+  while(remsz > 0){
+    // Just mask addr (i.e. the RAM address wraps and the two LSB are ignored)
+    uint32_t cur_addr = addr & 0x1ffffc;
+
+    switch(channel->get_direction()){
+      case FromRam:
+        printf("Unhandled DMA direction\n");
+        exit(1);
+      case ToRam:
+      {
+        uint32_t src_word;
+        switch(port){
+          case Otc:
+            switch(remsz){
+              // Last entry contains the end of table marker
+              case 1:
+                src_word = 0xffffff;
+                break;
+              // Pointer to the previous entry
+              default:
+                src_word = (addr - 4) & 0x1fffff;
+                break;
+            }
+            break;
+          default:
+            printf("Unhandled DMA source port %x\n", (uint8_t)port);
+            exit(1);
+        }
+        ram->store32(cur_addr, src_word);
+      }
+      break;
+    }
+    addr = addr + increment;
+    remsz--;
+  }
+  channel->done();
 }
 

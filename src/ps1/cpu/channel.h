@@ -65,5 +65,7 @@ public:
   uint32_t block_control();
   void set_block_control(uint32_t value);
   bool active();
+  uint32_t* transfer_size();
+  void done();
 };
 

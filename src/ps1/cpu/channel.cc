@@ -127,3 +127,35 @@ bool Channel::active(){
   return enable && trigger;
 }
 
+// Return the DMA transfer size in bytes or None for linked list mode
+uint32_t* Channel::transfer_size(){
+  uint32_t bs = (uint32_t)block_size;
+  uint32_t bc = (uint32_t)block_count;
+
+  uint32_t *ret = (uint32_t*)malloc(sizeof(uint32_t));
+
+  switch(sync){
+    // For manual mode only the block size is used
+    case Manual:
+      *ret = bs;
+      break;
+    // In DMA request mode we must transfer "bc" blocks
+    case Request:
+      *ret = bc * bs;
+      break;
+    // In linked list mode the size is not known ahead of time: we stop when we encounter the "end of list" marker (0xffffff)
+    case LinkedList:
+      return NULL;
+  }
+
+  return ret;
+}
+
+// Set the channel status to "completed" state
+void Channel::done(){
+  enable = false;
+  trigger = false;
+
+  // TODO: Need to set the correct value for the other fields (in particular interrupts)
+}
+
