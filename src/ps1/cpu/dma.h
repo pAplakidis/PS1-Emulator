@@ -60,6 +60,5 @@ public:
   void set_interrupt(uint32_t value);
   Channel* channel(enum Port port); // TODO: check if we need to implement the mutable version (all pointers are read/write in C++ so probably we don't)
   enum Port from_index(uint32_t index);
-  bool active();
 };
 
