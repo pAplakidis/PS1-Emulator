@@ -20,11 +20,12 @@ enum Field{
   Bottom = 0
 };
 
-// TODO: this implementation is not right (in rust it is struct(u8) with functions but not a class)
 // Video output horizontal resolution
 class HorizontalRes{
+private:
+  uint8_t hr;
 public:
-  HorizontalRes *from_fields(uint8_t hr1, uint8_t hr2);
+  uint8_t from_fields(uint8_t hr1, uint8_t hr2);
   uint32_t into_status();
 };
 
@@ -82,7 +83,8 @@ private:
   // When true all textures are disabled
   bool texture_disable;
   // Video output horizontal resolution
-  HorizontalRes *hres;
+  uint8_t hres;
+  HorizontalRes *horizontal_res;
   // Video output vertical resolution
   enum VerticalRes vres;
   // Video mode
@@ -98,5 +100,7 @@ private:
   // DMA request direction
   enum DmaDirection dma_direction;
 
+  Gpu();
+  uint32_t status();
 };
 
