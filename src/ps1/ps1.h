@@ -1,6 +1,7 @@
-#include <fstream>
+#pragma once
 
-#include "cpu/cpu.h"
+#include <fstream>
+#include "components/cpu.h"
 
 class Ps1{
 
