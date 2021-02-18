@@ -13,7 +13,7 @@ enum Port{
   // Macroblock decoder output
   MdecOut = 1,
   // Graphics Processing Unit
-  Gpu = 2,
+  GPU = 2,
   // CC-ROM drive
   CdRom = 3,
   // Sound Processing Unit

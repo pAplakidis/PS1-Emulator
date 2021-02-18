@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
 
 // Depth of the pixel values in a texture page
@@ -100,7 +102,15 @@ private:
   // DMA request direction
   enum DmaDirection dma_direction;
 
+  // Mirror textured rectangles alogn the x axis
+  bool rectangle_texture_x_flip;
+  // Mirror textured rectangles alogn the y axis
+  bool rectangle_texture_y_flip;
+
+public:
   Gpu();
   uint32_t status();
+  void gp0(uint32_t val);
+  void gp0_draw_mode(uint32_t val);
 };
 

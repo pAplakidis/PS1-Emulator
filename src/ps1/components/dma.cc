@@ -62,7 +62,7 @@ namespace PORT{
       case 1:
         return MdecOut;
       case 2:
-        return Gpu;
+        return GPU;
       case 3:
         return CdRom;
       case 4:

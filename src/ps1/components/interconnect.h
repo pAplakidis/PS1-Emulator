@@ -4,6 +4,7 @@
 #include "ram.h"
 #include "map.h"
 #include "dma.h"
+#include "gpu.h"
 
 // global interconnect
 class Interconnect{
@@ -11,6 +12,7 @@ public:
   Bios *bios;
   Ram *ram;
   Dma *dma;
+  Gpu *gpu;
 
   Interconnect(Bios *bios);
   uint32_t load32(uint32_t addr);

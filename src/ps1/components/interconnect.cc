@@ -7,6 +7,9 @@ Interconnect::Interconnect(Bios *bios){
 
   // DMA registers
   dma = new Dma();
+
+  // Gpu
+  gpu = new Gpu();
 }
 
 // load a 32bit word at addr
@@ -159,6 +162,18 @@ void Interconnect::store32(uint32_t addr, uint32_t val){
 
   if(uint32_t offset = map::DMA->contains(abs_addr)){
     return set_dma_reg(offset, val);
+  }
+
+  if(uint32_t offset = map::GPU->contains(abs_addr)){
+    switch(offset){
+      case 0:
+        gpu->gp0(val);
+        break;
+      default:
+        printf("GPU write %x: %08x\n", offset, val);
+        exit(1);
+    }
+    return;
   }
 }
 
@@ -376,7 +391,7 @@ void Interconnect::do_dma_block(enum Port port){
       {
         uint32_t src_word = ram->load32(cur_addr);
         switch(port){
-          case Gpu:
+          case GPU:
             printf("GPU data %08x\n", src_word);
             break;
           default:
@@ -426,7 +441,7 @@ void Interconnect::do_dma_linked_list(enum Port port){
   }
 
   // DMA doesn't support linked list for anything appart the GPU
-  if(port != Gpu){
+  if(port != GPU){
     printf("Attempted linked list DMA on port %x\n", (uint8_t)port);
     exit(1);
   }

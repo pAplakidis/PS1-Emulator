@@ -18,6 +18,7 @@ PS1 components
   * 1KB of data cache
   * 1KB of instruction cache
   * no need to implement data cache (data cache is not used, instead its memory is mapped as the scratpad at a fixed location)
+  * more info on [ https://www.techpowerup.com/gpu-specs/sony-playstation-scph-100x-gpu.b8176 ]
 
 - SPU (Sound Processing Unit):
 

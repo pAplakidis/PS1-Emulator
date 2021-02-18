@@ -93,3 +93,45 @@ uint32_t Gpu::status(){
   return r;
 }
 
+// Handle writes to the GP0 command register
+void Gpu::gp0(uint32_t val){
+  uint32_t opcode = (val >> 24) & 0xff;
+
+  switch(opcode){
+    case 0xe1:
+      gp0_draw_mode(val);
+      break;
+    default:
+      printf("Unhandled GP0 command %08x\n", val);
+      exit(1);
+  }
+}
+
+// GP0(0xe1) command
+void Gpu::gp0_draw_mode(uint32_t val){
+  page_base_x = (uint8_t)(val & 0xf);
+  page_base_y = (uint8_t)((val >> 4) & 1);
+  semi_transparency = (uint8_t)((val >> 5) & 3);
+
+  switch((val >> 7) & 3){
+    case 0:
+      texture_depth = T4Bit;
+      break;
+    case 1:
+      texture_depth = T8Bit;
+      break;
+    case 2:
+      texture_depth = T15Bit;
+      break;
+    default:
+      printf("Unhandled texture depth %x\n", (val >> 7) & 3);
+      exit(1);
+  }
+
+  dithering = ((val >> 9) & 1) != 0;
+  draw_to_display = ((val >> 10) & 1) != 0;
+  texture_disable = ((val >> 11) & 1) != 0;
+  rectangle_texture_x_flip = ((val >> 12) & 1) != 0;
+  rectangle_texture_y_flip = ((val >> 13) & 1) != 0;
+}
+
