@@ -58,7 +58,7 @@ enum DisplayDepth{
 enum DmaDirection{
   Off = 0,
   Fifo = 1,
-  GpuToGp0 = 2,
+  CpuToGp0 = 2,
   VRamToCpu = 3
 };
 
@@ -151,5 +151,6 @@ public:
   void gp1_reset(uint32_t _);
   uint32_t read();
   void gp1_display_mode(uint32_t val);
+  void gp1_dma_direction(uint32_t val);
 };
 

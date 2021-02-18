@@ -38,6 +38,7 @@ Gpu::Gpu(){
   dma_direction = Off;
 }
 
+// Retrieve value of the status register
 uint32_t Gpu::status(){
   uint32_t r = 0;
 
@@ -80,7 +81,7 @@ uint32_t Gpu::status(){
       dma_request = 1;
       break;
     // Shoud be the same as status bit 28
-    case GpuToGp0:
+    case CpuToGp0:
       dma_request = (r >> 28) & 1;
       break;
     // Should be the same as status bit 27
@@ -242,6 +243,24 @@ void Gpu::gp1_display_mode(uint32_t val){
   if(val & 0x80 != 0){
     printf("Unsupported display mode %08x\n", val);
     exit(1);
+  }
+}
+
+// GP1(0x04): DMA direction
+void Gpu::gp1_dma_direction(uint32_t val){
+  switch(val & 3){
+    case 0:
+      dma_direction = Off;
+      break;
+    case 1:
+      dma_direction = Fifo;
+      break;
+    case 2:
+      dma_direction = CpuToGp0;
+      break;
+    case 3:
+      dma_direction = VRamToCpu;
+      break;
   }
 }
 

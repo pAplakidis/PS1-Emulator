@@ -454,7 +454,8 @@ void Interconnect::do_dma_linked_list(enum Port port){
     while(remsz > 0){
       addr = (addr + 4) & 0x1ffffc;
       uint32_t command = ram->load32(addr);
-      printf("GPU command %08x\n", command);
+      // Send command to the GPU
+      gpu->gp0(command);
       remsz--;
     }
     // The end-of-table marker is usually 0xffffff but mednafen only checks for the MSB so maybethat's what the harware does. Since this bit is not part of any valid address it makes some sense. TODO: test that
