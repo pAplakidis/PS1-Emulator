@@ -94,6 +94,12 @@ uint32_t Gpu::status(){
   return r;
 }
 
+// Retrieve value of the "read" register
+uint32_t Gpu::read(){
+  // TODO: implement this
+  return 0;
+}
+
 // Handle writes to the GP0 command register
 void Gpu::gp0(uint32_t val){
   uint32_t opcode = (val >> 24) & 0xff;
@@ -137,6 +143,28 @@ void Gpu::gp0_draw_mode(uint32_t val){
   texture_disable = ((val >> 11) & 1) != 0;
   rectangle_texture_x_flip = ((val >> 12) & 1) != 0;
   rectangle_texture_y_flip = ((val >> 13) & 1) != 0;
+}
+
+// GP0(0xe3): set drawing area top left
+void Gpu::gp0_drawing_adrea_top_left(uint32_t val){
+  drawing_area_top = (uint16_t)((val >> 10) & 0x3ff);
+  drawing_area_left = (uint16_t)(val & 0x3ff);
+}
+
+// GP0(0xe4): set drawing area bottom right
+void Gpu::gp0_drawing_adrea_bottom_right(uint32_t val){
+  drawing_area_bottom = (uint16_t)((val >> 10) & 0x3ff);
+  drawing_area_right = (uint16_t)(val & 0x3ff);
+}
+
+// GP0(0xe5): set drawing offset
+void Gpu::gp0_drawing_offset(uint32_t val){
+  uint16_t x = (uint16_t)(val & 0x7ff);
+  uint16_t y = (uint16_t)((val >> 11) & 0x7ff);
+
+  // Values are 11bit 2's complement signed values, we need to shift the value to 16bits to force sign extension
+  drawing_x_offset = ((int16_t)(x << 5)) >> 5;
+  drawing_y_offset = ((int16_t)(y << 5)) >> 5;
 }
 
 // Handle writes to the GP1 command register
@@ -196,12 +224,6 @@ void Gpu::gp1_reset(uint32_t _){
 
   // TODO: clear the command FIFO when it is implemented
   // TODO: invalidate GPU cache when it is implemented
-}
-
-// Retrieve value of the "read" register
-uint32_t Gpu::read(){
-  // TODO: implement this
-  return 0;
 }
 
 // GP1(0x80): Display Mode

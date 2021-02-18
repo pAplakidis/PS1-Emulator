@@ -145,11 +145,14 @@ private:
 public:
   Gpu();
   uint32_t status();
+  uint32_t read();
   void gp0(uint32_t val);
   void gp0_draw_mode(uint32_t val);
+  void gp0_drawing_adrea_top_left(uint32_t val);
+  void gp0_drawing_adrea_bottom_right(uint32_t val);
+  void gp0_drawing_offset(uint32_t val);
   void gp1(uint32_t val);
   void gp1_reset(uint32_t _);
-  uint32_t read();
   void gp1_display_mode(uint32_t val);
   void gp1_dma_direction(uint32_t val);
 };
