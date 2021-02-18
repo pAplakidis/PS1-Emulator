@@ -152,6 +152,7 @@ void Gpu::gp1(uint32_t val){
   }
 }
 
+// GP1(0x00): soft reset
 void Gpu::gp1_reset(uint32_t _){
   interrupt = false;
 
@@ -194,5 +195,53 @@ void Gpu::gp1_reset(uint32_t _){
 
   // TODO: clear the command FIFO when it is implemented
   // TODO: invalidate GPU cache when it is implemented
+}
+
+// Retrieve value of the "read" register
+uint32_t Gpu::read(){
+  // TODO: implement this
+  return 0;
+}
+
+// GP1(0x80): Display Mode
+void Gpu::gp1_display_mode(uint32_t val){
+  uint8_t hr1 = (uint8_t)(val & 3);
+  uint8_t hr2 = (uint8_t)((val >> 6) & 1);
+
+  hres = horizontal_res->from_fields(hr1, hr2);
+
+  switch(val & 0x4 != 0){
+    case false:
+      vres = Y240Lines;
+      break;
+    case true:
+      vres = Y480Lines;
+      break;
+  }
+
+  switch(val & 0x8 != 0){
+    case false:
+      vmode = Ntsc;
+      break;
+    case true:
+      vmode = Pal;
+      break;
+  }
+
+  switch(val & 0x10 != 0){
+    case false:
+      display_depth = D24Bits;
+      break;
+    case true:
+      display_depth = D15Bits;
+      break;
+  }
+
+  interlaced = val & 0x20 != 0;
+
+  if(val & 0x80 != 0){
+    printf("Unsupported display mode %08x\n", val);
+    exit(1);
+  }
 }
 

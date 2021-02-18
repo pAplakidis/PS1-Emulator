@@ -149,5 +149,7 @@ public:
   void gp0_draw_mode(uint32_t val);
   void gp1(uint32_t val);
   void gp1_reset(uint32_t _);
+  uint32_t read();
+  void gp1_display_mode(uint32_t val);
 };
 
