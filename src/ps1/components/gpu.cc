@@ -98,6 +98,9 @@ void Gpu::gp0(uint32_t val){
   uint32_t opcode = (val >> 24) & 0xff;
 
   switch(opcode){
+    case 0x00:
+      // NOP
+      break;
     case 0xe1:
       gp0_draw_mode(val);
       break;
