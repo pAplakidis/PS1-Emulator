@@ -145,6 +145,14 @@ void Gpu::gp0_draw_mode(uint32_t val){
   rectangle_texture_y_flip = ((val >> 13) & 1) != 0;
 }
 
+// GP0(0xe2): set texture window
+void Gpu::gp0_texture_window(uint32_t val){
+  texture_window_x_mask = (uint8_t)(val & 0x1f);
+  texture_window_y_mask = (uint8_t)((val >> 5) & 0x1f);
+  texture_window_x_offset = (uint8_t)((val >> 10) & 0x1f);
+  texture_window_y_offset = (uint8_t)((val >> 15) & 0x1f);
+}
+
 // GP0(0xe3): set drawing area top left
 void Gpu::gp0_drawing_adrea_top_left(uint32_t val){
   drawing_area_top = (uint16_t)((val >> 10) & 0x3ff);
@@ -165,6 +173,12 @@ void Gpu::gp0_drawing_offset(uint32_t val){
   // Values are 11bit 2's complement signed values, we need to shift the value to 16bits to force sign extension
   drawing_x_offset = ((int16_t)(x << 5)) >> 5;
   drawing_y_offset = ((int16_t)(y << 5)) >> 5;
+}
+
+// GP0(0xe6): set mask bit setting
+void Gpu::gp0_mask_bit_setting(uint32_t val){
+  force_set_mask_bit = (val & 1) != 0;
+  preserve_masked_pixels = (val & 2) != 0;
 }
 
 // Handle writes to the GP1 command register
