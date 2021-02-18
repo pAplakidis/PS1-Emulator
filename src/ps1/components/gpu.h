@@ -102,15 +102,52 @@ private:
   // DMA request direction
   enum DmaDirection dma_direction;
 
+  // GP0 stuff
   // Mirror textured rectangles alogn the x axis
   bool rectangle_texture_x_flip;
   // Mirror textured rectangles alogn the y axis
   bool rectangle_texture_y_flip;
+
+  // GP1 stuff
+  // Texture window x mask (8 pixel steps)
+  uint8_t texture_window_x_mask;
+  // Texture window y mask (8 pixel steps)
+  uint8_t texture_window_y_mask;
+  // Texture window x offset (8 pixel steps)
+  uint8_t texture_window_x_offset;
+  // Texture window y offset (8 pixel steps)
+  uint8_t texture_window_y_offset;
+  // Left-most column of drawing area
+  uint16_t drawing_area_left;
+  // Top-most column of drawing area
+  uint16_t drawing_area_top;
+  // Right-most column of drawing area
+  uint16_t drawing_area_right;
+  // Bottom-most column of drawing area
+  uint16_t drawing_area_bottom;
+  // Horizontal drawing offset applied to all vertices
+  int16_t drawing_x_offset;
+  // Vertical drawing offset applied to all vertices
+  int16_t drawing_y_offset;
+  // First column of the display area in VRAM
+  uint16_t display_vram_x_start;
+  // First line of the display area in VRAM
+  uint16_t display_vram_y_start;
+  // Display output horizontal start relative to HSYNC
+  uint16_t display_horiz_start;
+  // Display output horizontal end relative to HSYNC
+  uint16_t display_horiz_end;
+  // Display output first line relative to VSYNC
+  uint16_t display_line_start;
+  // Display output last line relative to VSYNC
+  uint16_t display_line_end;
 
 public:
   Gpu();
   uint32_t status();
   void gp0(uint32_t val);
   void gp0_draw_mode(uint32_t val);
+  void gp1(uint32_t val);
+  void gp1_reset(uint32_t _);
 };
 

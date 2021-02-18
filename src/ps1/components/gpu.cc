@@ -138,3 +138,61 @@ void Gpu::gp0_draw_mode(uint32_t val){
   rectangle_texture_y_flip = ((val >> 13) & 1) != 0;
 }
 
+// Handle writes to the GP1 command register
+void Gpu::gp1(uint32_t val){
+  uint32_t opcode = (val >> 24) & 0xff;
+
+  switch(opcode){
+    case 0x00:
+      gp1_reset(val);
+      break;
+    default:
+      printf("Unhandled GP1 command %08x\n", val);
+      exit(1);
+  }
+}
+
+void Gpu::gp1_reset(uint32_t _){
+  interrupt = false;
+
+  page_base_x = 0;
+  page_base_y = 0;
+  semi_transparency = 0;
+  texture_depth = T4Bit;
+  dithering = false;
+  draw_to_display = false;
+  texture_disable = false;
+  force_set_mask_bit = false;
+  preserve_masked_pixels = false;
+  dma_direction = Off;
+  display_disabled = true;
+  hres = horizontal_res->from_fields(0, 0);
+  vres = Y240Lines;
+  vmode = Ntsc;
+  interlaced = true;
+  display_depth = D15Bits;
+
+  rectangle_texture_x_flip = false;
+  rectangle_texture_y_flip = false;
+
+  texture_window_x_mask = 0;
+  texture_window_y_mask = 0;
+  texture_window_x_offset = 0;
+  texture_window_y_offset = 0;
+  drawing_area_left = 0;
+  drawing_area_top = 0;
+  drawing_area_right = 0;
+  drawing_area_bottom = 0;
+  drawing_x_offset = 0;
+  drawing_y_offset = 0;
+  display_vram_x_start = 0;
+  display_vram_y_start = 0;
+  display_horiz_start = 0x200;
+  display_horiz_end = 0xc00;
+  display_line_start = 0x10;
+  display_line_end = 0x100;
+
+  // TODO: clear the command FIFO when it is implemented
+  // TODO: invalidate GPU cache when it is implemented
+}
+
