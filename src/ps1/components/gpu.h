@@ -62,6 +62,21 @@ enum DmaDirection{
   VRamToCpu = 3
 };
 
+// BUffer holding multi-word fixed-length GP0 command parameters
+class CommandBuffer{
+private:
+  // Command buffer: the longuest possible command is GP0(0x3e) which takes 12 parameters
+  uint32_t buffer[12];
+  // Number of words queued in bufffer
+  uint8_t len;
+
+public:
+  CommandBuffer();
+  void clear();
+  void push_word(uint32_t word);
+  uint32_t* index(size_t index);
+};
+
 class Gpu{
 private:
   // Texture page base X coordinate (4 bits, 64 byte increment)
@@ -107,6 +122,13 @@ private:
   bool rectangle_texture_x_flip;
   // Mirror textured rectangles alogn the y axis
   bool rectangle_texture_y_flip;
+  
+  // Buffer containing the current GP0 command
+  CommandBuffer *gp0_command;
+  // Remaining words for the current GP0 command
+  uint32_t gp0_command_remaining;
+  // Pointer to the method implementing the current GP0 command
+  void (Gpu::*gp0_command_method)(void); // TODO: this may not be right (check what functions are called later on)
 
   // GP1 stuff
   // Texture window x mask (8 pixel steps)
@@ -147,6 +169,8 @@ public:
   uint32_t status();
   uint32_t read();
   void gp0(uint32_t val);
+  void gp0_nop();
+  void gp0_quad_mono_opaque();
   void gp0_draw_mode(uint32_t val);
   void gp0_drawing_adrea_top_left(uint32_t val);
   void gp0_drawing_adrea_bottom_right(uint32_t val);
@@ -157,5 +181,8 @@ public:
   void gp1_reset(uint32_t _);
   void gp1_display_mode(uint32_t val);
   void gp1_dma_direction(uint32_t val);
+  void gp1_display_vram_start(uint32_t val);
+  void gp1_display_horizontal_range(uint32_t val);
+  void gp1_display_vertical_range(uint32_t val);
 };
 

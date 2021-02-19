@@ -16,6 +16,35 @@ uint32_t HorizontalRes::into_status(){
 
 // --------------------------------------------------------------
 
+// --------------------------------------------------------------
+
+// Command Buffer methods
+CommandBuffer::CommandBuffer(){
+  for(int i=0;i < 12;i++)
+    buffer[i] = 0;
+  len = 0;
+}
+
+// Clear the command buffer
+void CommandBuffer::clear(){
+  len = 0;
+}
+
+void CommandBuffer::push_word(uint32_t word){
+  buffer[(size_t)len] = word;
+  len += 1;
+}
+
+uint32_t* CommandBuffer::index(size_t index){
+  if(index >= (size_t)len){
+    printf("Command buffer index out of range: %x (%x)\n", index, len);
+  }
+
+  return &buffer[index];
+}
+
+// --------------------------------------------------------------
+
 Gpu::Gpu(){
   page_base_x = 0;
   page_base_y = 0;
@@ -102,19 +131,72 @@ uint32_t Gpu::read(){
 
 // Handle writes to the GP0 command register
 void Gpu::gp0(uint32_t val){
-  uint32_t opcode = (val >> 24) & 0xff;
+  if(gp0_command_remaining == 0){
+    uint32_t opcode = (val >> 24) & 0xff;
+    uint32_t len;
+    void (Gpu::*method)(void);
 
-  switch(opcode){
-    case 0x00:
-      // NOP
-      break;
-    case 0xe1:
-      gp0_draw_mode(val);
-      break;
-    default:
-      printf("Unhandled GP0 command %08x\n", val);
-      exit(1);
+    // TODO: check the function pointers (use of &) and parameters
+    switch(opcode){
+      case 0x00:
+        len = 1;
+        method = &Gpu::gp0_nop;
+        break;
+      case 0x28:
+        len = 1;
+        method = &Gpu::gp0_quad_mono_opaque;
+        break;
+      case 0xe1:
+        len = 1;
+        method = &Gpu::gp0_draw_mode;
+        break;
+      case 0xe2:
+        len = 1;
+        method = &Gpu::gp0_texture_window;
+        break;
+      case 0xe3:
+        len = 1;
+        method = &Gpu::gp0_drawing_area_top_left;
+        break;
+      case 0xe4:
+        len = 1;
+        method = &Gpu::gp0_drawing_area_bottom_right;
+        break;
+      case 0xe5:
+        len = 1;
+        method = &Gpu::gp0_drawing_offset;
+        break;
+      case 0xe6:
+        len = 1;
+        method = &Gpu::gp0_mask_bit_setting;
+        break;
+      default:
+        printf("Unhandled GP0 command %08x\n", val);
+        exit(1);
+    }
+
+    gp0_command_remaining = len;
+    gp0_command_method = method;
+    gp0_command->clear();
   }
+
+  gp0_command->push_word(val);
+  gp0_command_remaining--;
+
+  if(gp0_command_remaining == 0){
+    // We have all the parameters, we can run the command
+    (this->*gp0_command_method)(); // TODO: find a way to call this method
+  }
+}
+
+// GP0(0x00): No Operation
+void Gpu::gp0_nop(){
+  // NOP
+}
+
+// GP0(0x28): Monochrome Opaque Quadrilateral
+void Gpu::gp0_quad_mono_opaque(){
+  printf("Draw quad\n");
 }
 
 // GP0(0xe1) command
@@ -298,5 +380,23 @@ void Gpu::gp1_dma_direction(uint32_t val){
       dma_direction = VRamToCpu;
       break;
   }
+}
+
+// GP1(0x05): display VRAM start
+void Gpu::gp1_display_vram_start(uint32_t val){
+  display_vram_x_start = (uint16_t)(val & 0x3fe);
+  display_vram_y_start = (uint16_t)((val >> 10) & 0x1ff);
+}
+
+// GP1(0x06): display horizontal range
+void Gpu::gp1_display_horizontal_range(uint32_t val){
+  display_horiz_start = (uint16_t)(val & 0xfff);
+  display_horiz_end = (uint16_t)((val >> 12) & 0xfff);
+}
+
+// GP1(0x07): display vertical range
+void Gpu::gp1_display_vertical_range(uint32_t val){
+  display_line_start = (uint16_t)(val & 0x3ff);
+  display_line_end = (uint16_t)((val >> 10) & 0x3ff);
 }
 
