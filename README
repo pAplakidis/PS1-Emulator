@@ -9,6 +9,8 @@ Coding Style:
 
 Requirements:
 - CMake
+- OpenGL
+- SDL2
 
 Install:
 - mkdir build
