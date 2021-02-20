@@ -409,6 +409,18 @@ void Gpu::gp1_reset(uint32_t _){
   // TODO: invalidate GPU cache when it is implemented
 }
 
+// GP1(0x01): Reset Command Buffer
+void Gpu::gp1_reset_command_buffer(){
+  gp0_command->clear();
+  gp0_words_remaining = 0;
+  gp0_mode = Command;
+}
+
+// GP1(0x02): Acknowledge Interrupt
+void Gpu::gp1_acknowledge_irq(){
+  interrupt = false;
+}
+
 // GP1(0x03): Display Enable
 void Gpu::gp1_display_enable(uint32_t val){
   display_disabled = val & 1 != 0;
