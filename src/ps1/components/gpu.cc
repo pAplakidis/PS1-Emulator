@@ -147,6 +147,10 @@ void Gpu::gp0(uint32_t val){
         len = 1;
         method = &Gpu::gp0_quad_mono_opaque;
         break;
+      case 0x38:
+        len = 8;
+        method = &Gpu::gp0_quad_shaded_opaque;
+        break;
       case 0xa0:
         len = 3;
         method = &Gpu::gp0_image_load;
@@ -226,7 +230,12 @@ void Gpu::gp0_quad_mono_opaque(uint32_t val){
   printf("Draw quad\n");
 }
 
-// GP0(0xa0): image load
+// GP0(0x38): Shaded Opaque Quadrilateral
+void Gpu::gp0_quad_shaded_opaque(uint32_t val){
+  printf("Draw quad shaded\n");
+}
+
+// GP0(0xa0): Image Load
 void Gpu::gp0_image_load(uint32_t val){
   // Parameter 2 contains the image resolution
   uint32_t res = gp0_command->buffer[2];  // TODO: this might not be right
@@ -246,6 +255,17 @@ void Gpu::gp0_image_load(uint32_t val){
 
   // Put the GP0 state machine in ImageLoad mode
   gp0_mode = ImageLoad;
+}
+
+// GP0(0xc0): Image Store
+void Gpu::cp0_image_store(uint32_t val){
+  // Parameter 2 contains image resolution
+  uint32_t res = gp0_command->buffer[2];  // TODO: this might not be right
+
+  uint32_t width = res & 0xffff;
+  uint32_t height = res >> 16;
+
+  printf("Unhdandled image store: %x x %x\n", width, height);
 }
 
 // GP0(0xe1) command
