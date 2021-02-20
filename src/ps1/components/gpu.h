@@ -64,17 +64,23 @@ enum DmaDirection{
 
 // BUffer holding multi-word fixed-length GP0 command parameters
 class CommandBuffer{
-private:
+public:
   // Command buffer: the longuest possible command is GP0(0x3e) which takes 12 parameters
   uint32_t buffer[12];
   // Number of words queued in bufffer
   uint8_t len;
 
-public:
   CommandBuffer();
   void clear();
   void push_word(uint32_t word);
   uint32_t* index(size_t index);
+};
+
+enum Gp0Mode{
+  // Default mode: handling commands
+  Command,
+  // Loading an image into VRAM
+  ImageLoad
 };
 
 class Gpu{
@@ -116,6 +122,8 @@ private:
   bool interrupt;
   // DMA request direction
   enum DmaDirection dma_direction;
+  // Current mode of the GP0 register
+  enum Gp0Mode gp0_mode;
 
   // GP0 stuff
   // Mirror textured rectangles alogn the x axis
@@ -126,7 +134,7 @@ private:
   // Buffer containing the current GP0 command
   CommandBuffer *gp0_command;
   // Remaining words for the current GP0 command
-  uint32_t gp0_command_remaining;
+  uint32_t gp0_words_remaining;
   // Pointer to the method implementing the current GP0 command
   void (Gpu::*gp0_command_method)(uint32_t); // TODO: this may not be right (check what functions are called later on)
 
@@ -170,7 +178,9 @@ public:
   uint32_t read();
   void gp0(uint32_t val);
   void gp0_nop(uint32_t val);
+  void gp0_clear_cache();
   void gp0_quad_mono_opaque(uint32_t val);
+  void gp0_image_load(uint32_t val);
   void gp0_draw_mode(uint32_t val);
   void gp0_drawing_area_top_left(uint32_t val);
   void gp0_drawing_area_bottom_right(uint32_t val);

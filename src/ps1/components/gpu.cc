@@ -65,6 +65,7 @@ Gpu::Gpu(){
   display_disabled = true;
   interrupt = false;
   dma_direction = Off;
+  gp0_mode = Command;
 }
 
 // Retrieve value of the status register
@@ -83,7 +84,8 @@ uint32_t Gpu::status(){
   // Bit 14: not supported
   r |= (uint32_t)texture_disable << 15;
   r |= horizontal_res->into_status();
-  r |= (uint32_t)vres << 19;
+  // TODO: this a temporary workaround, if bit 31 is not emulated correctly, setting 'vres' to 1 locks the BIOS in an infinite loop
+  //r |= (uint32_t)vres << 19;
   r |= (uint32_t)vmode << 20;
   r |= (uint32_t)display_depth << 21;
   r |= (uint32_t)interlaced << 22;
@@ -131,7 +133,7 @@ uint32_t Gpu::read(){
 
 // Handle writes to the GP0 command register
 void Gpu::gp0(uint32_t val){
-  if(gp0_command_remaining == 0){
+  if(gp0_words_remaining == 0){
     uint32_t opcode = (val >> 24) & 0xff;
     uint32_t len;
     void (Gpu::*method)(uint32_t);
@@ -144,6 +146,10 @@ void Gpu::gp0(uint32_t val){
       case 0x28:
         len = 1;
         method = &Gpu::gp0_quad_mono_opaque;
+        break;
+      case 0xa0:
+        len = 3;
+        method = &Gpu::gp0_image_load;
         break;
       case 0xe1:
         len = 1;
@@ -174,17 +180,34 @@ void Gpu::gp0(uint32_t val){
         exit(1);
     }
 
-    gp0_command_remaining = len;
+    gp0_words_remaining = len;
     gp0_command_method = method;
     gp0_command->clear();
   }
 
-  gp0_command->push_word(val);
-  gp0_command_remaining--;
+  gp0_words_remaining--;
 
-  if(gp0_command_remaining == 0){
-    // We have all the parameters, we can run the command
-    (this->*gp0_command_method)(val); // TODO: this may not be right
+  switch(gp0_mode){
+    case Command:
+    {
+      gp0_command->push_word(val);
+
+      if(gp0_words_remaining == 0){
+        // We have all the parameters, we can run the command
+        (this->*gp0_command_method)(val); // TODO: this may not be right
+      }
+    }
+      break;
+    case ImageLoad:
+    {
+      // TODO: copy pixel data to VRAM
+
+      if(gp0_words_remaining == 0){
+        // Load done, switch back to command mode
+        gp0_mode = Command;
+      }
+    }
+      break;
   }
 }
 
@@ -193,9 +216,36 @@ void Gpu::gp0_nop(uint32_t val){
   // NOP
 }
 
+// GP0(0x01)
+void Gpu::gp0_clear_cache(){
+  // Not implemented yet since we don't have a texture cache yet
+}
+
 // GP0(0x28): Monochrome Opaque Quadrilateral
 void Gpu::gp0_quad_mono_opaque(uint32_t val){
   printf("Draw quad\n");
+}
+
+// GP0(0xa0): image load
+void Gpu::gp0_image_load(uint32_t val){
+  // Parameter 2 contains the image resolution
+  uint32_t res = gp0_command->buffer[2];  // TODO: this might not be right
+
+  uint32_t width = res & 0xffff;
+  uint32_t height = res >> 16;
+  
+  // Size of the image in 16bit pixels
+  uint32_t imgsize = width * height;
+  
+  // If we have an odd number of pixels we must round up since we transfer 32 bits at a time
+  // There will be 16 bits of padding in the last word;
+  imgsize = (imgsize + 1) & !1;
+
+  // Store number of words expected for this image
+  gp0_words_remaining = imgsize / 2;
+
+  // Put the GP0 state machine in ImageLoad mode
+  gp0_mode = ImageLoad;
 }
 
 // GP0(0xe1) command
