@@ -371,6 +371,47 @@ void Gpu::gp1_reset(uint32_t _){
   // TODO: invalidate GPU cache when it is implemented
 }
 
+// GP1(0x03): Display Enable
+void Gpu::gp1_display_enable(uint32_t val){
+  display_disabled = val & 1 != 0;
+}
+
+// GP1(0x04): DMA direction
+void Gpu::gp1_dma_direction(uint32_t val){
+  switch(val & 3){
+    case 0:
+      dma_direction = Off;
+      break;
+    case 1:
+      dma_direction = Fifo;
+      break;
+    case 2:
+      dma_direction = CpuToGp0;
+      break;
+    case 3:
+      dma_direction = VRamToCpu;
+      break;
+  }
+}
+
+// GP1(0x05): display VRAM start
+void Gpu::gp1_display_vram_start(uint32_t val){
+  display_vram_x_start = (uint16_t)(val & 0x3fe);
+  display_vram_y_start = (uint16_t)((val >> 10) & 0x1ff);
+}
+
+// GP1(0x06): display horizontal range
+void Gpu::gp1_display_horizontal_range(uint32_t val){
+  display_horiz_start = (uint16_t)(val & 0xfff);
+  display_horiz_end = (uint16_t)((val >> 12) & 0xfff);
+}
+
+// GP1(0x07): display vertical range
+void Gpu::gp1_display_vertical_range(uint32_t val){
+  display_line_start = (uint16_t)(val & 0x3ff);
+  display_line_end = (uint16_t)((val >> 10) & 0x3ff);
+}
+
 // GP1(0x80): Display Mode
 void Gpu::gp1_display_mode(uint32_t val){
   uint8_t hr1 = (uint8_t)(val & 3);
@@ -411,41 +452,5 @@ void Gpu::gp1_display_mode(uint32_t val){
     printf("Unsupported display mode %08x\n", val);
     exit(1);
   }
-}
-
-// GP1(0x04): DMA direction
-void Gpu::gp1_dma_direction(uint32_t val){
-  switch(val & 3){
-    case 0:
-      dma_direction = Off;
-      break;
-    case 1:
-      dma_direction = Fifo;
-      break;
-    case 2:
-      dma_direction = CpuToGp0;
-      break;
-    case 3:
-      dma_direction = VRamToCpu;
-      break;
-  }
-}
-
-// GP1(0x05): display VRAM start
-void Gpu::gp1_display_vram_start(uint32_t val){
-  display_vram_x_start = (uint16_t)(val & 0x3fe);
-  display_vram_y_start = (uint16_t)((val >> 10) & 0x1ff);
-}
-
-// GP1(0x06): display horizontal range
-void Gpu::gp1_display_horizontal_range(uint32_t val){
-  display_horiz_start = (uint16_t)(val & 0xfff);
-  display_horiz_end = (uint16_t)((val >> 12) & 0xfff);
-}
-
-// GP1(0x07): display vertical range
-void Gpu::gp1_display_vertical_range(uint32_t val){
-  display_line_start = (uint16_t)(val & 0x3ff);
-  display_line_end = (uint16_t)((val >> 10) & 0x3ff);
 }
 

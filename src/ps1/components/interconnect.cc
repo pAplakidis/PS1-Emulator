@@ -392,7 +392,7 @@ void Interconnect::do_dma_block(enum Port port){
         uint32_t src_word = ram->load32(cur_addr);
         switch(port){
           case GPU:
-            printf("GPU data %08x\n", src_word);
+            gpu->gp0(src_word);
             break;
           default:
             printf("Unhandled DMA destination port %x\n", (uint8_t)port);

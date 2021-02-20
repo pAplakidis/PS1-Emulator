@@ -189,10 +189,11 @@ public:
   void gp0_mask_bit_setting(uint32_t val);
   void gp1(uint32_t val);
   void gp1_reset(uint32_t _);
-  void gp1_display_mode(uint32_t val);
+  void gp1_display_enable(uint32_t val);
   void gp1_dma_direction(uint32_t val);
   void gp1_display_vram_start(uint32_t val);
   void gp1_display_horizontal_range(uint32_t val);
   void gp1_display_vertical_range(uint32_t val);
+  void gp1_display_mode(uint32_t val);
 };
 
