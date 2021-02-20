@@ -147,6 +147,14 @@ void Gpu::gp0(uint32_t val){
         len = 1;
         method = &Gpu::gp0_quad_mono_opaque;
         break;
+      case 0x2c:
+        len = 9;
+        method = &Gpu::gp0_quad_texture_blend_opaque;
+        break;
+      case 0x30:
+        len = 6;
+        method = &Gpu::gp0_triangle_shaded_opaque;
+        break;
       case 0x38:
         len = 8;
         method = &Gpu::gp0_quad_shaded_opaque;
@@ -228,6 +236,16 @@ void Gpu::gp0_clear_cache(){
 // GP0(0x28): Monochrome Opaque Quadrilateral
 void Gpu::gp0_quad_mono_opaque(uint32_t val){
   printf("Draw quad\n");
+}
+
+// GP0(0x2c): Textured Opaque Quadrilateral
+void Gpu::gp0_quad_texture_blend_opaque(uint32_t val){
+  printf("Draw quad texture blending\n");
+}
+
+// GP0(0x30): Shaded Opque Triangle
+void Gpu::gp0_triangle_shaded_opaque(uint32_t val){
+  printf("Draw triangle shaded\n");
 }
 
 // GP0(0x38): Shaded Opaque Quadrilateral

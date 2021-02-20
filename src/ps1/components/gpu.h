@@ -180,6 +180,8 @@ public:
   void gp0_nop(uint32_t val);
   void gp0_clear_cache();
   void gp0_quad_mono_opaque(uint32_t val);
+  void gp0_quad_texture_blend_opaque(uint32_t val);
+  void gp0_triangle_shaded_opaque(uint32_t val);
   void gp0_quad_shaded_opaque(uint32_t val);
   void gp0_image_load(uint32_t val);
   void cp0_image_store(uint32_t val);
