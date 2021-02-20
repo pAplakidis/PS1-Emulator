@@ -128,7 +128,7 @@ private:
   // Remaining words for the current GP0 command
   uint32_t gp0_command_remaining;
   // Pointer to the method implementing the current GP0 command
-  void (Gpu::*gp0_command_method)(void); // TODO: this may not be right (check what functions are called later on)
+  void (Gpu::*gp0_command_method)(uint32_t); // TODO: this may not be right (check what functions are called later on)
 
   // GP1 stuff
   // Texture window x mask (8 pixel steps)
@@ -169,11 +169,11 @@ public:
   uint32_t status();
   uint32_t read();
   void gp0(uint32_t val);
-  void gp0_nop();
-  void gp0_quad_mono_opaque();
+  void gp0_nop(uint32_t val);
+  void gp0_quad_mono_opaque(uint32_t val);
   void gp0_draw_mode(uint32_t val);
-  void gp0_drawing_adrea_top_left(uint32_t val);
-  void gp0_drawing_adrea_bottom_right(uint32_t val);
+  void gp0_drawing_area_top_left(uint32_t val);
+  void gp0_drawing_area_bottom_right(uint32_t val);
   void gp0_drawing_offset(uint32_t val);
   void gp0_texture_window(uint32_t val);
   void gp0_mask_bit_setting(uint32_t val);

@@ -134,9 +134,8 @@ void Gpu::gp0(uint32_t val){
   if(gp0_command_remaining == 0){
     uint32_t opcode = (val >> 24) & 0xff;
     uint32_t len;
-    void (Gpu::*method)(void);
+    void (Gpu::*method)(uint32_t);
 
-    // TODO: check the function pointers (use of &) and parameters
     switch(opcode){
       case 0x00:
         len = 1;
@@ -185,17 +184,17 @@ void Gpu::gp0(uint32_t val){
 
   if(gp0_command_remaining == 0){
     // We have all the parameters, we can run the command
-    (this->*gp0_command_method)(); // TODO: find a way to call this method
+    (this->*gp0_command_method)(val); // TODO: this may not be right
   }
 }
 
 // GP0(0x00): No Operation
-void Gpu::gp0_nop(){
+void Gpu::gp0_nop(uint32_t val){
   // NOP
 }
 
 // GP0(0x28): Monochrome Opaque Quadrilateral
-void Gpu::gp0_quad_mono_opaque(){
+void Gpu::gp0_quad_mono_opaque(uint32_t val){
   printf("Draw quad\n");
 }
 
@@ -236,13 +235,13 @@ void Gpu::gp0_texture_window(uint32_t val){
 }
 
 // GP0(0xe3): set drawing area top left
-void Gpu::gp0_drawing_adrea_top_left(uint32_t val){
+void Gpu::gp0_drawing_area_top_left(uint32_t val){
   drawing_area_top = (uint16_t)((val >> 10) & 0x3ff);
   drawing_area_left = (uint16_t)(val & 0x3ff);
 }
 
 // GP0(0xe4): set drawing area bottom right
-void Gpu::gp0_drawing_adrea_bottom_right(uint32_t val){
+void Gpu::gp0_drawing_area_bottom_right(uint32_t val){
   drawing_area_bottom = (uint16_t)((val >> 10) & 0x3ff);
   drawing_area_right = (uint16_t)(val & 0x3ff);
 }
