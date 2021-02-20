@@ -414,6 +414,7 @@ void Gpu::gp1_reset_command_buffer(){
   gp0_command->clear();
   gp0_words_remaining = 0;
   gp0_mode = Command;
+  // TODO: clear the command FIFO when it is implemented
 }
 
 // GP1(0x02): Acknowledge Interrupt
