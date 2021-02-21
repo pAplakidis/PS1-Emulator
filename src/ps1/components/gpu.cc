@@ -45,6 +45,31 @@ uint32_t* CommandBuffer::index(size_t index){
 
 // --------------------------------------------------------------
 
+// --------------------------------------------------------------
+
+// Postion in VRAM and RGB color methods
+
+// Parse position frtom GP0 parameter
+void Position::from_gp0(uint32_t val){
+  int16_t x = (int16_t)val;
+  int16_t y = (int16_t)(val >> 16);
+
+  pos[0] = (GLshort)x;
+  pos[1] = (GLshort)y;
+}
+
+void Color::from_gp0(uint32_t val){
+  uint8_t r = (uint8_t)val;
+  uint8_t g = (uint8_t)(val >> 8);
+  uint8_t b = (uint8_t)(val >> 16);
+
+  rgb[0] = r;
+  rgb[1] = g;
+  rgb[2] = b;
+}
+
+// --------------------------------------------------------------
+
 Gpu::Gpu(){
   page_base_x = 0;
   page_base_y = 0;
@@ -247,7 +272,17 @@ void Gpu::gp0_quad_texture_blend_opaque(uint32_t val){
 
 // GP0(0x30): Shaded Opque Triangle
 void Gpu::gp0_triangle_shaded_opaque(uint32_t val){
-  printf("Draw triangle shaded\n");
+  Position positions[3];
+  positions[0].from_gp0(gp0_command->buffer[1]);
+  positions[1].from_gp0(gp0_command->buffer[3]);
+  positions[2].from_gp0(gp0_command->buffer[5]);
+
+  Color colors[3];
+  colors[0].from_gp0(gp0_command->buffer[0]);
+  colors[1].from_gp0(gp0_command->buffer[2]);
+  colors[2].from_gp0(gp0_command->buffer[4]);
+
+  renderer->push_triangle(positions, colors);
 }
 
 // GP0(0x38): Shaded Opaque Quadrilateral

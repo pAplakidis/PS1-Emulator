@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "renderer.h"
+#include "buffer.h"
 
 // Depth of the pixel values in a texture page
 enum TextureDepth{
@@ -83,6 +84,20 @@ enum Gp0Mode{
   Command,
   // Loading an image into VRAM
   ImageLoad
+};
+
+// Position in VRAM
+class Position{
+public:
+  GLshort pos[2];
+  void from_gp0(uint32_t val);
+};
+
+// RGB color
+class Color{
+public:
+  GLubyte rgb[3];
+  void from_gp0(uint32_t val);
 };
 
 class Gpu{

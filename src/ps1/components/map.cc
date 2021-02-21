@@ -6,6 +6,7 @@ namespace map{
     this->length = length;
   }
 
+  // TODO: DEBUG THIS (check if it's right)
   // Returns the offset if the address is within range
   uint32_t Range::contains(uint32_t addr) const{
     if(addr >= start && addr < start + length){

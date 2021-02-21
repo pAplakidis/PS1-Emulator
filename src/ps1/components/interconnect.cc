@@ -22,6 +22,7 @@ uint32_t Interconnect::load32(uint32_t addr){
   
   uint32_t abs_addr = map::mask_region(addr);
 
+  // TODO: when PC tries to get address from here it crashes (cannot fetch), DEBUG (check contains() in map.cc)
   if(uint32_t offset = map::BIOS->contains(addr)){
     return bios->load32(offset);
   }
