@@ -1,6 +1,12 @@
 #pragma once
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #include <GL/gl.h>
+#include <GL/glext.h>
+
+const uint32_t VERTEX_BUFFER_LEN = 64 * 1024;
 
 // Write-only buffer with enough size for VERTEX_BUFFER_LEN elements
 template<typename T> class Buffer{
@@ -12,5 +18,7 @@ private:
 
 public:
   Buffer();
+  ~Buffer();
+  void set(uint32_t index, T val);
 };
 

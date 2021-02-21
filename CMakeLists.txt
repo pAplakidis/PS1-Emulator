@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.10)
 project(PS1-Emulator)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR/bin})
+set(CMAKE_CXX_FLAGS "-DGL_GLEXT_PROTOTYPES")
 
 # variables
 set(SRCDIR "src/")          # source code directory
