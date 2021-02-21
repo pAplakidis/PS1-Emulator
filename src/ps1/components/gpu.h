@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#include "renderer.h"
+
 // Depth of the pixel values in a texture page
 enum TextureDepth{
   // 4 bits per pixel
@@ -171,6 +173,9 @@ private:
   uint16_t display_line_start;
   // Display output last line relative to VSYNC
   uint16_t display_line_end;
+
+  // OpenGL renderer
+  Renderer *renderer;
 
 public:
   Gpu();

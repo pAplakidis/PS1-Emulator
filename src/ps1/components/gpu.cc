@@ -66,6 +66,8 @@ Gpu::Gpu(){
   interrupt = false;
   dma_direction = Off;
   gp0_mode = Command;
+
+  renderer = new Renderer();
 }
 
 // Retrieve value of the status register

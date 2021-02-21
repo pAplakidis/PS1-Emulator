@@ -12,7 +12,7 @@ Renderer::Renderer(){
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
   window = SDL_CreateWindow(
-    "PSX",                  // window title
+    "PS1",                  // window title
     SDL_WINDOWPOS_CENTERED, // initial x position
     SDL_WINDOWPOS_CENTERED, // initial y position
     1024,                   // width, in pixels
@@ -20,9 +20,20 @@ Renderer::Renderer(){
     SDL_WINDOW_OPENGL       // flags
   );
 
+  if(window == NULL){
+    printf("Could not create window: %s\n", SDL_GetError());
+    exit(1);
+  }
+
   gl_context = SDL_GL_CreateContext(window);
 
-  // TODO: gl::load_with(|s| sdl2::video::gl_get_proc_address(s).unwrap() as *const c_void)
-  
+  // gl::load_with(|s| sdl2::video::gl_get_proc_address(s).unwrap() as *const c_void)
+  // this is in so that we can use this: SDL_GL_GetProcAddress(s);
+  // TODO: don't forget to use SDL_DestroyWindow(window) and clean up when done (SDL_Quit when the program exits)
+
+  // Clear the window
+  glClearColor(0., 0., 0., 1.0);
+  glClear(GL_COLOR_BUFFER_BIT);
+  SDL_GL_SwapWindow(window);
 }
 
