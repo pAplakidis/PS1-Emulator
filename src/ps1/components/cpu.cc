@@ -29,6 +29,7 @@ Cpu::Cpu(Interconnect *intercn){
   this->intercn = intercn;
 }
 
+// TODO: we get a segfault trying to get or set a reg (probably due to load or store) (or at least that is where gdb crashed) DEBUG THIS
 // Get CPU register
 uint32_t Cpu::reg(int idx){
   return registers[idx];

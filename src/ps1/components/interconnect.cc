@@ -27,10 +27,6 @@ uint32_t Interconnect::load32(uint32_t addr){
     free(offset);
     return ret;
   }
-  else{
-    printf("Cannot fetch address at %08x\n", addr);
-    exit(1);
-  }
 
   if(uint32_t *offset = map::IRQ_CONTROL->contains(abs_addr)){
     printf("IRQ control read %x\n", *offset);
@@ -74,10 +70,18 @@ uint32_t Interconnect::load32(uint32_t addr){
         return 0;
     }
   }
+
+  printf("Unhandled load16 at address %08x\n", addr);
+  exit(1);
 }
 
 // Load 16bit halfword at 'addr'
 uint16_t Interconnect::load16(uint32_t addr){
+  if(addr % 2 != 0){
+    printf("Unaligned load16 address: %8x\n", addr);
+    exit(1);
+  }
+
   uint32_t abs_addr = map::mask_region(addr);
 
   if(uint32_t *offset = map::SPU->contains(abs_addr)){
@@ -202,6 +206,9 @@ void Interconnect::store32(uint32_t addr, uint32_t val){
     }
     return;
   }
+
+  printf("Unhandled store32 at address %08x <- %x\n", addr, val);
+  exit(1);
 }
 
 // TODO: the only peripheral we support right now is BIOS ROM and we can't write to it, come back and complete this later
@@ -236,6 +243,9 @@ void Interconnect::store16(uint32_t addr, uint16_t val){
     free(offset);
     return;
   }
+
+  printf("Unhandled store16 at address %08x <- %x\n", addr, val);
+  exit(1);
 }
 
 // TODO: the only peripheral we support right now is BIOS ROM and we can't write to it, come back and complete this later
@@ -250,7 +260,8 @@ void Interconnect::store8(uint32_t addr, uint8_t val){
     return;
   }
   
-  printf("Unhandled store8 into address %8x\n", addr);
+  printf("Unhandled store8 into address %08x <- %x\n", addr, val);
+  exit(1);
 }
 
 // DMA register read

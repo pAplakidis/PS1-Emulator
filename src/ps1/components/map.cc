@@ -14,7 +14,7 @@ namespace map{
       return res;
     }
     else{
-      printf("Invalid memory address: %x\n", addr);
+      //printf("Invalid memory address: %x\n", addr);
       return NULL;
     }
   }
