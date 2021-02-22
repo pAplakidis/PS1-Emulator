@@ -282,7 +282,7 @@ void Gpu::gp0_triangle_shaded_opaque(uint32_t val){
   colors[1].from_gp0(gp0_command->buffer[2]);
   colors[2].from_gp0(gp0_command->buffer[4]);
 
-  renderer->push_triangle(positions, colors);
+  //renderer->push_triangle(positions, colors);
 }
 
 // GP0(0x38): Shaded Opaque Quadrilateral

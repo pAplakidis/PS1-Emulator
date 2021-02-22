@@ -6,19 +6,19 @@ namespace map{
     this->length = length;
   }
 
-  // TODO: DEBUG THIS (check if it's right)
   // Returns the offset if the address is within range
-  uint32_t Range::contains(uint32_t addr) const{
+  uint32_t* Range::contains(uint32_t addr) const{
     if(addr >= start && addr < start + length){
-      return addr - start;
+      uint32_t *res = (uint32_t*)malloc(sizeof(uint32_t));
+      *res = addr - start;
+      return res;
     }
     else{
-      printf("Invalid memory address: %x", addr);
-      exit(1);
+      printf("Invalid memory address: %x\n", addr);
+      return NULL;
     }
   }
 
-  // TODO: maybe move these to the interconnect file?
   const Range *BIOS = new Range(0xbfc00000, 512*1024);
   const Range *MEMCONTROL = new Range(0x1f801000, 36);
   // Register that has something to do with RAM configuration, configured by the BIOS

@@ -1,7 +1,9 @@
 #pragma once
 
-#include <vector>
+#include <stdio.h>
 #include <stdint.h>
+
+#include <vector>
 
 class Ram{
 public:

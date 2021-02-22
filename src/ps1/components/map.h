@@ -13,7 +13,7 @@ namespace map{
     uint32_t start, length;
 
     Range(uint32_t start, uint32_t length);
-    uint32_t contains(uint32_t addr) const;
+    uint32_t *contains(uint32_t addr) const;
   };
 
   extern const Range *BIOS;
