@@ -1,7 +1,8 @@
 #include "buffer.h"
 
 // Create a new buffer bound tothe current vertex array
-template<typename T> Buffer<T>::Buffer(){
+template<class T>
+Buffer<T>::Buffer(){
   object = 0;
 
   // Generate the buffer object
@@ -31,14 +32,16 @@ template<typename T> Buffer<T>::Buffer(){
   map = memory;
 }
 
-template<typename T> Buffer<T>::~Buffer(){
+template<class T>
+Buffer<T>::~Buffer(){
   glBindBuffer(GL_ARRAY_BUFFER, object);
   glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
   glDeleteBuffers(1, &object);
 }
 
 // Set entry at "index" to "val" in the buffer
-template<typename T> void Buffer<T>::set(uint32_t index, T val){
+template<class T>
+void Buffer<T>::set(uint32_t index, T val){
   if(index >= VERTEX_BUFFER_LEN){
     printf("Buffer overflow\n");
     exit(1);

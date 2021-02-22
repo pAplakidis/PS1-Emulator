@@ -9,7 +9,8 @@
 const uint32_t VERTEX_BUFFER_LEN = 64 * 1024;
 
 // Write-only buffer with enough size for VERTEX_BUFFER_LEN elements
-template<typename T> class Buffer{
+template<class T>
+class Buffer{
 private:
   // OpenGL buffer object
   GLuint object;
