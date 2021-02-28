@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <fstream>
+#include <iostream>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
@@ -45,5 +47,8 @@ public:
   uint32_t nvertices;
 
   Renderer();
+  GLuint compile_shader(std::str& src, GLenum shader_type);
+  GLuint link_program(GLuint& shaders);
+  GLuint find_program_attrib(std::string& attr);
 };
 
