@@ -10,6 +10,7 @@
 #include <GL/gl.h>
 
 #include "buffer.h"
+#include "buffer_impl.h"
 
 // Position in VRAM
 class Position{
@@ -47,8 +48,8 @@ public:
   uint32_t nvertices;
 
   Renderer();
-  GLuint compile_shader(std::str& src, GLenum shader_type);
+  GLuint compile_shader(const std::string& src, GLenum shader_type);
   GLuint link_program(GLuint& shaders);
-  GLuint find_program_attrib(std::string& attr);
+  GLuint find_program_attrib(const std::string& attr);
 };
 

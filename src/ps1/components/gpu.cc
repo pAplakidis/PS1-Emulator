@@ -37,7 +37,7 @@ void CommandBuffer::push_word(uint32_t word){
 
 uint32_t* CommandBuffer::index(size_t index){
   if(index >= (size_t)len){
-    printf("Command buffer index out of range: %x (%x)\n", index, len);
+    printf("Command buffer index out of range: %x (%x)\n", (uint32_t)index, len);
   }
 
   return &buffer[index];

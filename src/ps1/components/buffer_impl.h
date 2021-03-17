@@ -23,17 +23,16 @@ Buffer<T>::Buffer(){
   // Remap the entire buffer
   T *memory = (T*)glMapBufferRange(GL_ARRAY_BUFFER, 0, buffer_size, access);
 
-  // TODO: this iteration of memory might be wrong
+  // TODO: this iteration of memory might be wrong + the assignment is wrong (check page 141)
   // Reset the buffer to 0 to avoid hard-to-reproduce bugs if we do something wrong with uninitialized memory
-  for(int i=0;i < (size_t)VERTEX_BUFFER_LEN;i++){
-    memory[i] = (T)0;
-  }
+  //for(int i=0;i < (size_t)VERTEX_BUFFER_LEN;i++){
+  //  memory[i] = NULL;
+  //}
 
   map = memory;
 }
 
-template<class T>
-Buffer<T>::~Buffer(){
+template<class T> Buffer<T>::~Buffer(){
   glBindBuffer(GL_ARRAY_BUFFER, object);
   glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
   glDeleteBuffers(1, &object);

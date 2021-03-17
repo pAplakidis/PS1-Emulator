@@ -1,39 +1,39 @@
 #include "renderer.h"
 
 // These functions help us load the shaders into memory
-unsigned long getFileLength(ifstream& file){
+unsigned long getFileLength(std::ifstream& file){
   if(!file.good()) return 0;
 
   unsigned long pos = file.tellg();
-  file.seekg(0, ios::end);
+  file.seekg(0, std::ios::end);
   unsigned long len = file.tellg();
-  file.seekg(ios::beg);
+  file.seekg(std::ios::beg);
 
   return len;
 }
 
-// TODO: check the way we handle len, it might be wrong use of pointer/value
-int loadshader(char* filename, GLchar** ShderSource, unsigned long* len){
-  ifstream file;
-  file.open(filename, ios::in);  // opens as ASCII
+int loadshader(const char* filename, GLchar** ShaderSource, int* len){
+  std::ifstream file;
+  // TODO: this gives error
+  file.open(filename, std::ios::in);  // opens as ASCII
   if(!file){
     printf("Error opening shader file\n");
     exit(1);
   }
 
-  len = getFileLength(file);
+  *len = getFileLength(file);
 
-  if(len == 0){
+  if(*len == 0){
     printf("Error: shader length = 0\n");
     exit(-2);
   }
 
-  *ShaderSource = (GLubyte*) new char[len+1];
+  *ShaderSource = (GLchar*) new char[*len+1];
   if(*ShaderSource == 0){
     printf("Error creating shader source\n");
     exit(-3);
   }
-  *ShaderSource[len] = 0;
+  *ShaderSource[*len] = 0;
   
   unsigned int i = 0;
   while(file.good()){
@@ -121,9 +121,15 @@ Renderer::Renderer(){
   unsigned int vertex_shader = glCreateShader(GL_VERTEX_SHADER);
   unsigned int fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
 
-  unsigned long vlength, flength;
-  const char *vs_src = loadshader("vertex_shader.shader", &vlength);
-  const char *fs_src = loadshader("fragment_shader.shader", &flength);
+  int vlength;
+  int flength;
+  char *vs_src;
+  char *fs_src;
+
+  const char *vs_filename = "vertex_shader.shader";
+  const char *fs_filename = "fragment_shader.shader";
+  loadshader(vs_filename, &vs_src, &vlength);
+  loadshader(fs_filename, &fs_src, &flength);
 
   // TODO: check out glShaderSourceARB() + you can use nullptr instead of &vlength
   glShaderSource(vertex_shader, 1, &vs_src, &vlength);
@@ -158,7 +164,7 @@ Renderer::Renderer(){
   glVertexAttribIPointer(index, 2, GL_SHORT, 0, NULL);
 
   // Bind the color attribute
-  GLuint index = find_program_attrib("vertex_color");
+  index = find_program_attrib("vertex_color");
   glEnableVertexAttribArray(index);
 
   // Link the buffer and the index: 3 GLByte attributes, not normalized
@@ -167,10 +173,10 @@ Renderer::Renderer(){
 }
 
 // TODO: code these
-// TODO: maybe the std::str in the functions' parameters need to be const
+// TODO: maybe the std::string in the functions' parameters need to be const
 
 // Compile the given shader from a file
-GLuint Renderer::compile_shader(std::str& src, GLenum shader_type){
+GLuint Renderer::compile_shader(const std::string& src, GLenum shader_type){
 
 }
 
@@ -180,7 +186,7 @@ GLuint Renderer::link_program(GLuint& shaders){
 }
 
 // Return the index of attribute "attr" in renderer's program. Panics if the index is not found
-GLuint Renderer::find_program_attrib(std::string& attr){
+GLuint Renderer::find_program_attrib(const std::string& attr){
 
 }
 
