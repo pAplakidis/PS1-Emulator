@@ -48,8 +48,9 @@ public:
   uint32_t nvertices;
 
   Renderer();
+  ~Renderer();
   GLuint compile_shader(const std::string& src, GLenum shader_type);
   GLuint link_program(GLuint& shaders);
-  GLuint find_program_attrib(const std::string& attr);
+  GLuint find_program_attrib(const char* attr);
 };
 

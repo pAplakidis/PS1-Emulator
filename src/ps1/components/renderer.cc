@@ -12,12 +12,12 @@ unsigned long getFileLength(std::ifstream& file){
   return len;
 }
 
+// TODO: fix this function (segfaults, watch Cherno's tutorial)
 int loadshader(const char* filename, GLchar** ShaderSource, int* len){
   std::ifstream file;
-  // TODO: this gives error
   file.open(filename, std::ios::in);  // opens as ASCII
   if(!file){
-    printf("Error opening shader file\n");
+    printf("Error opening shader file %s\n", filename);
     exit(1);
   }
 
@@ -126,8 +126,9 @@ Renderer::Renderer(){
   char *vs_src;
   char *fs_src;
 
-  const char *vs_filename = "vertex_shader.shader";
-  const char *fs_filename = "fragment_shader.shader";
+  // TODO: this requires full path
+  const char *vs_filename = "/home/neo/Dev/PS1-Emulator/src/ps1/components/vertex_shader.shader";
+  const char *fs_filename = "/home/neo/Dev/PS1-Emulator/src/ps1/components/fragment_shader.shader";
   loadshader(vs_filename, &vs_src, &vlength);
   loadshader(fs_filename, &fs_src, &flength);
 
@@ -172,9 +173,14 @@ Renderer::Renderer(){
   glVertexAttribIPointer(index, 3, GL_UNSIGNED_BYTE, 0, NULL);
 }
 
-// TODO: code these
-// TODO: maybe the std::string in the functions' parameters need to be const
+Renderer::~Renderer(){
+  glDeleteVertexArrays(1, &vertex_array_object);
+  glDeleteShader(vertex_shader);
+  glDeleteShader(fragment_shader);
+  glDeleteProgram(program);
+}
 
+// TODO: put the code parts from above here to look cleaner
 // Compile the given shader from a file
 GLuint Renderer::compile_shader(const std::string& src, GLenum shader_type){
 
@@ -186,7 +192,14 @@ GLuint Renderer::link_program(GLuint& shaders){
 }
 
 // Return the index of attribute "attr" in renderer's program. Panics if the index is not found
-GLuint Renderer::find_program_attrib(const std::string& attr){
+GLuint Renderer::find_program_attrib(const char* attr){
+  GLint index = glGetAttribLocation(program, attr);
 
+  if(index < 0){
+    printf("Attribute \"%s\" not found in program\n", attr);
+    exit(1);
+  }
+
+  return index;
 }
 

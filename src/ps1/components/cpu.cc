@@ -61,6 +61,8 @@ void Cpu::main_loop(){
 
 // Reads command in memory and executes it (also increases pc to point to next instruction)
 void Cpu::cycle(){
+  printf("%08x\n", reg_pc); // TODO: remove this when done with the debugger
+
   // Fetch instruction at PC
   Instruction *instruction = decode(load32(reg_pc));  // this solves branching issues with pipelining
 

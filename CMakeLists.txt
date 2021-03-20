@@ -8,6 +8,7 @@ find_package(SDL2 REQUIRED)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR/bin})
 set(CMAKE_CXX_FLAGS "-DGL_GLEXT_PROTOTYPES")
+set(CMAKE_BUILD_TYPE Debug)
 
 # variables
 set(SRCDIR "src/")          # source code directory
