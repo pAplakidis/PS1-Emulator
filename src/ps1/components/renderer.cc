@@ -203,3 +203,48 @@ GLuint Renderer::find_program_attrib(const char* attr){
   return index;
 }
 
+// Add a triangle to the draw buffer
+void Renderer::push_triangle(Position positions[3], Color colors[3]){
+  // Make sure we have enough room left to queue the vertex
+  if(nvertices + 3 > VERTEX_BUFFER_LEN){
+    printf("Vertex attribute buffers full, forcing draw\n");
+    draw();
+  }
+
+  for(int i=0;i<3;i++){
+    // Push
+    this->positions.set(nvertices, positions[i]);
+    this->colors.set(nvertices, colors[i]);
+    nvertices++;
+  }
+}
+
+// TODO: study this
+// Draw the buffered commands and reset the buffers
+void Renderer::draw(){
+  // Make sure all the data from the persistent mappings is flushed to the buffer
+  glMemoryBarrier(GL_CLIENT_MAPPED_BUFFER_BARRIER_BIT);
+  glDrawArrays(GL_TRIANGLES, 0, (GLsizei)nvertices);
+
+  // Wait for GPU to complete
+  GLsync sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+
+  while(1){
+    GLenum r = glClientWaitSync(sync, GL_SYNC_FLUSH_COMMANDS_BIT, 10000000);
+
+    if(r == GL_ALREADY_SIGNALED || r == GL_CONDITION_SATISFIED){
+      // Drawing done
+      break;
+    }
+  }
+
+  // Reset the buffers
+  nvertices = 0;
+}
+
+// Draw the buffered commands and display them
+void Renderer::display(){
+  draw();
+  SDL_GL_SwapWindow(window);
+}
+

@@ -257,7 +257,7 @@ void Gpu::gp0_triangle_shaded_opaque(uint32_t val){
   colors[1].from_gp0(gp0_command->buffer[2]);
   colors[2].from_gp0(gp0_command->buffer[4]);
 
-  //renderer->push_triangle(positions, colors);
+  renderer->push_triangle(positions, colors);
 }
 
 // GP0(0x38): Shaded Opaque Quadrilateral
@@ -354,6 +354,9 @@ void Gpu::gp0_drawing_offset(uint32_t val){
   // Values are 11bit 2's complement signed values, we need to shift the value to 16bits to force sign extension
   drawing_x_offset = ((int16_t)(x << 5)) >> 5;
   drawing_y_offset = ((int16_t)(y << 5)) >> 5;
+
+  // TODO: temporary hack, force display when changing offset since we don't have proper timings
+  renderer->display();
 }
 
 // GP0(0xe6): set mask bit setting

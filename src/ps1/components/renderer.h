@@ -52,5 +52,8 @@ public:
   GLuint compile_shader(const std::string& src, GLenum shader_type);
   GLuint link_program(GLuint& shaders);
   GLuint find_program_attrib(const char* attr);
+  void push_triangle(Position positions[3], Color colors[3]);
+  void draw();
+  void display();
 };
 
