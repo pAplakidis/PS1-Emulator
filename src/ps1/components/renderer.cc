@@ -18,7 +18,6 @@ unsigned long getFileSize(const char* filename){
   return rc == 0 ? stat_buf.st_size : -1;
 }
 
-// TODO: fix this function (segfaults, watch Cherno's tutorial)
 int loadshader(const char* filename, GLchar** ShaderSource, int* len){
   std::ifstream file;
   file.open(filename, std::ios::in);  // opens as ASCII
@@ -253,5 +252,16 @@ void Renderer::draw(){
 void Renderer::display(){
   draw();
   SDL_GL_SwapWindow(window);
+}
+
+// TODO: finish this
+// Check for OpenGL errors using glGetDebugMessageLog. If a severe error is encoutered this function panics
+// If the OpenGL context doesn't have the DEBUG asttribute this won't work
+void Renderer::check_for_errors(){
+  bool fatal = false;
+
+  while(1){
+    
+  }
 }
 

@@ -56,5 +56,6 @@ public:
   void push_triangle(Position positions[3], Color colors[3]);
   void draw();
   void display();
+  void check_for_errors();
 };
 
