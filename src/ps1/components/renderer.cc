@@ -12,6 +12,12 @@ unsigned long getFileLength(std::ifstream& file){
   return len;
 }
 
+unsigned long getFileSize(const char* filename){
+  struct stat stat_buf;
+  int rc = stat(filename, &stat_buf);
+  return rc == 0 ? stat_buf.st_size : -1;
+}
+
 // TODO: fix this function (segfaults, watch Cherno's tutorial)
 int loadshader(const char* filename, GLchar** ShaderSource, int* len){
   std::ifstream file;
@@ -21,7 +27,8 @@ int loadshader(const char* filename, GLchar** ShaderSource, int* len){
     exit(1);
   }
 
-  *len = getFileLength(file);
+  //*len = getFileLength(file);
+  *len = getFileSize(filename);
 
   if(*len == 0){
     printf("Error: shader length = 0\n");
