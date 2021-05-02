@@ -46,8 +46,9 @@ void Buffer<T>::set(uint32_t index, T val){
     exit(1);
   }
   
-  //TODO: this might be wrong
-  T *p = map->offset((size_t)index);
+  //TODO: this might be wrong!!!
+  //T *p = map->offset((size_t)index);
+  T *p = map + (size_t)index;
   *p = val;
 }
 
