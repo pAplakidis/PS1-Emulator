@@ -254,14 +254,47 @@ void Renderer::display(){
   SDL_GL_SwapWindow(window);
 }
 
-// TODO: finish this
 // Check for OpenGL errors using glGetDebugMessageLog. If a severe error is encoutered this function panics
 // If the OpenGL context doesn't have the DEBUG asttribute this won't work
 void Renderer::check_for_errors(){
   bool fatal = false;
 
   while(1){
-    
+    std::vector<GLsizei> buffer;
+    buffer.assign(4096, 0);
+    int severity = 0;
+    int source = 0;
+    int message_size = 0;
+    int mtype = 0;
+    int id = 0;
+
+    GLuint count = glGetDebugMessageLog(1,
+                                        (GLsizei)buffer.size(),
+                                        (GLenum*)&source,
+                                        (GLenum*)&mtype,
+                                        (GLuint*)&id,
+                                        (GLenum*)&severity,
+                                        (GLsizei*)&message_size,
+                                        (GLchar*)&buffer);
+    if(count == 0)
+      // No messages left
+      break;
+
+    // TODO: this might be wrong
+    buffer.resize((size_t)message_size);
+
+    // TODO: check if message is utf-8
+    /*
+    switch(){
+      case
+    }
+    */
+
+    // TODO: finish debugging code
+  }
+  if(fatal){
+    printf("Fatal OpenGL error!\n");
+    exit(1);
   }
 }
 

@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <fstream>
 #include <iostream>
+#include <vector>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
