@@ -55,6 +55,7 @@ public:
   GLuint link_program(GLuint& shaders);
   GLuint find_program_attrib(const char* attr);
   void push_triangle(Position positions[3], Color colors[3]);
+  void push_quad(Position positions[4], Color colors[4]);
   void draw();
   void display();
   void check_for_errors();

@@ -225,6 +225,29 @@ void Renderer::push_triangle(Position positions[3], Color colors[3]){
   }
 }
 
+// Add a quad to the draw buffer
+void Renderer::push_quad(Position positions[4], Color colors[4]){
+  // make sure we have enough room left to queue the vertex
+  // we need to push two triangles to draw a quad, so 6 vertices
+  if(nvertices + 6 > VERTEX_BUFFER_LEN)
+    // the vertex attribute buffers are full, force an early draw
+    draw();
+
+  // Push the first triangle
+  for(int i=0;i<3;i++){
+    this->positions.set(nvertices, positions[i]);
+    this->colors.set(nvertices, colors[i]);
+    nvertices++;
+  }
+
+  // Push the second triangle
+  for(int i=1;i<4;i++){
+    this->positions.set(nvertices, positions[i]);
+    this->colors.set(nvertices, colors[i]);
+    nvertices++;
+  }
+}
+
 // TODO: study this
 // Draw the buffered commands and reset the buffers
 void Renderer::draw(){
@@ -291,6 +314,7 @@ void Renderer::check_for_errors(){
     */
 
     // TODO: finish debugging code
+    // https://www.khronos.org/registry/OpenGL/extensions/KHR/KHR_debug.txt
   }
   if(fatal){
     printf("Fatal OpenGL error!\n");

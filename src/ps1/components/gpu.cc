@@ -237,12 +237,45 @@ void Gpu::gp0_clear_cache(){
 
 // GP0(0x28): Monochrome Opaque Quadrilateral
 void Gpu::gp0_quad_mono_opaque(uint32_t val){
-  printf("Draw quad\n");
+  Position positions[4];
+  positions[0].from_gp0(gp0_command->buffer[1]);
+  positions[1].from_gp0(gp0_command->buffer[2]);
+  positions[2].from_gp0(gp0_command->buffer[3]);
+  positions[3].from_gp0(gp0_command->buffer[4]);
+
+  Color colors[4];
+  colors[0].from_gp0(gp0_command->buffer[0]);
+  colors[1].from_gp0(gp0_command->buffer[0]);
+  colors[2].from_gp0(gp0_command->buffer[0]);
+  colors[3].from_gp0(gp0_command->buffer[0]);
+
+  renderer->push_quad(positions, colors);
 }
 
 // GP0(0x2c): Textured Opaque Quadrilateral
 void Gpu::gp0_quad_texture_blend_opaque(uint32_t val){
-  printf("Draw quad texture blending\n");
+  Position positions[4];
+  positions[0].from_gp0(gp0_command->buffer[1]);
+  positions[1].from_gp0(gp0_command->buffer[3]);
+  positions[2].from_gp0(gp0_command->buffer[5]);
+  positions[3].from_gp0(gp0_command->buffer[7]);
+
+  // TODO: we don't support textures for now, use a solid red color instead
+  Color colors[4];
+  colors[0].rgb[0] = 0x80;
+  colors[0].rgb[1] = 0x00;
+  colors[0].rgb[2] = 0x00;
+  colors[1].rgb[0] = 0x80;
+  colors[1].rgb[1] = 0x00;
+  colors[1].rgb[2] = 0x00;
+  colors[2].rgb[0] = 0x80;
+  colors[2].rgb[1] = 0x00;
+  colors[2].rgb[2] = 0x00;
+  colors[3].rgb[0] = 0x80;
+  colors[3].rgb[1] = 0x00;
+  colors[3].rgb[2] = 0x00;
+
+  renderer->push_quad(positions, colors);
 }
 
 // GP0(0x30): Shaded Opque Triangle
@@ -262,7 +295,19 @@ void Gpu::gp0_triangle_shaded_opaque(uint32_t val){
 
 // GP0(0x38): Shaded Opaque Quadrilateral
 void Gpu::gp0_quad_shaded_opaque(uint32_t val){
-  printf("Draw quad shaded\n");
+  Position positions[4];
+  positions[0].from_gp0(gp0_command->buffer[1]);
+  positions[1].from_gp0(gp0_command->buffer[3]);
+  positions[2].from_gp0(gp0_command->buffer[5]);
+  positions[3].from_gp0(gp0_command->buffer[7]);
+
+  Color colors[4];
+  colors[0].from_gp0(gp0_command->buffer[0]);
+  colors[1].from_gp0(gp0_command->buffer[2]);
+  colors[2].from_gp0(gp0_command->buffer[4]);
+  colors[3].from_gp0(gp0_command->buffer[6]);
+
+  renderer->push_quad(positions, colors);
 }
 
 // GP0(0xa0): Image Load
