@@ -39,6 +39,7 @@ int loadshader(const char* filename, GLchar** ShaderSource, int* len){
     printf("Error creating shader source\n");
     exit(-3);
   }
+  // TODO: segfaults here!!!
   *ShaderSource[*len] = 0;
   
   unsigned int i = 0;
