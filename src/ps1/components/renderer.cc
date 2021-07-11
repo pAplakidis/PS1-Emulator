@@ -133,9 +133,11 @@ Renderer::Renderer(){
   char *vs_src;
   char *fs_src;
 
-  // TODO: this requires full path
-  const char *vs_filename = "/home/neo/Dev/PS1-Emulator/src/ps1/components/vertex_shader.shader";
-  const char *fs_filename = "/home/neo/Dev/PS1-Emulator/src/ps1/components/fragment_shader.shader";
+  // TODO: this requires full path (CHANGE IT depending on your machine for the time being)
+  const char *vs_filename = "/home/paul/Dev/PS1-Emulator/src/ps1/components/vertex_shader.shader";
+  const char *fs_filename = "/home/paul/Dev/PS1-Emulator/src/ps1/components/fragment_shader.shader";
+  //const char *vs_filename = "vertex_shader.shader";
+  //const char *fs_filename = "fragment_shader.shader";
   loadshader(vs_filename, &vs_src, &vlength);
   loadshader(fs_filename, &fs_src, &flength);
 
