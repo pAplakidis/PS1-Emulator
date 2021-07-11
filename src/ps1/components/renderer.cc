@@ -180,6 +180,10 @@ Renderer::Renderer(){
   // Link the buffer and the index: 3 GLByte attributes, not normalized
   // That should send the data untouched to the vertex shader
   glVertexAttribIPointer(index, 3, GL_UNSIGNED_BYTE, 0, NULL);
+
+  // Retrieve and initialize the draw offset
+  uniform_offset = find_program_uniform("offset");
+  glUniform2i(uniform_offset, 0, 0);
 }
 
 Renderer::~Renderer(){
@@ -210,6 +214,11 @@ GLuint Renderer::find_program_attrib(const char* attr){
   }
 
   return index;
+}
+
+// TODO: this might be wrong
+GLint Renderer::find_program_uniform(const char* name){
+  return glGetUniformLocation(program, name);
 }
 
 // Add a triangle to the draw buffer
@@ -323,5 +332,14 @@ void Renderer::check_for_errors(){
     printf("Fatal OpenGL error!\n");
     exit(1);
   }
+}
+
+// Set the value of the uniform draw offset
+void Renderer::set_draw_offset(int16_t x, int16_t y){
+  // force draw for the primitives with the current offset
+  draw();
+
+  // update the uniform value
+  glUniform2i(uniform_offset, (GLint) x, (GLint) y);
 }
 

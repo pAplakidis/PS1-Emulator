@@ -48,16 +48,20 @@ public:
   Buffer<Color> colors;
   // Current number of vertices in the buffers
   uint32_t nvertices;
+  // Index of the "offset" shader uniform
+  GLint uniform_offset;
 
   Renderer();
   ~Renderer();
   GLuint compile_shader(const std::string& src, GLenum shader_type);
   GLuint link_program(GLuint& shaders);
   GLuint find_program_attrib(const char* attr);
+  GLint find_program_uniform(const char* name);
   void push_triangle(Position positions[3], Color colors[3]);
   void push_quad(Position positions[4], Color colors[4]);
   void draw();
   void display();
   void check_for_errors();
+  void set_draw_offset(int16_t x, int16_t y);
 };
 
