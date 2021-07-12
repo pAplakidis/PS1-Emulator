@@ -45,7 +45,7 @@ uint32_t* CommandBuffer::index(size_t index){
 
 // --------------------------------------------------------------
 
-Gpu::Gpu(){
+Gpu::Gpu(Renderer *renderer){
   page_base_x = 0;
   page_base_y = 0;
   semi_transparency = 0;
@@ -67,7 +67,7 @@ Gpu::Gpu(){
   dma_direction = Off;
   gp0_mode = Command;
 
-  renderer = new Renderer();
+  this->renderer = renderer;
 }
 
 // Retrieve value of the status register

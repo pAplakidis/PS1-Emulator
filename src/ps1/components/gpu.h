@@ -178,7 +178,7 @@ private:
   Renderer *renderer;
 
 public:
-  Gpu();
+  Gpu(Renderer *renderer);
   uint32_t status();
   uint32_t read();
   void gp0(uint32_t val);

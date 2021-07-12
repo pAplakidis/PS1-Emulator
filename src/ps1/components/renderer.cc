@@ -86,8 +86,9 @@ void Color::from_gp0(uint32_t val){
 
 // --------------------------------------------------------------
 
-Renderer::Renderer(){
-  sdl_context = SDL_Init(SDL_INIT_VIDEO);
+Renderer::Renderer(int32_t sdl_context){
+  //sdl_context = SDL_Init(SDL_INIT_VIDEO);
+  this->sdl_context = sdl_context;
 
   if(sdl_context != 0){
     printf("Unable to initialize SD2: %s\n", SDL_GetError());

@@ -1,6 +1,6 @@
 #include "interconnect.h"
 
-Interconnect::Interconnect(Bios *bios){
+Interconnect::Interconnect(Bios *bios, Gpu *gpu){
   this->bios = bios;
   ram = new Ram();
 
@@ -8,7 +8,7 @@ Interconnect::Interconnect(Bios *bios){
   dma = new Dma();
 
   // Gpu
-  gpu = new Gpu();
+  this->gpu = gpu;
 }
 
 // TODO: need to ad RAM_SIZE CHECK AS WELL (we also get a SEG FAULT sometimes)

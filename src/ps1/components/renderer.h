@@ -51,7 +51,7 @@ public:
   // Index of the "offset" shader uniform
   GLint uniform_offset;
 
-  Renderer();
+  Renderer(int32_t sdl_context);
   ~Renderer();
   GLuint compile_shader(const std::string& src, GLenum shader_type);
   GLuint link_program(GLuint& shaders);

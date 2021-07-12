@@ -14,7 +14,7 @@ public:
   Dma *dma;
   Gpu *gpu;
 
-  Interconnect(Bios *bios);
+  Interconnect(Bios *bios, Gpu *gpu);
   uint32_t load32(uint32_t addr);
   uint16_t load16(uint32_t addr);
   uint8_t load8(uint32_t addr);
