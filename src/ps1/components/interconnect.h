@@ -6,6 +6,21 @@
 #include "dma.h"
 #include "gpu.h"
 
+// Types of memory access supported by the Playstation
+enum AccessWidth{
+  Byte = 1,
+  Halfword = 2,
+  Word = 4
+};
+
+// TODO: this is a trait in Rust, one implementation for each AccessWidth type, implement it
+class Addressable{
+public:
+  enum AccessWidth width();
+  void from_u32(uint32_t);
+  uint32_t as_u32();
+};
+
 // global interconnect
 class Interconnect{
 public:
