@@ -14,6 +14,7 @@ enum AccessWidth{
 };
 
 // TODO: this is a trait in Rust, one implementation for each AccessWidth type, implement it
+// TODO: use templates!!!
 class Addressable{
 public:
   enum AccessWidth width();
