@@ -1,6 +1,6 @@
 #include "cpu.h"
 
-Cpu::Cpu(Interconnect *intercn){
+Cpu::Cpu(Interconnect *intercn, Debugger *debugger){
   // PC reset value at the beginning of BIOS
   reg_pc = 0xbfc00000;
   next_pc = reg_pc + 4;
@@ -27,6 +27,7 @@ Cpu::Cpu(Interconnect *intercn){
   delay_slot = false;
 
   this->intercn = intercn;
+  this->debugger = debugger;
 }
 
 // TODO: we get a segfault trying to get or set a reg (probably due to load or store) (or at least that is where gdb crashed) DEBUG THIS
@@ -68,6 +69,9 @@ void Cpu::cycle(){
 
   // Save the address of the current instruction to save in "EPC" in case of an exception
   current_pc = reg_pc;
+
+  // Debugger entrypoint: used for code breakpoints and stepping
+  debugger->pc_change(this);
 
   if(current_pc % 4 != 0){
     // PC is not correctly aligned

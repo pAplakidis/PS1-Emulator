@@ -9,7 +9,8 @@ Ps1::Ps1(std::string bios_path, std::string rom_path){
   Renderer *renderer = new Renderer(sdl_context);
   Gpu *gpu = new Gpu(renderer);
   intercn = new Interconnect(bios, gpu);
-  cpu = new Cpu(intercn);
+  Debugger = new Debugger();
+  cpu = new Cpu(intercn, debugger);
 
 
   // Temporary tests
@@ -17,6 +18,6 @@ Ps1::Ps1(std::string bios_path, std::string rom_path){
   cpu->main_loop();
 
   // See if we should quit
-  // TODO: handle SDL-quit
+  // TODO: handle SDL-quit + debugger.debug()
 }
 
