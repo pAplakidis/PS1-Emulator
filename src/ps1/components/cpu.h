@@ -185,5 +185,10 @@ public:
   void op_swc1(Instruction *instruction);
   void op_swc2(Instruction *instruction);
   void op_swc3(Instruction *instruction);
+
+  // Debugger memory read
+  uint32_t examine32(uint32_t addr);
+  uint16_t examine16(uint32_t addr);
+  uint8_t examine8(uint32_t addr);
 };
 
