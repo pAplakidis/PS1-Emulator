@@ -18,7 +18,9 @@ unsigned long getFileSize(const char* filename){
   return rc == 0 ? stat_buf.st_size : -1;
 }
 
-int loadshader(const char* filename, GLchar** ShaderSource, int* len){
+//int loadshader(const char* filename, GLchar** ShaderSource, int* len){
+int loadshader(const char* filename, std::string *ShaderSource, int* len){
+  /*
   std::ifstream file;
   file.open(filename, std::ios::in);  // opens as ASCII
   if(!file){
@@ -26,7 +28,7 @@ int loadshader(const char* filename, GLchar** ShaderSource, int* len){
     exit(1);
   }
 
-  //*len = getFileLength(file);
+  // *len = getFileLength(file);
   *len = getFileSize(filename);
 
   if(*len == 0){
@@ -39,8 +41,10 @@ int loadshader(const char* filename, GLchar** ShaderSource, int* len){
     printf("Error creating shader source\n");
     exit(-3);
   }
-  // TODO: segfaults here!!!
-  *ShaderSource[*len] = 0;
+
+  // TODO: segfaults here!!! (length is correct, so problem is in the ShaderSource pointer itself)
+  // probably need to malloc ShaderSource
+  *ShaderSource[*len] = '\0';
   
   unsigned int i = 0;
   while(file.good()){
@@ -50,6 +54,27 @@ int loadshader(const char* filename, GLchar** ShaderSource, int* len){
   }
 
   *ShaderSource[i] = 0;
+  file.close();
+  */
+
+  std::ifstream file(filename, std::ios::in);
+  if(!file.is_open()){
+    printf("Error opening shader file %s\n", filename);
+    exit(1);
+  }
+
+  *len = getFileSize(filename);
+  if(*len == 0){
+    printf("Error: shader length = 0\n");
+    exit(-2);
+  }
+
+  std::string line = "";
+  while(!file.eof()){
+    std::getline(file, line);
+    ShaderSource->append(line + "\n");
+  }
+
   file.close();
 
   return 0;
@@ -131,8 +156,10 @@ Renderer::Renderer(int32_t sdl_context){
 
   int vlength;
   int flength;
-  char *vs_src;
-  char *fs_src;
+  //char *vs_src;
+  //char *fs_src;
+  std::string vs_src;
+  std::string fs_src;
 
   // TODO: this requires full path (CHANGE IT depending on your machine for the time being)
   const char *vs_filename = "/home/paul/Dev/PS1-Emulator/src/ps1/components/vertex_shader.shader";
@@ -143,8 +170,10 @@ Renderer::Renderer(int32_t sdl_context){
   loadshader(fs_filename, &fs_src, &flength);
 
   // TODO: check out glShaderSourceARB() + you can use nullptr instead of &vlength
-  glShaderSource(vertex_shader, 1, &vs_src, &vlength);
-  glShaderSource(fragment_shader, 1, &fs_src, &flength);
+  const char *vertShaderSrc = vs_src.c_str();
+  const char *fragShaderSrc = fs_src.c_str();
+  glShaderSource(vertex_shader, 1, &vertShaderSrc, &vlength);
+  glShaderSource(fragment_shader, 1, &fragShaderSrc, &flength);
 
   glCompileShader(vertex_shader);
   glCompileShader(fragment_shader);
