@@ -20,9 +20,12 @@ Install:
 
 Run:
 - cd build
-- ./PS1-Emulator <bios> <game_rom>
+- ./PS1-Emulator <bios_path> <game_rom_path>
 
 TODO:
+- complete the memory map so that the bios run normally!!!
+
+long-term
 * Code the Debugger
 * Garbage collect and check memory managemnt (optimization)
 * implement all components
