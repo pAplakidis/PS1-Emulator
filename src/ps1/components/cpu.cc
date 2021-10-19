@@ -1,6 +1,6 @@
 #include "cpu.h"
 
-Cpu::Cpu(Interconnect *intercn, Debugger *debugger){
+Cpu::Cpu(Interconnect *intercn){
   // PC reset value at the beginning of BIOS
   reg_pc = 0xbfc00000;
   next_pc = reg_pc + 4;
@@ -27,7 +27,7 @@ Cpu::Cpu(Interconnect *intercn, Debugger *debugger){
   delay_slot = false;
 
   this->intercn = intercn;
-  this->debugger = debugger;
+  //this->debugger = debugger;
 }
 
 // TODO: we get a segfault trying to get or set a reg (probably due to load or store) (or at least that is where gdb crashed) DEBUG THIS
@@ -71,7 +71,7 @@ void Cpu::cycle(){
   current_pc = reg_pc;
 
   // Debugger entrypoint: used for code breakpoints and stepping
-  debugger->pc_change(this);
+  //debugger->pc_change(this);
 
   if(current_pc % 4 != 0){
     // PC is not correctly aligned
@@ -108,37 +108,37 @@ void Cpu::cycle(){
 
 // load 32bit value from the memory
 uint32_t Cpu::load32(uint32_t addr){
-  debugger->memory_read(this, addr);
+  //debugger->memory_read(this, addr);
   return intercn->load32(addr);
 }
 
 // load 32bit value from the memory
 uint16_t Cpu::load16(uint32_t addr){
-  debugger->memory_read(this, addr);
+  //debugger->memory_read(this, addr);
   return intercn->load16(addr);
 }
 
 // load 8bit value from the memory
 uint8_t Cpu::load8(uint32_t addr){
-  debugger->memory_read(this, addr);
+  //debugger->memory_read(this, addr);
   return intercn->load8(addr);
 }
 
 // Store 32bit value into memory
 void Cpu::store32(uint32_t addr, uint32_t val){
-  debugger->memory_write(this, addr);
+  //debugger->memory_write(this, addr);
   intercn->store32(addr, val);
 }
 
 // Store 16bit value into memory
 void Cpu::store16(uint32_t addr, uint16_t val){
-  debugger->memory_write(this, addr);
+  //debugger->memory_write(this, addr);
   intercn->store16(addr, val);
 }
 
 // Store 8bit value into memory
 void Cpu::store8(uint32_t addr, uint8_t val){
-  debugger->memory_write(this, addr);
+  //debugger->memory_write(this, addr);
   intercn->store8(addr, val);
 }
 
@@ -1357,6 +1357,7 @@ void Cpu::op_swc3(Instruction *instruction){
 }
 
 // Debugger memory reads
+/*
 uint32_t examine32(uint32_t addr){
   return intercn->load32(addr);
 }
@@ -1368,4 +1369,5 @@ uint16_t examine16(uint32_t addr){
 uint8_t examine8(uint32_t addr){
   return intercn->load8(addr);
 }
+*/
 

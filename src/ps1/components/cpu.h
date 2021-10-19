@@ -9,7 +9,6 @@
 #include "instruction.h"
 #include "interconnect.h"
 #include "helpers.h"
-#include "../debugger.h"
 
 // Exception types (as stored in the "CAUSE" register)
 enum Exception{
@@ -75,10 +74,10 @@ public:
   Interconnect *intercn;
 
   // Debugger
-  Debugger *debugger;
+  //Debugger *debugger;
 
   // Basic Functions
-  Cpu(Interconnect *intercn, Debugger *debugger);
+  Cpu(Interconnect *intercn);
   uint32_t reg(int idx);
   void set_reg(int idx, uint32_t value);
   void main_loop();

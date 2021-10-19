@@ -9,8 +9,8 @@ Ps1::Ps1(std::string bios_path, std::string rom_path){
   Renderer *renderer = new Renderer(sdl_context);
   Gpu *gpu = new Gpu(renderer);
   intercn = new Interconnect(bios, gpu);
-  Debugger = new Debugger();
-  cpu = new Cpu(intercn, debugger);
+  //Debugger = new Debugger();
+  cpu = new Cpu(intercn);
 
 
   // Temporary tests
