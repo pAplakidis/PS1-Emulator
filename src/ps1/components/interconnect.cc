@@ -190,7 +190,7 @@ void Interconnect::store32(uint32_t addr, uint32_t val){
   }
 
   if(uint32_t *offset = map::RAM_SIZE->contains(abs_addr)){
-    printf("Unhandled write to ram_size register %08x: %08x\n", *offset, val);
+    printf("\nUnhandled write to ram_size register %08x: %08x\n", *offset, val);
     free(offset);
     return;
   }
