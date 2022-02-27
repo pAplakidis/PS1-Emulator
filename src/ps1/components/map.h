@@ -16,6 +16,7 @@ namespace map{
     uint32_t *contains(uint32_t addr) const;
   };
 
+  // KSEG
   extern const Range *BIOS;
   extern const Range *MEMCONTROL;
   extern const Range *RAM_SIZE;
@@ -28,6 +29,9 @@ namespace map{
   extern const Range *TIMERS;
   extern const Range *DMA;
   extern const Range *GPU;
+
+  // KSEG0
+  extern const Range *RAM_KSEG0;
 
   // Mask array used to strip the region bits of the adrress
   // The mask is selected using the 3 MSBs of the address so each entry effectively matches 512KB of the address space

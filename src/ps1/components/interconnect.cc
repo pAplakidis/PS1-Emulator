@@ -22,21 +22,38 @@ uint32_t Interconnect::load32(uint32_t addr){
   
   uint32_t abs_addr = map::mask_region(addr);
 
+  if(uint32_t *offset = map::RAM->contains(abs_addr)){
+    uint32_t ret = ram->load32(*offset);
+    free(offset);
+    offset = NULL;
+    return ret;
+  }
+
+  if(uint32_t *offset = map::RAM_KSEG0->contains(abs_addr)){
+    uint32_t ret = ram->load32(*offset);
+    free(offset);
+    offset = NULL;
+    return ret;
+  }
+
   if(uint32_t *offset = map::BIOS->contains(addr)){
     uint32_t ret = bios->load32(*offset);
     free(offset);
+    offset = NULL;
     return ret;
   }
 
   if(uint32_t *offset = map::IRQ_CONTROL->contains(abs_addr)){
     printf("IRQ control read %x\n", *offset);
     free(offset);
+    offset = NULL;
     return 0;
   }
 
   if(uint32_t *offset = map::DMA->contains(abs_addr)){
     printf("DMA read %08x\n", abs_addr);
     free(offset);
+    offset = NULL;
     return 0;
   }
 
@@ -46,6 +63,7 @@ uint32_t Interconnect::load32(uint32_t addr){
       // GPUSTAT: set bit 28 to signal that the GPU is ready to receive DMA blocks
       case 4:
         free(offset);
+        offset = NULL;
         return 0x10000000;
       default:
         return 0;
@@ -55,6 +73,7 @@ uint32_t Interconnect::load32(uint32_t addr){
   if(uint32_t *offset = map::DMA->contains(abs_addr)){
     uint32_t ret = dma_reg(*offset);
     free(offset);
+    offset = NULL;
     return ret;
   }
 
@@ -64,14 +83,16 @@ uint32_t Interconnect::load32(uint32_t addr){
       // This way the BIOS won't dead lock waiting for an event that will never come.
       case 4:
         free(offset);
+        offset = NULL;
         return 0x1c000000;
       default:
         free(offset);
+        offset = NULL;
         return 0;
     }
   }
 
-  printf("Unhandled load16 at address %08x\n", addr);
+  printf("Unhandled load32 at address %08x\tabs_addr: 0x%08x\n", addr, abs_addr);
   exit(1);
 }
 
@@ -87,18 +108,21 @@ uint16_t Interconnect::load16(uint32_t addr){
   if(uint32_t *offset = map::SPU->contains(abs_addr)){
     printf("Unhandled read from SPU register %08x\n", abs_addr);
     free(offset);
+    offset = NULL;
     return 0;
   }
 
   if(uint32_t *offset = map::RAM->contains(abs_addr)){
     uint16_t ret = ram->load16(*offset);
     free(offset);
+    offset = NULL;
     return ret;
   }
 
   if(uint32_t *offset = map::IRQ_CONTROL->contains(abs_addr)){
     printf("IRQ control read %x\n", *offset);
     free(offset);
+    offset = NULL;
     return 0;
   }
 
@@ -113,18 +137,21 @@ uint8_t Interconnect::load8(uint32_t addr){
   if(uint32_t *offset = map::RAM->contains(abs_addr)){
     uint8_t ret = ram->load8(*offset);
     free(offset);
+    offset = NULL;
     return ret;
   }
 
   if(uint32_t *offset = map::BIOS->contains(abs_addr)){
     uint8_t ret = bios->load8(*offset);
     free(offset);
+    offset = NULL;
     return ret;
   }
 
   if(uint32_t *_ = map::EXPANSION_1->contains(abs_addr)){
     // no expansion implemented
     free(_);
+    _ = NULL;
     return 0xff;
   }
 
@@ -160,6 +187,7 @@ void Interconnect::store32(uint32_t addr, uint32_t val){
       default:
         printf("Unhandled write to MEMCONTROL register\n");
         free(offset);
+        offset = NULL;
         break;
     }
     return;
@@ -168,36 +196,42 @@ void Interconnect::store32(uint32_t addr, uint32_t val){
   if(uint32_t *offset = map::IRQ_CONTROL->contains(abs_addr)){
     printf("IRQ_control: %x <- %08x\n", *offset, val);
     free(offset);
+    offset = NULL;
     return;
   }
 
   if(uint32_t *offset = map::DMA->contains(abs_addr)){
     printf("DMA write: %08x: %08x\n", abs_addr, val);
     free(offset);
+    offset = NULL;
     return;
   }
 
   if(uint32_t *offset = map::GPU->contains(abs_addr)){
     printf("GPU write %x: %08x\n", *offset, val);
     free(offset);
+    offset = NULL;
     return;
   }
 
   if(uint32_t *offset = map::TIMERS->contains(abs_addr)){
     printf("Unhandled write to timer register %08x: %08x\n", *offset, val);
     free(offset);
+    offset = NULL;
     return;
   }
 
   if(uint32_t *offset = map::RAM_SIZE->contains(abs_addr)){
     printf("\nUnhandled write to ram_size register %08x: %08x\n", *offset, val);
     free(offset);
+    offset = NULL;
     return;
   }
 
   if(uint32_t *offset = map::DMA->contains(abs_addr)){
     return set_dma_reg(*offset, val);
     free(offset);
+    offset = NULL;
   }
 
   if(uint32_t *offset = map::GPU->contains(abs_addr)){
@@ -205,6 +239,7 @@ void Interconnect::store32(uint32_t addr, uint32_t val){
       case 0:
         gpu->gp0(val);
         free(offset);
+        offset = NULL;
         break;
       default:
         printf("GPU write %x: %08x\n", *offset, val);
@@ -230,12 +265,14 @@ void Interconnect::store16(uint32_t addr, uint16_t val){
   if(uint32_t *offset = map::RAM->contains(abs_addr)){
     ram->store16(*offset, val);
     free(offset);
+    offset = NULL;
     return;
   }
 
   if(uint32_t *offset = map::SPU->contains(abs_addr)){
     printf("Unhandled write to SPU register %x\n", *offset);
     free(offset);
+    offset = NULL;
     return;
   }
   
@@ -247,6 +284,7 @@ void Interconnect::store16(uint32_t addr, uint16_t val){
   if(uint32_t *offset = map::IRQ_CONTROL->contains(abs_addr)){
     printf("IRQ control write %x: %04x\n", *offset, val);
     free(offset);
+    offset = NULL;
     return;
   }
 
@@ -263,6 +301,7 @@ void Interconnect::store8(uint32_t addr, uint8_t val){
     printf("Unhandled write to SPU register %x\n", *offset);
     ram->store8(*offset, val);
     free(offset);
+    offset = NULL;
     return;
   }
   

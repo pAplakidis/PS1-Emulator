@@ -6,8 +6,8 @@ Ps1::Ps1(std::string bios_path, std::string rom_path){
   // we initialize SDL before the interconnect is created since it contains the GPU and the GPU needs to create a window
   int32_t sdl_context = SDL_Init(SDL_INIT_VIDEO);
 
-  Renderer *renderer = new Renderer(sdl_context);
-  Gpu *gpu = new Gpu(renderer);
+  renderer = new Renderer(sdl_context);
+  gpu = new Gpu(renderer);
   intercn = new Interconnect(bios, gpu);
   //Debugger = new Debugger();
   cpu = new Cpu(intercn);

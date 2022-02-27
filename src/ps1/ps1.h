@@ -15,6 +15,8 @@ public:
   Interconnect *intercn;
   Debugger *debugger;
   Cpu *cpu;
+  Renderer *renderer;
+  Gpu *gpu;
 
   Ps1(std::string bios_path, std::string rom_path);
 };
