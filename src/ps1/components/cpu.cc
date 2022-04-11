@@ -73,7 +73,7 @@ void Cpu::main_loop(){
 
 // Reads command in memory and executes it (also increases pc to point to next instruction)
 void Cpu::cycle(){
-  printf("%08x:\t", reg_pc);
+  printf("0x%08x:\t", reg_pc);
 
   // Fetch instruction at PC
   Instruction *instruction = decode(load32(reg_pc));  // this solves branching issues with pipelining
@@ -161,7 +161,6 @@ Instruction* Cpu::decode(uint32_t instr){
 // Trigger an exception
 void Cpu::exception(enum Exception cause){
   // print out exception type
-  printf("%sException Caught: %s", color::red, color::white);
   char* s_cause;
   switch(cause){
     case SysCall:
@@ -190,7 +189,7 @@ void Cpu::exception(enum Exception cause){
       break;
 
   }
-  printf("%s%s%s\t", color::red, s_cause, color::white);
+  printf("%sException Caught: %s%s\t", color::yellow, s_cause, color::white);
   
   // Exception handler address depends on the "BEV"
   uint32_t handler;
@@ -408,7 +407,7 @@ void Cpu::execute_instruction(Instruction *instruction){
 
 // Illegal instruction
 void Cpu::op_illegal(Instruction *instruction){
-  printf("Illegal instruction %x\n", instruction->instr);
+  printf("Illegal instruction 0x%x\n", instruction->instr);
   exception(IllegalInstruction);
 }
 
@@ -429,13 +428,13 @@ void Cpu::op_add(Instruction *instruction){
     else{
       int32_t sum = (int32_t)*ptr;
       set_reg(rd, sum);
-      printf("ADD %x, %x, %x\n", reg(rd), reg(rs), reg(rt));
+      printf("ADD 0x%x, 0x%x, 0x%x\n", reg(rd), reg(rs), reg(rt));
     }
   }
   else if(instruction->subfunction() == 0b100001){
     uint32_t sum = reg(rs) + reg(rt);
     set_reg(rd, sum);
-    printf("ADDU %x, %x, %x\n", reg(rd), reg(rs), reg(rt));
+    printf("ADDU 0x%x, 0x%x, 0x%x\n", reg(rd), reg(rs), reg(rt));
   }
   else{
     printf("Cannot recognise whether ADD is signed or unsigned");
@@ -458,7 +457,7 @@ void Cpu::op_addi(Instruction *instruction){
   else{
     int32_t sum = (int32_t)*ptr;
     set_reg(rt, sum);
-    printf("ADDI %08x, %08x, %08x\n", reg(rt), reg(rs), imm);
+    printf("ADDI 0x%08x, 0x%08x, 0x%08x\n", reg(rt), reg(rs), imm);
   }
 }
 
@@ -471,7 +470,7 @@ void Cpu::op_addiu(Instruction *instruction){
   uint32_t imm = instruction->immediate();
   uint32_t sum = reg(rs) + imm;
   set_reg(rt, sum);
-  printf("ADDIU %08x, %08x, %08x\n", reg(rt), reg(rs), imm);
+  printf("ADDIU 0x%08x, 0x%08x, 0x%08x\n", reg(rt), reg(rs), imm);
 }
 
 // AND rd,rs,rt
@@ -483,7 +482,7 @@ void Cpu::op_and(Instruction *instruction){
 
   uint32_t result = reg(rs) & reg(rt);
   set_reg(rd, result);
-  printf("AND %08x, %08x, %08x\n", reg(rd), reg(rs), reg(rt));
+  printf("AND 0x%08x, 0x%08x, 0x%08x\n", reg(rd), reg(rs), reg(rt));
 }
 
 // ANDI rt,rs,imm
@@ -495,7 +494,7 @@ void Cpu::op_andi(Instruction *instruction){
   uint32_t imm = instruction->immediate();
   uint32_t result = reg(rs) & imm;
   set_reg(rt, result);
-  printf("ANDI %08x, %08x, %08x\n", reg(rt), reg(rs), imm);
+  printf("ANDI 0x%08x, 0x%08x, 0x%08x\n", reg(rt), reg(rs), imm);
 }
 
 // LUI rt,imm
@@ -506,7 +505,7 @@ void Cpu::op_lui(Instruction *instruction){
   
   uint32_t result = imm << 16;
   set_reg(rt, result);
-  printf("LUI %08x, %08x\n", reg(rt), imm);
+  printf("LUI 0x%08x, 0x%08x\n", reg(rt), imm);
 }
 
 // NOR rd,rs,rt
@@ -518,7 +517,7 @@ void Cpu::op_nor(Instruction *instruction){
   
   uint32_t result = !(reg(rs) | reg(rt));
   set_reg(rd, result);
-  printf("NOR %08x, %08x, %08x\n", reg(rd), reg(rs), reg(rt));
+  printf("NOR 0x%08x, 0x%08x, 0x%08x\n", reg(rd), reg(rs), reg(rt));
 }
 
 // OR rd,rs,rt
@@ -530,7 +529,7 @@ void Cpu::op_or(Instruction *instruction){
   
   uint32_t result = reg(rs) | reg(rt);
   set_reg(rd, result);
-  printf("OR %08x, %08x, %08x\n", reg(rd), reg(rs), reg(rt));
+  printf("OR 0x%08x, 0x%08x, 0x%08x\n", reg(rd), reg(rs), reg(rt));
 }
 
 // ORI rt,rs,imm
@@ -542,7 +541,7 @@ void Cpu::op_ori(Instruction *instruction){
   uint32_t imm = instruction->immediate();
   uint32_t result = reg(rs) | reg(imm);
   set_reg(rt, result);
-  printf("ORI %08x, %08x, %08x\n", reg(rt), reg(rs), imm);
+  printf("ORI 0x%08x, 0x%08x, 0x%08x\n", reg(rt), reg(rs), imm);
 }
 
 // SLT rd,rs,rt
@@ -556,7 +555,7 @@ void Cpu::op_slt(Instruction *instruction){
     set_reg(rd, 1);
   else
     set_reg(rd, 0);
-  printf("SLT %08x, %08x, %08x\n", reg(rd), reg(rs), reg(rt));
+  printf("SLT 0x%08x, 0x%08x, 0x%08x\n", reg(rd), reg(rs), reg(rt));
 }
 
 // SLTI rt,rs,imm
@@ -570,7 +569,7 @@ void Cpu::op_slti(Instruction *instruction){
     set_reg(rt, 1);
   else
     set_reg(rt, 0);
-  printf("SLTI %08x, %08x, %08x\n", reg(rt), reg(rs), imm);
+  printf("SLTI 0x%08x, 0x%08x, 0x%08x\n", reg(rt), reg(rs), imm);
 }
 
 // SLTIU rt,rs,imm
@@ -584,7 +583,7 @@ void Cpu::op_sltiu(Instruction *instruction){
     set_reg(rt, 1);
   else
     set_reg(rt, 0);
-  printf("SLTIU %08x, %08x, %08x\n", reg(rt), reg(rs), imm);
+  printf("SLTIU 0x%08x, 0x%08x, 0x%08x\n", reg(rt), reg(rs), imm);
 }
 
 // SLTU rd,rs,rt
@@ -598,7 +597,7 @@ void Cpu::op_sltu(Instruction *instruction){
     set_reg(rd, 1);
   else
     set_reg(rd, 0);
-  printf("SLTU %08x, %08x, %08x\n", reg(rd), reg(rs), reg(rt));
+  printf("SLTU 0x%08x, 0x%08x, 0x%08x\n", reg(rd), reg(rs), reg(rt));
 }
 
 // SUB rd,rs,rt
@@ -618,13 +617,13 @@ void Cpu::op_sub(Instruction *instruction){
     else{
       int32_t diff = (int32_t)*ptr;
       set_reg(rd, diff);
-      printf("SUB %08x, %08x, %08x\n", reg(rd), reg(rs), reg(rt));
+      printf("SUB 0x%08x, 0x%08x, 0x%08x\n", reg(rd), reg(rs), reg(rt));
     }
   }
   else if(instruction->subfunction() == 0b100011){
     uint32_t diff = reg(rs) - reg(rt);
     set_reg(rd, diff);
-    printf("SUBU %08x, %08x, %08x\n", reg(rd), reg(rs), reg(rt));
+    printf("SUBU 0x%08x, 0x%08x, 0x%08x\n", reg(rd), reg(rs), reg(rt));
   }
   else{
     printf("Cannot recognise whether SUB is signed or unsigned");
@@ -640,7 +639,7 @@ void Cpu::op_xor(Instruction *instruction){
   uint32_t rd = instruction->regd_idx();
 
   set_reg(rd, reg(rs)^reg(rt));
-  printf("XOR %08x, %08x, %08x\n", reg(rd), reg(rs), reg(rt));
+  printf("XOR 0x%08x, 0x%08x, 0x%08x\n", reg(rd), reg(rs), reg(rt));
 }
 
 // XORI rt,rs,imm
@@ -651,7 +650,7 @@ void Cpu::op_xori(Instruction *instruction){
 
   uint32_t imm = instruction->immediate();
   set_reg(rt, reg(rs)^imm);
-  printf("XORI %08x, %08x, %08x\n", reg(rt), reg(rs), imm);
+  printf("XORI 0x%08x, 0x%08x, 0x%08x\n", reg(rt), reg(rs), imm);
 }
 
 // DIV rs,rt
@@ -681,7 +680,7 @@ void Cpu::op_div(Instruction *instruction){
     hi = (uint32_t)(n % d);
     lo = (uint32_t)(n / d);
   }
-  printf("DIV %08x, %08x\n", reg(rs), reg(rt));
+  printf("DIV 0x%08x, 0x%08x\n", reg(rs), reg(rt));
 }
 
 // DIVU rs,rt
@@ -702,35 +701,35 @@ void Cpu::op_divu(Instruction *instruction){
     hi = n % d;
     lo = n / d;
   }
-  printf("DIVU %08x, %08x\n", reg(rs), reg(rt));
+  printf("DIVU 0x%08x, 0x%08x\n", reg(rs), reg(rt));
 }
 
 // MFLO rd (move from LO)
 void Cpu::op_mflo(Instruction *instruction){
   uint32_t rd = instruction->regd_idx();
   set_reg(rd, lo);
-  printf("MFLO %08x\n", reg(rd));
+  printf("MFLO 0x%08x\n", reg(rd));
 }
 
 // MFHI rd
 void Cpu::op_mfhi(Instruction *instruction){
   uint32_t rd = instruction->regd_idx();
   set_reg(rd, hi);
-  printf("MFHI %08x\n", reg(rd));
+  printf("MFHI 0x%08x\n", reg(rd));
 }
 
 // MTLO rs
 void Cpu::op_mtlo(Instruction *instruction){
   uint32_t rs = instruction->regs_idx();
   hi = reg(rs);
-  printf("MTLO %08x\n", reg(rs));
+  printf("MTLO 0x%08x\n", reg(rs));
 }
 
 // MTHI rs
 void Cpu::op_mthi(Instruction *instruction){
   uint32_t rs = instruction->regs_idx();
   lo = reg(rs);
-  printf("MTHI %08x\n", reg(rs));
+  printf("MTHI 0x%08x\n", reg(rs));
 }
 
 // MULT rs,rt
@@ -745,7 +744,7 @@ void Cpu::op_mult(Instruction *instruction){
   uint64_t v = a * b;
   hi = (uint32_t)(v >> 32);
   lo = (uint32_t)v;
-  printf("MULT %08x, %08x\n", reg(rs), reg(rt));
+  printf("MULT 0x%08x, 0x%08x\n", reg(rs), reg(rt));
 }
 
 // MULTU rs,rt
@@ -760,7 +759,7 @@ void Cpu::op_multu(Instruction *instruction){
   uint64_t v = a * b;
   hi = (uint32_t)(v >> 32);
   lo = (uint32_t)v;
-  printf("MULTU %08x, %08x\n", reg(rs), reg(rt));
+  printf("MULTU 0x%08x, 0x%08x\n", reg(rs), reg(rt));
 }
 
 // SW rt,offset(rs)
@@ -783,7 +782,7 @@ void Cpu::op_sw(Instruction *instruction){
   }else{
     exception(StoreAddressError);
   }
-  printf("SW %08x, [%08x]\n", reg(rt), reg(rs));
+  printf("SW 0x%08x, [0x%08x]\n", reg(rt), reg(rs));
 }
 
 // SH rt,offset(rs)
@@ -807,7 +806,7 @@ void Cpu::op_sh(Instruction *instruction){
   }else{
     exception(StoreAddressError);
   }
-  printf("SH %08x, [%08x]\n", reg(rt), reg(rs));
+  printf("SH 0x%08x, [0x%08x]\n", reg(rt), reg(rs));
 }
 
 // SB rt,offset(rs)
@@ -826,7 +825,7 @@ void Cpu::op_sb(Instruction *instruction){
   uint32_t addr = reg(rs) + imm;
   uint32_t val = reg(rt);
   store8(addr, (uint8_t)val);
-  printf("SB %08x, [%08x]\n", reg(rt), reg(rs));
+  printf("SB 0x%08x, [0x%08x]\n", reg(rt), reg(rs));
 }
 
 // LW rt,offset(rs)
@@ -855,7 +854,7 @@ void Cpu::op_lw(Instruction *instruction){
   }else{
     exception(LoadAddressError);
   }
-  printf("LW %08x, [%08x]\n", reg(rt), reg(rs));
+  printf("LW 0x%08x, [0x%08x]\n", reg(rt), reg(rs));
 }
 
 // LB rt,offset(rs)
@@ -872,7 +871,7 @@ void Cpu::op_lb(Instruction *instruction){
   // put the load in the delay slot
   load[0] = rt;
   load[1] = (uint32_t)value;
-  printf("LB %08x, [%08x]\n", reg(rt), reg(rs));
+  printf("LB 0x%08x, [0x%08x]\n", reg(rt), reg(rs));
 }
 
 // LBU rt,offset(rs)
@@ -887,7 +886,7 @@ void Cpu::op_lbu(Instruction *instruction){
   // Put the load in the delay slot
   load[0] = rt;
   load[1] = (uint32_t)load16(addr);
-  printf("LBU %08x, [%08x]\n", reg(rt), reg(rs));
+  printf("LBU 0x%08x, [0x%08x]\n", reg(rt), reg(rs));
 }
 
 // LH rt, offset(rs)
@@ -905,7 +904,7 @@ void Cpu::op_lh(Instruction *instruction){
   // Put the load in the delay slot
   load[0] = rt;
   load[1] = (uint32_t)v;
-  printf("LH %08x, [%08x]\n", reg(rt), reg(rs));
+  printf("LH 0x%08x, [0x%08x]\n", reg(rt), reg(rs));
 }
 
 // LHU rt, offset(rs)
@@ -925,7 +924,7 @@ void Cpu::op_lhu(Instruction *instruction){
   }else{
     exception(LoadAddressError);
   }
-  printf("LHU %08x, [%08x]\n", reg(rt), reg(rs));
+  printf("LHU 0x%08x, [0x%08x]\n", reg(rt), reg(rs));
 }
 
 // LWL rt, offset(rs) (load word left)
@@ -960,13 +959,13 @@ void Cpu::op_lwl(Instruction *instruction){
       v = (cur_v & 0x00000000) | (aligned_word << 0);
       break;
     default:
-      printf("LWL error -> instruction: %x\n", instruction->instr);
+      printf("LWL error -> instruction: 0x%x\n", instruction->instr);
       exit(1);
   }
 
   load[0] = rt;
   load[1] = v;
-  printf("LWL %08x, [%08x]\n", reg(rt), reg(rs));
+  printf("LWL 0x%08x, [0x%08x]\n", reg(rt), reg(rs));
 }
 
 // LWR rt, offset(rs)
@@ -1001,13 +1000,13 @@ void Cpu::op_lwr(Instruction *instruction){
       v = (cur_v & 0xffffff00) | (aligned_word >> 24);
       break;
     default:
-      printf("LWR error -> instruction: %x\n", instruction->instr);
+      printf("LWR error -> instruction: 0x%x\n", instruction->instr);
       exit(1);
   }
 
   load[0] = rt;
   load[1] = v;
-  printf("LWR %08x, [%08x]\n", reg(rt), reg(rs));
+  printf("LWR 0x%08x, [0x%08x]\n", reg(rt), reg(rs));
 }
 
 // SWL rt, offset(rs)
@@ -1039,12 +1038,12 @@ void Cpu::op_swl(Instruction *instruction){
       mem = (cur_mem & 0x00000000) | (v >> 0);
       break;
     default:
-      printf("SWL error -> instruction: %x\n", instruction->instr);
+      printf("SWL error -> instruction: 0x%x\n", instruction->instr);
       exit(1);
   }
 
   store32(aligned_addr, mem);
-  printf("SWL %08x, [%08x]\n", reg(rt), reg(rs));
+  printf("SWL 0x%08x, [0x%08x]\n", reg(rt), reg(rs));
 }
 
 // SWR rt, offset(rs)
@@ -1076,12 +1075,12 @@ void Cpu::op_swr(Instruction *instruction){
       mem = (cur_mem & 0x00ffffff) | (v << 24);
       break;
     default:
-      printf("SWL error -> instruction: %x\n", instruction->instr);
+      printf("SWL error -> instruction: 0x%x\n", instruction->instr);
       exit(1);
   }
 
   store32(aligned_addr, mem);
-  printf("SWR %08x, [%08x]\n", reg(rt), reg(rs));
+  printf("SWR 0x%08x, [0x%08x]\n", reg(rt), reg(rs));
 }
 
 // SLL rd,rt,sa
@@ -1092,7 +1091,7 @@ void Cpu::op_sll(Instruction *instruction){
   int32_t sa = instruction->shift();
 
   set_reg(rd, reg(rt) << sa);
-  printf("SLL %08x, %08x, %08x\n", reg(rd), reg(rt), sa);
+  printf("SLL 0x%08x, 0x%08x, 0x%08x\n", reg(rd), reg(rt), sa);
 }
 
 // SLLV rd,rt,rs
@@ -1104,7 +1103,7 @@ void Cpu::op_sllv(Instruction *instruction){
 
   // shift amount is truncated to 5 bits
   set_reg(rd, reg(rt) << (reg(rs) & 0x1f));
-  printf("SLLV %08x, %08x, %08x\n", reg(rd), reg(rt), reg(rs));
+  printf("SLLV 0x%08x, 0x%08x, 0x%08x\n", reg(rd), reg(rt), reg(rs));
 }
 
 // SRA rd,rt,sa
@@ -1116,7 +1115,7 @@ void Cpu::op_sra(Instruction *instruction){
 
   int32_t v = (int32_t)reg(rt) >> sa;
   set_reg(rd, (uint32_t)v);
-  printf("SRA %08x, %08x, %08x\n", reg(rd), reg(rt), sa);
+  printf("SRA 0x%08x, 0x%08x, 0x%08x\n", reg(rd), reg(rt), sa);
 }
 
 // SRAV rd,rt,rs
@@ -1129,7 +1128,7 @@ void Cpu::op_srav(Instruction *instruction){
   // shifft amount is truncated to 5 bits
   int32_t v = (int32_t)reg(rt) >> (reg(rs) & 0x1f);
   set_reg(rd, (uint32_t)v);
-  printf("SRAV %08x, %08x, %08x\n", reg(rd), reg(rt), reg(rs));
+  printf("SRAV 0x%08x, 0x%08x, 0x%08x\n", reg(rd), reg(rt), reg(rs));
 }
 
 // SRL rd,rt,sa
@@ -1140,7 +1139,7 @@ void Cpu::op_srl(Instruction *instruction){
   int32_t sa = instruction->shift();
 
   set_reg(rd, reg(rt) >> sa);
-  printf("SRL %08x, %08x, %08x\n", reg(rd), reg(rt), sa);
+  printf("SRL 0x%08x, 0x%08x, 0x%08x\n", reg(rd), reg(rt), sa);
 }
 
 // SRLV rd,rt,rs
@@ -1153,7 +1152,7 @@ void Cpu::op_srlv(Instruction *instruction){
   // shift amount is truncated to 5 bits
   uint32_t v = reg(rt) >> (reg(rs) & 0x1f);
   set_reg(rd, v);
-  printf("SRLV %08x, %08x, %08x\n", reg(rd), reg(rt), reg(rs));
+  printf("SRLV 0x%08x, 0x%08x, 0x%08x\n", reg(rd), reg(rt), reg(rs));
 }
 
 // Branch to immediate value 'offset'
@@ -1174,7 +1173,7 @@ void Cpu::op_j(Instruction *instruction){
 
   next_pc = (reg_pc & 0xf0000000) | (target << 2);
   branched = true;
-  printf("J %08x\n", target);
+  printf("J 0x%08x\n", target);
 }
 
 // JAL target (jump and link)
@@ -1192,7 +1191,7 @@ void Cpu::op_jr(Instruction *instruction){
   uint32_t rs = instruction->regs_idx();
   next_pc = reg(rs);
   branched = true;
-  printf("JR %08x\n", reg(rs));
+  printf("JR 0x%08x\n", reg(rs));
 }
 
 // JALR rs (jump and link register)
@@ -1206,7 +1205,7 @@ void Cpu::op_jalr(Instruction *instruction){
   set_reg(rd, ra);
   next_pc = reg(rs);
   branched = true;
-  printf("JR %08x\n", reg(rs));
+  printf("JR 0x%08x\n", reg(rs));
 }
 
 // BNE rs,rt,offset
@@ -1218,7 +1217,7 @@ void Cpu::op_bne(Instruction *instruction){
   if(reg(rs) != reg(rt)){
     branch(imm);
   }
-  printf("BNE %08x, %08x, %08x\n", reg(rs), reg(rt), imm);
+  printf("BNE 0x%08x, 0x%08x, 0x%08x\n", reg(rs), reg(rt), imm);
 }
 
 // BEQ rs,rt,offset
@@ -1230,7 +1229,7 @@ void Cpu::op_beq(Instruction *instruction){
   if(reg(rs) == reg(rt)){
     branch(imm);
   }
-  printf("BEQ %08x, %08x, %08x\n", reg(rs), reg(rt), imm);
+  printf("BEQ 0x%08x, 0x%08x, 0x%08x\n", reg(rs), reg(rt), imm);
 }
 
 // BGTZ rs,offset
@@ -1240,7 +1239,7 @@ void Cpu::op_bgtz(Instruction *instruction){
   
   if((int32_t)reg(rs) > 0)
     branch(imm);
-  printf("BGTZ %08x, %08x\n", reg(rs), imm);
+  printf("BGTZ 0x%08x, 0x%08x\n", reg(rs), imm);
 }
 
 // BLEZ rs,offset
@@ -1250,7 +1249,7 @@ void Cpu::op_blez(Instruction *instruction){
   
   if((int32_t)reg(rs) <= 0)
     branch(imm);
-  printf("BLEZ %08x, %08x\n", reg(rs), imm);
+  printf("BLEZ 0x%08x, 0x%08x\n", reg(rs), imm);
 }
 
 // BGEZ rs,offset, BLTZ rs,offset, BGEZAL rs,offset, BLTZAL rs,offset
@@ -1280,7 +1279,7 @@ void Cpu::op_bxx(Instruction *instruction){
   if(test != 0){
     branch(imm);
   }
-  printf("BGEZ/BLTZ/GEZAL/BLTZAL %08x, %08x\n", reg(rs), imm);
+  printf("BGEZ/BLTZ/GEZAL/BLTZAL 0x%08x, 0x%08x\n", reg(rs), imm);
 }
 
 // BREAK
@@ -1300,7 +1299,7 @@ void Cpu::op_rfe(Instruction *instruction){
   // There are other instructions with the same encoding but all are virtual memory related and the PS1 doens't implement them
   // need to make sure we are not running buggy code
   if(instruction->instr & 0x3f != 0b010000){
-    printf("Invalid cop0 instruction %x\n", instruction->instr);
+    printf("Invalid cop0 instruction 0x%x\n", instruction->instr);
     exit(1);
   }
 
@@ -1337,7 +1336,7 @@ void Cpu::op_mfc0(Instruction *instruction){
 
   load[0] = cpu_r;
   load[1] = v;
-  printf("MFC0 %08x, %08x\n", cpu_r, cop_r);
+  printf("MFC0 0x%08x, 0x%08x\n", cpu_r, cop_r);
 }
 
 // MTC0 rt,rd
@@ -1370,10 +1369,10 @@ void Cpu::op_mtc0(Instruction *instruction){
       }
       break;
     default:
-      printf("Unhandled cop0 register %x\n", cop_r);
+      printf("Unhandled cop0 register 0x%x\n", cop_r);
       exit(1);
   }
-  printf("MTC0 %08x, %08x\n", cpu_r, cop_r);
+  printf("MTC0 0x%08x, 0x%08x\n", cpu_r, cop_r);
 }
 
 // Coprocessor 0 opcode
@@ -1389,7 +1388,7 @@ void Cpu::op_cop0(Instruction *instruction){
       op_rfe(instruction);
       break;
     default:
-      printf("Unhandled cop0 isntruction %x\n", instruction->instr);
+      printf("Unhandled cop0 isntruction 0x%x\n", instruction->instr);
       exit(1);
   }
 }
@@ -1401,7 +1400,7 @@ void Cpu::op_cop1(Instruction *instruction){
 
 // Coprocessor 2 opcode (Geometry Transform Engine(GTE))
 void Cpu::op_cop2(Instruction *instruction){
-  printf("Unhandled GTE instruction %x\n", instruction->instr);
+  printf("Unhandled GTE instruction 0x%x\n", instruction->instr);
   exit(1);
 }
 
@@ -1425,7 +1424,7 @@ void Cpu::op_lwc1(Instruction *instruction){
 
 // Load Word in Coprocessor 2
 void Cpu::op_lwc2(Instruction *instruction){
-  printf("Unhandled GTE LWC: %x\n", instruction->instr);
+  printf("Unhandled GTE LWC: 0x%x\n", instruction->instr);
 }
 
 // Load Word in Coprocessor 3
@@ -1448,7 +1447,7 @@ void Cpu::op_swc1(Instruction *instruction){
 
 // Store Word in Coprocessor 2
 void Cpu::op_swc2(Instruction *instruction){
-  printf("Unhandled GTE SWC: %x\n", instruction->instr);
+  printf("Unhandled GTE SWC: 0x%x\n", instruction->instr);
 }
 
 // Store Word in Coprocessor 3

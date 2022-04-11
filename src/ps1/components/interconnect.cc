@@ -29,13 +29,15 @@ uint32_t Interconnect::load32(uint32_t addr){
     return ret;
   }
 
+  /*
   if(uint32_t *offset = map::RAM_KSEG0->contains(abs_addr)){
     uint32_t ret = ram->load32(*offset);
     free(offset);
     offset = NULL;
-    exit(1);
+    //exit(1);
     return ret;
   }
+  */
 
   if(uint32_t *offset = map::BIOS->contains(addr)){
     uint32_t ret = bios->load32(*offset);
@@ -45,21 +47,21 @@ uint32_t Interconnect::load32(uint32_t addr){
   }
 
   if(uint32_t *offset = map::IRQ_CONTROL->contains(abs_addr)){
-    printf("IRQ control read %x\n", *offset);
+    printf("IRQ control read 0x%x\n", *offset);
     free(offset);
     offset = NULL;
     return 0;
   }
 
   if(uint32_t *offset = map::DMA->contains(abs_addr)){
-    printf("DMA read %08x\n", abs_addr);
+    printf("DMA read 0x%08x\n", abs_addr);
     free(offset);
     offset = NULL;
     return 0;
   }
 
   if(uint32_t *offset = map::GPU->contains(abs_addr)){
-    printf("GPU read %x\n", *offset);
+    printf("GPU read 0x%x\n", *offset);
     switch(*offset){
       // GPUSTAT: set bit 28 to signal that the GPU is ready to receive DMA blocks
       case 4:
@@ -93,7 +95,7 @@ uint32_t Interconnect::load32(uint32_t addr){
     }
   }
 
-  printf("Unhandled load32 at address %08x\tabs_addr: 0x%08x\n", addr, abs_addr);
+  printf("%sUnhandled load32 at address 0x%08x\tabs_addr: 0x%08x%s\n", color::red, addr, abs_addr, color::white);
   exit(1);
 }
 
@@ -107,7 +109,7 @@ uint16_t Interconnect::load16(uint32_t addr){
   uint32_t abs_addr = map::mask_region(addr);
 
   if(uint32_t *offset = map::SPU->contains(abs_addr)){
-    printf("Unhandled read from SPU register %08x\n", abs_addr);
+    printf("%sUnhandled read from SPU register 0x%08x%s\n", color::red, abs_addr, color::white);
     free(offset);
     offset = NULL;
     return 0;
@@ -121,13 +123,13 @@ uint16_t Interconnect::load16(uint32_t addr){
   }
 
   if(uint32_t *offset = map::IRQ_CONTROL->contains(abs_addr)){
-    printf("IRQ control read %x\n", *offset);
+    printf("IRQ control read 0x%x\n", *offset);
     free(offset);
     offset = NULL;
     return 0;
   }
 
-  printf("Unhandled load16 at address %08x\n", addr);
+  printf("%sUnhandled load16 at address 0x%08x%s\n", color::red, addr, color::white);
   exit(1);
 }
 
@@ -156,7 +158,7 @@ uint8_t Interconnect::load8(uint32_t addr){
     return 0xff;
   }
 
-  printf("Unhandled load8 at address %8x\n", addr);
+  printf("%sUnhandled load8 at address 0x%8x%s\n", color::red, addr, color::white);
   exit(1);
 }
 
@@ -165,7 +167,7 @@ uint8_t Interconnect::load8(uint32_t addr){
 void Interconnect::store32(uint32_t addr, uint32_t val){
   // Check for address alignment (must be an address-multiple of 32bits)
   if(addr % 4 != 0){
-    printf("Unaligned store32 address: %x\n", addr);
+    printf("Unaligned store32 address: 0x%x\n", addr);
     exit(1);
   }
 
@@ -177,16 +179,16 @@ void Interconnect::store32(uint32_t addr, uint32_t val){
       // Expansion 1 base address
       case 0:
         if(val != 0xf1000000){
-          printf("Bad Expansion 1 base address: %x\n", val);
+          printf("%sBad Expansion 1 base address: 0x%x%s\n", color::red, val, color::white);
           exit(1);
         }
       case 4:
         if(val != 0xf1802000){
-          printf("Bad Expansion 2 base address: %x\n", val);
+          printf("%sBad Expansion 2 base address: 0x%x%s\n", color::red, val, color::white);
           exit(1);
       }
       default:
-        printf("Unhandled write to MEMCONTROL register\n");
+        printf("%sUnhandled write to MEMCONTROL register%s\n", color::red, color::white);
         free(offset);
         offset = NULL;
         break;
@@ -195,35 +197,35 @@ void Interconnect::store32(uint32_t addr, uint32_t val){
   }
 
   if(uint32_t *offset = map::IRQ_CONTROL->contains(abs_addr)){
-    printf("IRQ_control: %x <- %08x\n", *offset, val);
+    printf("IRQ_control: 0x%x <- 0x%08x\n", *offset, val);
     free(offset);
     offset = NULL;
     return;
   }
 
   if(uint32_t *offset = map::DMA->contains(abs_addr)){
-    printf("DMA write: %08x: %08x\n", abs_addr, val);
+    printf("DMA write: 0x%08x: 0x%08x\n", abs_addr, val);
     free(offset);
     offset = NULL;
     return;
   }
 
   if(uint32_t *offset = map::GPU->contains(abs_addr)){
-    printf("GPU write %x: %08x\n", *offset, val);
+    printf("GPU write 0x%x: 0x%08x\n", *offset, val);
     free(offset);
     offset = NULL;
     return;
   }
 
   if(uint32_t *offset = map::TIMERS->contains(abs_addr)){
-    printf("Unhandled write to timer register %08x: %08x\n", *offset, val);
+    printf("%sUnhandled write to timer register 0x%08x: 0x%08x%s\n", color::red, *offset, val, color::white);
     free(offset);
     offset = NULL;
     return;
   }
 
   if(uint32_t *offset = map::RAM_SIZE->contains(abs_addr)){
-    printf("\nUnhandled write to ram_size register %08x: %08x\n", *offset, val);
+    printf("\n%sUnhandled write to ram_size register 0x%08x: 0x%08x%s\n", color::red, *offset, val, color::white);
     free(offset);
     offset = NULL;
     return;
@@ -243,13 +245,13 @@ void Interconnect::store32(uint32_t addr, uint32_t val){
         offset = NULL;
         break;
       default:
-        printf("GPU write %x: %08x\n", *offset, val);
+        printf("GPU write 0x%x: 0x%08x\n", *offset, val);
         exit(1);
     }
     return;
   }
 
-  printf("Unhandled store32 at address %08x <- %x\n", addr, val);
+  printf("%sUnhandled store32 at address 0x%08x <- 0x%x%s\n", color::red, addr, val, color::white);
   exit(1);
 }
 
@@ -257,7 +259,7 @@ void Interconnect::store32(uint32_t addr, uint32_t val){
 // Store 16bit halfword 'val' into 'addr'
 void Interconnect::store16(uint32_t addr, uint16_t val){
   if(addr % 2 != 0){
-    printf("Unaligned store16 address %08x\n", addr);
+    printf("Unaligned store16 address 0x%08x\n", addr);
     exit(1);
   }
 
@@ -271,25 +273,25 @@ void Interconnect::store16(uint32_t addr, uint16_t val){
   }
 
   if(uint32_t *offset = map::SPU->contains(abs_addr)){
-    printf("Unhandled write to SPU register %x\n", *offset);
+    printf("%sUnhandled write to SPU register 0x%x%s\n", color::red, *offset, color::white);
     free(offset);
     offset = NULL;
     return;
   }
   
   if(uint32_t *offset = map::TIMERS->contains(abs_addr)){
-    printf("Unhandled write to timer register %x\n",  *offset);
+    printf("%sUnhandled write to timer register 0x%x%s\n",  color::red, *offset, color::white);
     return;
   }
 
   if(uint32_t *offset = map::IRQ_CONTROL->contains(abs_addr)){
-    printf("IRQ control write %x: %04x\n", *offset, val);
+    printf("IRQ control write 0x%x: 0x%04x\n", *offset, val);
     free(offset);
     offset = NULL;
     return;
   }
 
-  printf("Unhandled store16 at address %08x <- %x\n", addr, val);
+  printf("%sUnhandled store16 at address 0x%08x <- 0x%x\n", color::red, addr, val, color::white);
   exit(1);
 }
 
@@ -299,14 +301,14 @@ void Interconnect::store8(uint32_t addr, uint8_t val){
   uint32_t abs_addr = map::mask_region(addr);
 
   if(uint32_t *offset = map::EXPANSION_2->contains(abs_addr)){
-    printf("Unhandled write to SPU register %x\n", *offset);
+    printf("%sUnhandled write to SPU register 0x%x%s\n", color::red, *offset, color::white);
     ram->store8(*offset, val);
     free(offset);
     offset = NULL;
     return;
   }
   
-  printf("Unhandled store8 into address %08x <- %x\n", addr, val);
+  printf("%sUnhandled store8 into address 0x%08x <- 0x%x%s\n", color::red, addr, val, color::white);
   exit(1);
 }
 
@@ -320,7 +322,7 @@ uint32_t Interconnect::dma_reg(uint32_t offset){
     case 0x70:
       return dma->get_control();
     default:
-      printf("Unhandled DMA access: %08x\n", *offset);
+      printf("%sUnhandled DMA access: 0x%08x%s\n", color::red, *offset, color::red);
       exit(1);
   }
   */
@@ -338,7 +340,7 @@ uint32_t Interconnect::dma_reg(uint32_t offset){
         case 8:
           return channel->control();
         default:
-          printf("Unhandled DMA read at %x\n", offset);
+          printf("%sUnhandled DMA read at 0x%x%s\n", color::red, offset, color::white);
           exit(1);
       }
       break;
@@ -352,14 +354,14 @@ uint32_t Interconnect::dma_reg(uint32_t offset){
         case 4:
           return dma->interrupt();
         default:
-          printf("Unhandled DMA read at %x\n", offset);
+          printf("%sUnhandled DMA read at 0x%x%s\n", color::red, offset, color::white);
           exit(1);
       }
       break;
     }
     default:
     {
-      printf("Unhandled DMA read at %x\n", offset);
+      printf("%sUnhandled DMA read at 0x%x%s\n", color::red, offset, color::white);
       exit(1);
     }
   }
@@ -376,7 +378,7 @@ void Interconnect::set_dma_reg(uint32_t offset, uint32_t value){
       dma->set_control(value);
       break;
     default:
-      printf("Unhandled DMA write access: %08x <- %08x\n", offset, value);
+      printf("%sUnhandled DMA write access: 0x%08x <- 0x%08x%s\n", color::red, offset, value, color::white);
       exit(1);
   }
   */
@@ -401,7 +403,7 @@ void Interconnect::set_dma_reg(uint32_t offset, uint32_t value){
           channel->set_control(value);
           break;
         default:
-          printf("Unhandled DMA write at %x <- %08x\n", offset, value);
+          printf("%sUnhandled DMA write at 0x%x <- 0x%08x%s\n", color::red, offset, value, color::white);
           exit(1);
       }
 
@@ -423,7 +425,7 @@ void Interconnect::set_dma_reg(uint32_t offset, uint32_t value){
           dma->set_interrupt(value);
           break;
         default:
-          printf("Unhandled DMA write at %x <- %08x\n", offset, value);
+          printf("%sUnhandled DMA write at 0x%x <- 0x%08x%s\n", color::red, offset, value, color::white);
           exit(1);
       }
 
@@ -431,7 +433,7 @@ void Interconnect::set_dma_reg(uint32_t offset, uint32_t value){
       break;
     }
     default:
-      printf("Unhandled DMA write at %x <- %08x\n", offset, value);
+      printf("%sUnhandled DMA write at 0x%x <- 0x%08x%s\n", color::red, offset, value, color::white);
       exit(1);
   }
  if(active_port != NULL){
@@ -490,7 +492,7 @@ void Interconnect::do_dma_block(enum Port port){
             gpu->gp0(src_word);
             break;
           default:
-            printf("Unhandled DMA destination port %x\n", (uint8_t)port);
+            printf("%sUnhandled DMA destination port 0x%x%s\n", color::red, (uint8_t)port, color::white);
             exit(1);
         }
       }
@@ -512,7 +514,7 @@ void Interconnect::do_dma_block(enum Port port){
             }
             break;
           default:
-            printf("Unhandled DMA source port %x\n", (uint8_t)port);
+            printf("%sUnhandled DMA source port 0x%x%s\n", color::red, (uint8_t)port), color::white;
             exit(1);
         }
         ram->store32(cur_addr, src_word);
@@ -537,7 +539,7 @@ void Interconnect::do_dma_linked_list(enum Port port){
 
   // DMA doesn't support linked list for anything appart the GPU
   if(port != GPU){
-    printf("Attempted linked list DMA on port %x\n", (uint8_t)port);
+    printf("Attempted linked list DMA on port 0x%x\n", (uint8_t)port);
     exit(1);
   }
 

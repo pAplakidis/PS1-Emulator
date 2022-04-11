@@ -6,6 +6,18 @@
 #include "dma.h"
 #include "gpu.h"
 
+namespace color{
+  extern const char* black;
+  extern const char* red;
+  extern const char* green;
+  extern const char* yellow;
+  extern const char* blue;
+  extern const char* purple;
+  extern const char* cyan;
+  extern const char* white;
+}
+
+
 // Types of memory access supported by the Playstation
 enum AccessWidth{
   Byte = 1,
