@@ -1,5 +1,16 @@
 #include "cpu.h"
 
+namespace color{
+  const char* black = "\033[0;30m";
+  const char* red = "\033[0;31m";
+  const char* green = "\033[0;32m";
+  const char* yellow = "\033[0;33m";
+  const char* blue = "\033[0;34m";
+  const char* purple = "\033[0;35m";
+  const char* cyan = "\033[0;36m";
+  const char* white = "\033[0;37m";
+}
+
 Cpu::Cpu(Interconnect *intercn){
   // PC reset value at the beginning of BIOS
   reg_pc = 0xbfc00000;
@@ -149,6 +160,38 @@ Instruction* Cpu::decode(uint32_t instr){
 
 // Trigger an exception
 void Cpu::exception(enum Exception cause){
+  // print out exception type
+  printf("%sException Caught: %s", color::red, color::white);
+  char* s_cause;
+  switch(cause){
+    case SysCall:
+      s_cause = "SysCall";
+      break;
+    case Break:
+      s_cause = "Break";
+      break;
+    case Overflow:
+      s_cause = "Overflow";
+      break;
+    case LoadAddressError:
+      s_cause = "LoadAddressError";
+      break;
+    case StoreAddressError:
+      s_cause = "StoreAddressError";
+      break;
+    case CoprocessorError:
+      s_cause = "CoprocessorError";
+      break;
+    case IllegalInstruction:
+      s_cause = "IllegalInstruction";
+      break;
+    default:
+      s_cause = "Unknown";
+      break;
+
+  }
+  printf("%s%s%s\t", color::red, s_cause, color::white);
+  
   // Exception handler address depends on the "BEV"
   uint32_t handler;
   switch(sr & (1 << 22) != 0){

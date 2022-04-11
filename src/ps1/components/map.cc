@@ -56,7 +56,7 @@ namespace map{
   const Range *GPU = new Range(0x1f801810, 8);
 
   // KSEG0 areas
-  const Range *RAM_KSEG0 = new Range(0x80000000, 2 * 1024 * 1024);
+  const Range *RAM_KSEG0 = new Range(0x00000000, 2 * 1024 * 1024);
 
   uint32_t mask_region(uint32_t addr){
     size_t idx = addr >> 29;

@@ -33,6 +33,7 @@ uint32_t Interconnect::load32(uint32_t addr){
     uint32_t ret = ram->load32(*offset);
     free(offset);
     offset = NULL;
+    exit(1);
     return ret;
   }
 
