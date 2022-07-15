@@ -19,8 +19,12 @@ namespace map{
     }
   }
 
-  const Range *BIOS = new Range(0xbfc00000, 512*1024);
+  // BIOS
+  const Range *BIOS = new Range(0x1fc00000, 512*1024);
+  
+  // Memory latency and expansion mapping
   const Range *MEMCONTROL = new Range(0x1f801000, 36);
+
   // Register that has something to do with RAM configuration, configured by the BIOS
   const Range *RAM_SIZE = new Range(0x1f801060, 4);
 
@@ -28,7 +32,7 @@ namespace map{
   const Range *CACHECONTROL = new Range(0xfffe0130, 4);
 
   // RAM
-  const Range *RAM = new Range(0xa0000000, 2*1024*1024);
+  const Range *RAM = new Range(0x00000000, 8*1024*1024);
 
   // Unknown registers
   const Range *SYS_CONTROL = new Range(0x1f801000, 36);
@@ -55,8 +59,19 @@ namespace map{
   // GPU Registers (TODO: check if this range is correct)
   const Range *GPU = new Range(0x1f801810, 8);
 
+  // ScratchPad: data cache used as a fast 1KB RAM
+  const Range *SCRATCH_PAD = new Range(0x1f800000, 1024);
+
+  // Gamepad and memory card controller
+  const Range *PAD_MEMCARD = new Range(0x1f801040, 32);
+
+  // CDROM controller
+  const Range *CDROM = new Range(0x1f801800, 0x4);
+
+  const Range *MDEC = new Range(0x1f801820, 8);
+
   // KSEG0 areas
-  //const Range *RAM_KSEG0 = new Range(0x00000000, 2 * 1024 * 1024);
+  //const Range *RAM_KSEG0 = new Range(400000000, 2 * 1024 * 1024);
 
   uint32_t mask_region(uint32_t addr){
     size_t idx = addr >> 29;

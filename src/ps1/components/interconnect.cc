@@ -16,7 +16,7 @@ Interconnect::Interconnect(Bios *bios, Gpu *gpu){
 uint32_t Interconnect::load32(uint32_t addr){
   // Check for address alignment (must be an address-multiple of 32bits)
   if(addr % 4 != 0){
-    printf("Unaligned load32 address: %8x\n", addr);
+    printf("%sUnaligned load32 address: 0x%8x%s\n", color::red, addr, color::white);
     exit(1);
   }
   
@@ -27,6 +27,21 @@ uint32_t Interconnect::load32(uint32_t addr){
     free(offset);
     offset = NULL;
     return ret;
+  }
+
+  // TODO: implement for store as well
+  // TODO: implement for new ranges
+  // TODO: implement for 16 and 8 bits as well
+  if(uint32_t *offset = map::SCRATCH_PAD.contains(abs_addr)){
+    if(addr > 0xa0000000){
+      printf("ScratchPad access through uncached memory");
+      exit(1);
+    }
+  }
+
+  if(uint32_t *offset = map::PAD_MEMCARD.contains(abs_addr)){
+    printf("%sUnhandled load to PAD_MEMCARD%s\n", color::red, color::white);
+    exit(1);
   }
 
   /*
